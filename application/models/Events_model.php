@@ -17,6 +17,9 @@ class Events_model extends CI_Model {
         $this->db->where_in('block', $blockid_array);
     }
 
+    // Order by ID descending to show newest first
+    $this->db->order_by('id', 'DESC');
+
     // Now get the results after applying conditions
     $query = $this->db->get('events');
 

@@ -75,6 +75,17 @@
         color: #f0f0f0 !important;
         text-decoration: underline;
     }
+
+    /* Reject cards - permanent white text */
+    .reject-card {
+        background-color: #e74c3c !important;
+    }
+
+    .reject-card .inner h3,
+    .reject-card .inner h4,
+    .reject-card .inner p {
+        color: white !important;
+    }
     </style>
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -84,10 +95,10 @@
         </h1>
     </section>
     <section class="content" style="padding-left: 10px; padding-right: 10px;">
-        <!-- First Row: Vidhan Sabha + Public Problems Cards (6 cards total) -->
+        <!-- First Row: My Assembly Cards (8 cards total in one row) -->
         <div class="row" style="padding-left: 30px; padding-right: 30px;">
             <h3>My Assembly</h3>
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-aqua" style="cursor: pointer;">
@@ -106,7 +117,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-purple" style="cursor: pointer;">
@@ -125,13 +136,12 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('user/jansunwai'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-blue" style="cursor: pointer;">
                     <div class="inner" style="text-align: center;">
                         <h3><?php $date=date('Y-m-d');
-                     //date('Y-m-d');
                      $cc1=  $this->db->query("SELECT count(*) as userstoday FROM `jansunwai` ");
                      $ca2=$cc1->row();
                      echo $ca2->userstoday;
@@ -143,7 +153,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('user/jansunwai?status=Complete'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-green" style="cursor: pointer;">
@@ -159,13 +169,12 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('user/jansunwai?status=Incomplete'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-red" style="cursor: pointer;">
+                <div class="small-box bg-orange" style="cursor: pointer; background-color: #9f9d15ff !important;">
                     <div class="inner" style="text-align: center;">
                         <h3><?php $date=date('Y-m-d');
-                     //date('Y-m-d');
                      $cc1=  $this->db->query("SELECT count(*) as userstoday FROM `jansunwai` WHERE  `work_status`='Incomplete' ");
                      $ca2=$cc1->row();
                      echo $ca2->userstoday;
@@ -177,7 +186,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('user/jansunwai?status=In progress'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-yellow" style="cursor: pointer;">
@@ -192,11 +201,25 @@
                 </div>
                 </a>
             </div>
+            <!-- ./col -->
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+                <!-- small box -->
+                <div class="small-box reject-card">
+                    <div class="inner" style="text-align: center;">
+                        <h3><?php
+                     $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `jansunwai` WHERE `work_status`='Reject' ");
+                     $cc122=$cc12->row();
+                     echo $cc122->totalusers; ?></h3>
+                        <h4>Rejected</h4>
+                        <p>Public Problems</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Third Row: MP Member + MP Problem Cards (6 cards total) -->
+        <!-- Second Row: All MP Cards (8 cards total in one row) -->
         <div class="row" style="padding-left: 30px; padding-right: 30px; margin-top: -20px;">
             <h3>All MP</h3>
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-aqua" style="cursor: pointer;">
@@ -215,15 +238,13 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-purple" style="cursor: pointer;">
                     <div class="inner" style="text-align: center;">
                         <h3><?php 
-                     $cc=  $this->db->query("SELECT count(*) as mp_total FROM `servayapp` s 
-                                            JOIN `block` b ON s.block_name_number = b.id 
-                                            WHERE b.name = 'Other'");
+                     $cc=  $this->db->query("SELECT count(*) as mp_total FROM `servayapp`");
                        $ca=$cc->row();
                        echo $ca->mp_total;
                        ?></h3>
@@ -234,13 +255,12 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-blue" style="cursor: pointer;">
                     <div class="inner" style="text-align: center;">
                         <h3><?php $date=date('Y-m-d');
-                     //date('Y-m-d');
                      $cc1=  $this->db->query("SELECT count(*) as userstoday FROM `districtpublicproblem` ");
                      $ca2=$cc1->row();
                      echo $ca2->userstoday;
@@ -252,7 +272,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Complete'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-green" style="cursor: pointer;">
@@ -268,13 +288,12 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Incomplete'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-red" style="cursor: pointer;">
+                <div class="small-box bg-orange" style="cursor: pointer; background-color: #9f9d15ff !important;">
                     <div class="inner" style="text-align: center;">
                         <h3><?php $date=date('Y-m-d');
-                     //date('Y-m-d');
                      $cc1=  $this->db->query("SELECT count(*) as userstoday FROM `districtpublicproblem` WHERE  `work_status`='Incomplete' ");
                      $ca2=$cc1->row();
                      echo $ca2->userstoday;
@@ -286,7 +305,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-2 col-xs-6">
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
                 <!-- small box -->
                 <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=In progress'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-yellow" style="cursor: pointer;">
@@ -302,6 +321,19 @@
                 </a>
             </div>
             <!-- ./col -->
+            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+                <!-- small box -->
+                <div class="small-box reject-card">
+                    <div class="inner" style="text-align: center;">
+                        <h3><?php
+                     $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `districtpublicproblem` WHERE `work_status`='Reject' ");
+                     $cc122=$cc12->row();
+                     echo $cc122->totalusers; ?></h3>
+                        <h4>MP Rejected</h4>
+                        <p>Public Problems</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-lg-12 col-xs-12">

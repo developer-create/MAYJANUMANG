@@ -12,25 +12,47 @@
                     <!-- form start -->
                     <form action="<?php echo site_url('events/store'); ?>" method="post">
                         <div class="box-body">
-                            <!-- Event Details Section -->
-                            <h4 style="background-color: #3c8dbc; color: white; padding: 10px; margin-bottom: 20px;">Event Details</h4>
+                            <!-- Invitation Details Section -->
+                            <h4 style="background-color: #3c8dbc; color: white; padding: 10px; margin-bottom: 20px;">Invitation Received Details</h4>
                             
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="unique_id_preview">Unique ID:</label>
-                                        <input type="text" class="form-control" id="unique_id_preview" value="Auto Generated (ET/X)" readonly style="background-color: #f5f5f5; color: #999;">
+                                        <label for="date">Invitation Date:</label>
+                                        <input type="date" class="form-control required" id="date" name="date" value="<?php echo set_value('date'); ?>">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="program_date">Program Date:</label>
+                                        <label for="office">Invitation Received Office:</label>
+                                        <select class="form-control required" id="office" name="office">
+                                            <option value="">Select Office</option>
+                                            <option value="Bhopal" <?php echo set_select('office', 'Bhopal'); ?>>Bhopal</option>
+                                            <option value="Dhar" <?php echo set_select('office', 'Dhar'); ?>>Dhar</option>
+                                            <option value="Gandhwani" <?php echo set_select('office', 'Gandhwani'); ?>>Gandhwani</option>
+                                            <option value="Tanda" <?php echo set_select('office', 'Tanda'); ?>>Tanda</option>
+                                            <option value="Bagh" <?php echo set_select('office', 'Bagh'); ?>>Bagh</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Event Details Section -->
+                            <h4 style="background-color: #3c8dbc; color: white; padding: 10px; margin-bottom: 20px; margin-top: 30px;">Event Details</h4>
+                            
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="program_date">Event Program Date:</label>
                                         <input type="date" class="form-control required" id="program_date" name="program_date" value="<?php echo set_value('program_date'); ?>">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="day">Day:</label>
+                                        <label for="day">Event Day:</label>
                                         <select class="form-control" id="day" name="day">
                                             <option value="">-- Select Day --</option>
                                             <option value="Monday" <?php echo set_select('day', 'Monday'); ?>>Monday</option>
@@ -43,12 +65,9 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="month">Month:</label>
+                                        <label for="month">Event Month:</label>
                                         <select class="form-control required" id="month" name="month">
                                             <option value="">Select Month</option>
                                             <option value="January" <?php echo set_select('month', 'January'); ?>>January</option>
@@ -66,27 +85,20 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="year">Year:</label>
+                                        <label for="year">Event Year:</label>
                                         <input type="number" class="form-control required" id="year" name="year" value="<?php echo set_value('year'); ?>">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="date">Recived Date:</label>
-                                        <input type="date" class="form-control required" id="date" name="date" value="<?php echo set_value('date'); ?>">
-                                    </div>
-                                </div>
                             </div>
-                            
                             <div class="row">
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="time">Time:</label>
-                                        <input type="time" class="form-control required" id="time" name="time" value="<?php echo set_value('time'); ?>">
+                                        <label for="unique_id_preview">Unique ID:</label>
+                                        <input type="text" class="form-control" id="unique_id_preview" value="Auto Generated (ET/X)" readonly style="background-color: #f5f5f5; color: #999;">
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="event_type">Event Type:</label>
@@ -100,21 +112,25 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="time">Event Time:</label>
+                                        <input type="time" class="form-control required" id="time" name="time" value="<?php echo set_value('time'); ?>">
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <!-- Card Details Section -->
-                            <h4 style="background-color: #3c8dbc; color: white; padding: 10px; margin-bottom: 20px; margin-top: 30px;">Card Details</h4>
+                            <h4 style="background-color: #3c8dbc; color: white; padding: 10px; margin-bottom: 20px; margin-top: 30px;">Program  Details</h4>
                             
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="event_detail">Event Details:</label>
+                                        <label for="event_detail">Event (Name) Details:</label>
                                         <input type="text" class="form-control required" id="event_detail" name="event_detail" value="<?php echo set_value('event_detail'); ?>">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="Block">Block:</label>
+                                        <label for="block">Block:</label>
                                        <select class="form-control required" id="block" name="block">
                                             <option value="">Select Block</option>
                                             <?php foreach ($blocks as $block): ?>
@@ -122,63 +138,53 @@
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
-                                </div>  
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="district">District:</label>
                                         <input type="text" class="form-control required" id="district" name="district" value="<?php echo set_value('district'); ?>">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="venue_city">Vanue City:</label>
+                                        <label for="venue_city">Venue City:</label>
                                         <input type="text" class="form-control required" id="venue_city" name="venue_city" value="<?php echo set_value('venue_city'); ?>">
                                     </div>
                                 </div>
-                            </div>
-                            
-                                <div class="row">
-                                    <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="referance">REFRANCE PERSON NAME / POST:(INVITEE DETAILS)</label>
-                                         <input type="text" class="form-control required" id="referance" name="referance" value="<?php echo set_value('referance'); ?>">
-                                        
-                                    </div>
-                                </div>
-                           
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="contact_number">Contact Number (INVITEE DETAILS):</label>
-                                         <input type="number" class="form-control required" id="contact_number" name="contact_number" value="<?php echo set_value('contact_number'); ?>">
-                                        
+                                        <label for="referance">Reference Person Name/Post:</label>
+                                         <input type="text" class="form-control required" id="referance" name="referance" value="<?php echo set_value('referance'); ?>">
                                     </div>
                                 </div>
-                                 <div class="col-md-4">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="address">Address (INVITEE DETAILS):</label>
-                                         
-                                        <textarea class="form-control" id="address" name="address"><?php echo set_value('address'); ?></textarea>
+                                        <label for="contact_number">Contact Number:</label>
+                                         <input type="number" class="form-control required" id="contact_number" name="contact_number" value="<?php echo set_value('contact_number'); ?>">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                               
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="name">Name (INVITEE DETAILS):</label>
-                                         <input type="text" class="form-control required" id="name" name="name" value="<?php echo set_value('name'); ?>">
-                                        
+                                        <label for="address">Address:</label>
+                                        <textarea class="form-control" id="address" name="address"><?php echo set_value('address'); ?></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="location">Location (INVITEE DETAILS):</label>
+                                        <label for="name">Name:</label>
+                                         <input type="text" class="form-control required" id="name" name="name" value="<?php echo set_value('name'); ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="location">Location:</label>
                                          <input type="text" class="form-control required" id="location" name="location" value="<?php echo set_value('location'); ?>">
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -205,11 +211,11 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="attended"> ATTENDED (YES/NO ) :</label>
+                                        <label for="attended">ATTENDED (YES/NO):</label>
                                         <select class="form-control required" id="attended" name="attended">
-                                         <option class="form-control required" value="YES" <?php echo set_select('attended', 'YES'); ?>>YES </option>
-                                         <option class="form-control required" value="NO" <?php echo set_select('attended', 'NO'); ?>>NO </option>
-                                        
+                                         <option value="">-- Select Option --</option>
+                                         <option value="YES" <?php echo set_select('attended', 'YES'); ?>>YES</option>
+                                         <option value="NO" <?php echo set_select('attended', 'NO'); ?>>NO</option>
                                         </select>
                                     </div>
                                 </div>
@@ -302,14 +308,14 @@ document.getElementById('attended').addEventListener('change', function() {
     const dispatchNumber = document.getElementById('dispatch_number');
     const remark = document.getElementById('remark');
     
-    if (this.value === 'YES') {
-        // Show fields when YES is selected
+    if (this.value === 'NO') {
+        // Show fields when NO is selected
         notAttendedFields.style.display = 'flex';
         dispatchDate.disabled = false;
         dispatchNumber.disabled = false;
         remark.disabled = false;
     } else {
-        // Hide fields when NO is selected
+        // Hide fields when YES is selected
         notAttendedFields.style.display = 'none';
         dispatchDate.disabled = true;
         dispatchNumber.disabled = true;
@@ -329,7 +335,7 @@ window.addEventListener('DOMContentLoaded', function() {
     const dispatchNumber = document.getElementById('dispatch_number');
     const remark = document.getElementById('remark');
     
-    if (attended.value === 'YES') {
+    if (attended.value === 'NO') {
         notAttendedFields.style.display = 'flex';
         dispatchDate.disabled = false;
         dispatchNumber.disabled = false;

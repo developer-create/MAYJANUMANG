@@ -21,6 +21,8 @@ class Events extends BaseController {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
             $data['events'] = $this->Events_model->get_events();
+            $query = $this->db->get('block');
+            $data['blocks'] = $query->result();
             $this->global['pageTitle'] = 'Datacollector : Events';
             $this->loadViews("events/index", $this->global, $data, NULL);
         }
@@ -115,6 +117,7 @@ public function store() {
             'dispatch_date' => $dispatch_date ?: '0000-00-00',
             'dispatch_number' => $this->input->post('dispatch_number') ?: 'NA',
             'remark' => $this->input->post('remark') ?: 'NA',
+            'office' => $this->input->post('office') ?: 'NA',
             'created_by' => $this->vendorId,
         );
 
@@ -244,6 +247,7 @@ public function update($id) {
             'dispatch_date' => $dispatch_date, // Set to NULL if not selected
             'dispatch_number' => $this->input->post('dispatch_number'),
             'remark' => $this->input->post('remark'),
+            'office' => $this->input->post('office'),
             'updated_by' => $this->vendorId,
              'block' => $this->input->post('block'),
         );
