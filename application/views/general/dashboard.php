@@ -1,91 +1,232 @@
 <div class="content-wrapper">
     <style>
-    #pieChart {
-        height: 300px !important;
-        /* Adjust the height as needed */
-        width: 200px;
-        /* Optionally adjust the width */
-    }
+    <style>
+    /* Premium Dashboard Styles */
+    #pieChart { height: 400px !important; width: 100%; }
+    #barChart { height: 400px !important; width: 100%; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px; text-align: center; }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        padding: 8px;
-        text-align: center;
-    }
-
-    /* Table header styling for all dashboard tables */
+    /* Modern Table headers */
     .table thead th {
-        background-color: #337ab7 !important; /* Bootstrap primary blue */
+        background-color: var(--sidebar-bg, #111827) !important;
         color: white !important;
-        font-weight: bold !important;
-        text-align: center !important;
-        padding: 12px 8px !important;
-        border: 1px solid #2e6da4 !important;
+        font-weight: 600 !important;
+        font-family: 'Outfit', sans-serif !important;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        border: none !important;
+        padding: 15px 10px !important;
+    }
+    #dashboardtable thead th { background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important; color: white !important; }
+    #dashboardtable1 thead th { background: linear-gradient(135deg, #064e3b, #10b981) !important; color: white !important; }
+    #dashboardtable2 thead th { background: linear-gradient(135deg, #78350f, #f59e0b) !important; color: white !important; }
+    .table tbody tr { transition: all 0.3s ease; }
+    .table tbody tr td { border-bottom: 1px solid #f1f5f9 !important; border-top: none !important; vertical-align: middle !important; }
+    
+    .gray { background-color: #64748b !important; color: white !important; }
+    .light-gray { background-color: #94a3b8 !important; color: white !important; }
+    .dark-gray { background-color: #475569 !important; color: white !important; }
+
+    .table thead th a { color: white !important; text-decoration: none; }
+    .table thead th a:hover { color: #f8fafc !important; text-decoration: underline; }
+
+    /* New Card Gradients & Styling */
+    .small-box {
+        position: relative;
+        border-radius: 16px !important;
+        overflow: hidden;
+        color: #ffffff !important;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+        padding: 5px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .small-box .inner {
+        position: relative;
+        z-index: 2;
+        padding: 15px !important;
+        text-align: left !important;
+    }
+    .small-box h3 {
+        font-size: 32px !important;
+        font-weight: 800 !important;
+        font-family: 'Outfit', sans-serif !important;
+        margin: 0 0 5px 0 !important;
+        letter-spacing: -1px;
+    }
+    .small-box h4 {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        margin: 0 0 5px 0 !important;
+        letter-spacing: 0.5px;
+        opacity: 0.9;
+    }
+    .small-box p {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        opacity: 0.8;
+        margin: 0 !important;
+    }
+    
+    /* Background Icon using Pseudo-element */
+    .small-box::after {
+        font-family: "FontAwesome";
+        content: "\f200"; /* Pie chart icon */
+        position: absolute;
+        top: 15px;
+        right: -10px;
+        font-size: 70px;
+        color: rgba(255,255,255,0.15);
+        z-index: 1;
+        transition: transform 0.4s ease;
+    }
+    .small-box:hover::after { transform: scale(1.1) rotate(-15deg); }
+    .small-box:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important; }
+
+    /* Gradients */
+    .bg-aqua { background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%) !important; }
+    .bg-aqua::after { content: "\f0c0"; } /* users */
+    
+    .bg-purple { background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%) !important; }
+    .bg-purple::after { content: "\f19c"; } /* building */
+    
+    .bg-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important; }
+    .bg-blue::after { content: "\f0e8"; } /* sitemap */
+    
+    .bg-green { background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important; }
+    .bg-green::after { content: "\f058"; } /* check-circle */
+    
+    .bg-orange { background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%) !important; }
+    .bg-orange::after { content: "\f071"; } /* warning */
+    
+    .bg-yellow { background: linear-gradient(135deg, #eab308 0%, #a16207 100%) !important; }
+    .bg-yellow::after { content: "\f110"; } /* spinner */
+    
+    .reject-card { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important; }
+    .reject-card::after { content: "\f057"; } /* times-circle */
+
+    .reject-card .inner h3, .reject-card .inner h4, .reject-card .inner p { color: white !important; }
+    
+    /* Box Wrappers */
+    .box.box-primary {
+        border-top: none !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;
+        border-radius: 16px !important;
+        padding: 20px !important;
+        margin-bottom: 30px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
     }
 
-    /* Alternative styling for different sections */
-    #dashboardtable thead th {
-        background-color: #3c8dbc !important; /* Light blue */
-        color: white !important;
+    .box-body {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
     }
 
-    #dashboardtable1 thead th {
-        background-color: #00a65a !important; /* Green */
-        color: white !important;
+    .box-body canvas {
+        flex: 1 !important;
+    }
+    
+    /* Form Enhancements */
+    form label { font-weight: 500 !important; color: #475569; }
+    .btn-primary { border-radius: 8px !important; padding: 10px 20px !important; font-weight: 600 !important; }
+
+    /* Section Headings */
+    h3 {
+        font-family: 'Outfit', sans-serif !important;
+        font-weight: 700 !important;
+        color: var(--sidebar-bg, #1e293b);
+        margin-bottom: 20px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 10px;
+        display: inline-block;
     }
 
-    #dashboardtable2 thead th {
-        background-color: #f39c12 !important; /* Orange */
-        color: white !important;
+    /* 8-column layout for cards (12.5% each) */
+    .row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        margin-left: -5px !important;
+        margin-right: -5px !important;
     }
 
-    .gray {
-        background-color: #818589 !important;
-        color: white !important;
+    .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
+        flex: 0 0 12.5% !important;
+        max-width: 12.5% !important;
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+        box-sizing: border-box !important;
     }
 
-    .light-gray {
-        background-color: #95a5a6 !important;
-        color: white !important;
+    .col-xs-12:first-child {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
     }
 
-    .dark-gray {
-        background-color: #7f8c8d !important;
-        color: white !important;
+    @media (max-width: 1200px) {
+        .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
+            flex: 0 0 16.666% !important;
+            max-width: 16.666% !important;
+        }
+        .col-xs-12:first-child {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
     }
 
-    /* Hover effect for table headers */
-    .table thead th:hover {
-        background-color: #286090 !important;
-        transition: background-color 0.3s ease;
+    @media (max-width: 992px) {
+        .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
+            flex: 0 0 20% !important;
+            max-width: 20% !important;
+        }
+        .col-xs-12:first-child {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
     }
 
-    /* Ensure text remains visible in colored headers */
-    .table thead th a {
-        color: white !important;
-        text-decoration: none;
+    @media (max-width: 768px) {
+        .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
+            flex: 0 0 25% !important;
+            max-width: 25% !important;
+        }
+        .col-xs-12:first-child {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
     }
 
-    .table thead th a:hover {
-        color: #f0f0f0 !important;
-        text-decoration: underline;
+    @media (max-width: 480px) {
+        .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+        }
+        .col-xs-12:first-child {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
     }
 
-    /* Reject cards - permanent white text */
-    .reject-card {
-        background-color: #e74c3c !important;
+    /* Chart row alignment */
+    .row > [class*='col-'] {
+        display: flex !important;
+        flex-direction: column !important;
     }
 
-    .reject-card .inner h3,
-    .reject-card .inner h4,
-    .reject-card .inner p {
-        color: white !important;
+    .col-lg-6, .col-xs-6 {
+        display: flex !important;
+        flex-direction: column !important;
     }
+
+    .col-lg-6 .box-primary, .col-xs-6 .box-primary {
+        height: 100% !important;
+    }
+    </style>
     </style>
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -97,8 +238,10 @@
     <section class="content" style="padding-left: 10px; padding-right: 10px;">
         <!-- First Row: My Assembly Cards (8 cards total in one row) -->
         <div class="row" style="padding-left: 30px; padding-right: 30px;">
-            <h3>My Assembly</h3>
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-xs-12">
+                <h3>My Assembly</h3>
+            </div>
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-aqua" style="cursor: pointer;">
@@ -117,7 +260,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-purple" style="cursor: pointer;">
@@ -136,7 +279,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('user/jansunwai'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-blue" style="cursor: pointer;">
@@ -153,7 +296,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('user/jansunwai?status=Complete'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-green" style="cursor: pointer;">
@@ -169,7 +312,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('user/jansunwai?status=Incomplete'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-orange" style="cursor: pointer; background-color: #9f9d15ff !important;">
@@ -186,7 +329,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('user/jansunwai?status=In progress'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-yellow" style="cursor: pointer;">
@@ -202,7 +345,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <div class="small-box reject-card">
                     <div class="inner" style="text-align: center;">
@@ -218,8 +361,10 @@
         </div>
         <!-- Second Row: All MP Cards (8 cards total in one row) -->
         <div class="row" style="padding-left: 30px; padding-right: 30px; margin-top: -20px;">
-            <h3>All MP</h3>
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-xs-12">
+                <h3>All MP</h3>
+            </div>
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-aqua" style="cursor: pointer;">
@@ -238,7 +383,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-purple" style="cursor: pointer;">
@@ -255,7 +400,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-blue" style="cursor: pointer;">
@@ -272,7 +417,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Complete'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-green" style="cursor: pointer;">
@@ -288,7 +433,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Incomplete'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-orange" style="cursor: pointer; background-color: #9f9d15ff !important;">
@@ -305,7 +450,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=In progress'); ?>" style="text-decoration: none;">
                 <div class="small-box bg-yellow" style="cursor: pointer;">
@@ -321,7 +466,7 @@
                 </a>
             </div>
             <!-- ./col -->
-            <div class="col-lg-1.5 col-xs-6" style="flex: 0 0 12.5%; max-width: 12.5%;">
+            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
                 <!-- small box -->
                 <div class="small-box reject-card">
                     <div class="inner" style="text-align: center;">

@@ -11,6 +11,221 @@
     <link href="<?php echo base_url(); ?>assets/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>assets/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
     <style>
+/* Premium Modern Theme Overrides */
+:root {
+    --primary-color: #4f46e5;
+    --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --secondary-color: #ec4899;
+    --dark-bg: #0f172a;
+    --sidebar-bg: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+    --sidebar-hover: rgba(255,255,255,0.08);
+    --card-bg: #ffffff;
+    --text-main: #334155;
+    --text-muted: #94a3b8;
+    --accent: #0ea5e9;
+}
+
+body {
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+    background-color: #f8fafc !important;
+}
+
+/* Header Navbar */
+.main-header .logo {
+    background: #1e1b4b !important;
+    color: #fff !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px;
+    height: 60px !important;
+    line-height: 60px !important;
+}
+.main-header .navbar {
+    background: var(--primary-gradient) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+    height: 60px !important;
+    border: none !important;
+}
+.main-header .sidebar-toggle {
+    color: #ffffff !important;
+    font-size: 20px !important;
+    transition: all 0.3s ease;
+}
+.main-header .sidebar-toggle:hover {
+    background: rgba(255,255,255,0.1) !important;
+    color: #ffffff !important;
+}
+
+/* Sidebar */
+.main-sidebar {
+    background: var(--sidebar-bg) !important;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+    padding-top: 60px !important;
+}
+.sidebar-menu {
+    padding-top: 15px !important;
+}
+.sidebar-menu>li>a {
+    transition: all 0.3s ease;
+    border-radius: 12px !important; /* Premium Pill Shape */
+    margin: 4px 15px !important; /* Floating effect from edges */
+    padding: 12px 15px 12px 20px !important;
+    color: #94a3b8 !important;
+    font-size: 14.5px !important;
+    font-weight: 500 !important;
+    border: none !important;
+}
+/* Making the bulky fa-circle look like a sleek modern dot */
+.sidebar-menu>li>a i.fa-circle, .sidebar-menu>li>a i.fa-circle-o {
+    font-size: 8px !important;
+    margin-right: 15px !important;
+    color: #64748b !important;
+    vertical-align: middle !important;
+    margin-bottom: 2px !important;
+    transition: all 0.3s ease;
+}
+.sidebar-menu>li>a:hover, .sidebar-menu>li.active>a {
+    background: var(--primary-gradient) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3) !important;
+}
+/* When hovered/active, the dot becomes brilliantly white */
+.sidebar-menu>li>a:hover i, .sidebar-menu>li.active>a i {
+    color: #ffffff !important;
+    transform: scale(1.2);
+}
+/* Submenus */
+.sidebar-menu .treeview-menu {
+    background: transparent !important;
+    padding-left: 15px !important;
+}
+.sidebar-menu .treeview-menu>li>a {
+    margin: 2px 15px !important;
+    border-radius: 8px !important;
+    font-size: 13.5px !important;
+    padding: 8px 15px !important;
+}
+.sidebar-menu>li.header {
+    background: transparent !important;
+    color: #475569 !important;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 10px 25px;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+/* Cards & Boxes */
+.box, .info-box, .small-box {
+    border-radius: 16px !important;
+    border-top: none !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+.box {
+    background: var(--card-bg) !important;
+}
+.box:hover, .info-box:hover, .small-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+}
+.box-header.with-border {
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 15px 20px !important;
+}
+.box-title {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    color: var(--text-main) !important;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12px !important;
+    padding: 8px 16px !important;
+}
+.btn-primary {
+    background: var(--primary-gradient) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4) !important;
+}
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6) !important;
+    transform: translateY(-2px);
+}
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4) !important;
+}
+.btn-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    border: none !important;
+    color: white !important;
+}
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    border: none !important;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    background-color: #f1f5f9 !important;
+    padding-top: 20px;
+}
+.content-header h1 {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 700 !important;
+    color: var(--sidebar-bg) !important;
+    letter-spacing: -0.5px;
+}
+
+/* Forms */
+.form-control {
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 10px 15px !important;
+    height: auto !important;
+    box-shadow: none !important;
+    transition: all 0.3s ease !important;
+    background-color: #f8fafc !important;
+}
+.form-control:focus {
+    border-color: #8b5cf6 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2) !important;
+}
+
+/* User Account Menu */
+.navbar-nav>.user-menu>.dropdown-menu {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.navbar-nav>.user-menu>.dropdown-menu>li.user-header {
+    background: var(--primary-gradient) !important;
+}
+
+/* DataTables overrrides */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 8px !important;
+    border: none !important;
+    background: #ffffff !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary-gradient) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3) !important;
+}
+
     	.error{
     		color:red;
     		font-weight: normal;
@@ -32,13 +247,31 @@ table {
 }
 
 /* Global table header styling for all tables */
-.table thead th {
-    background-color: #020254 !important; /* Deep navy blue */
-    color: white !important;
-    font-weight: bold !important;
-    text-align: center !important;
-    padding: 12px 8px !important;
-    border: 1px solid #2e6da4 !important;
+.table thead th, table thead th {
+    background: var(--sidebar-bg) !important;
+    color: #ffffff !important;
+    font-family: 'Outfit', sans-serif !important;
+    text-transform: uppercase !important;
+    font-size: 11px !important;
+    letter-spacing: 1px !important;
+    border: none !important;
+    padding: 15px 10px !important;
+}
+table tbody tr td {
+    border: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 12px 10px !important;
+    color: var(--text-main) !important;
+    vertical-align: middle !important;
+}
+table tbody tr {
+    transition: all 0.3s ease !important;
+    background-color: #ffffff !important;
+}
+table tbody tr:hover {
+    background-color: #f8fafc !important;
+    transform: scale(1.005) !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
 }
 
 /* Dashboard specific table headers with different colors */
@@ -313,12 +546,62 @@ table tbody td:last-child {
     color: #f0f0f0 !important;
     text-decoration: underline;
 }
+
+/* FundSummary Table Specific Styling */
+#fundSummaryTable {
+    width: 100% !important;
+    table-layout: auto !important;
+}
+
+#fundSummaryTable thead th {
+    background-color: #020254 !important;
+    color: white !important;
+    padding: 12px 8px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+}
+
+#fundSummaryTable tbody td {
+    padding: 10px 8px !important;
+    font-size: 12px !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+#fundSummaryTable tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+/* Ensure DataTables wrapper allows horizontal scroll */
+.dataTables_wrapper {
+    overflow-x: auto !important;
+}
+
+/* Fix for DataTables responsive container */
+.table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+/* Ensure table doesn't get cut off */
+.box-body.table-responsive {
+    padding: 0 !important;
+}
+
+.box-body.table-responsive table {
+    margin-bottom: 0 !important;
+}
     </style>
     <script src="<?php echo base_url(); ?>assets/bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript">
         var baseURL = "<?php echo base_url(); ?>";
     </script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
@@ -579,11 +862,77 @@ table tbody td:last-child {
                     if ($this->session->userdata('blockId') != 0 && $this->session->userdata('isAdmin') != 1 && $module['module'] =='Dashboard') {
                          $url = base_url().'blockdashboard'; 
                     }
+                    
+                    // Determine icon based on module name
+                    $icon = 'fa-circle'; // default
+                    $moduleName = $module['module'];
+                    
+                    if (strcasecmp($moduleName, 'Dashboard') == 0) {
+                        $icon = 'fa-dashboard';
+                    } elseif (strcasecmp($moduleName, 'Users') == 0) {
+                        $icon = 'fa-users';
+                    } elseif (strcasecmp($moduleName, 'Roles') == 0) {
+                        $icon = 'fa-lock';
+                    } elseif (strcasecmp($moduleName, 'UserCount') == 0) {
+                        $icon = 'fa-user-plus';
+                    } elseif (strcasecmp($moduleName, 'MP-publicproblem') == 0) {
+                        $icon = 'fa-warning';
+                    } elseif (strcasecmp($moduleName, 'Project-Summary') == 0) {
+                        $icon = 'fa-bar-chart';
+                    } elseif (strcasecmp($moduleName, 'Fund-Summary') == 0) {
+                        $icon = 'fa-money';
+                    } elseif (strcasecmp($moduleName, 'Visitors') == 0) {
+                        $icon = 'fa-eye';
+                    } elseif (strcasecmp($moduleName, 'Events') == 0) {
+                        $icon = 'fa-calendar';
+                    } elseif (strcasecmp($moduleName, 'Voter') == 0) {
+                        $icon = 'fa-check-square';
+                    } elseif (strcasecmp($moduleName, 'Samiti') == 0) {
+                        $icon = 'fa-sitemap';
+                    } elseif (strcasecmp($moduleName, 'District') == 0) {
+                        $icon = 'fa-map-marker';
+                    } elseif (strcasecmp($moduleName, 'Vidhan-Sabha') == 0) {
+                        $icon = 'fa-building';
+                    } elseif (strcasecmp($moduleName, 'Block') == 0) {
+                        $icon = 'fa-th';
+                    } elseif (strcasecmp($moduleName, 'Booth') == 0) {
+                        $icon = 'fa-th-large';
+                    } elseif (strcasecmp($moduleName, 'Village') == 0) {
+                        $icon = 'fa-home';
+                    } elseif (strcasecmp($moduleName, 'Panchayat') == 0) {
+                        $icon = 'fa-users';
+                    } elseif (strcasecmp($moduleName, 'Phone-Directory') == 0) {
+                        $icon = 'fa-phone';
+                    } elseif (strcasecmp($moduleName, 'Booking') == 0) {
+                        $icon = 'fa-calendar-check-o';
+                    } elseif (strcasecmp($moduleName, 'InDocs') == 0) {
+                        $icon = 'fa-file-text';
+                    } elseif (strcasecmp($moduleName, 'InwardRegister') == 0) {
+                        $icon = 'fa-inbox';
+                    } elseif (strcasecmp($moduleName, 'DispatchRegister') == 0) {
+                        $icon = 'fa-send';
+                    } elseif (strcasecmp($moduleName, 'CallManagement') == 0) {
+                        $icon = 'fa-headphones';
+                    } elseif (strcasecmp($moduleName, 'Question') == 0) {
+                        $icon = 'fa-question-circle';
+                    } elseif (strcasecmp($moduleName, 'Task') == 0) {
+                        $icon = 'fa-tasks';
+                    } elseif (strcasecmp($moduleName, 'Worktype') == 0) {
+                        $icon = 'fa-wrench';
+                    } elseif (strcasecmp($moduleName, 'SubtypeOfWork') == 0) {
+                        $icon = 'fa-cogs';
+                    } elseif (strcasecmp($moduleName, 'Party') == 0) {
+                        $icon = 'fa-flag';
+                    } elseif (strcasecmp($moduleName, 'Department') == 0) {
+                        $icon = 'fa-sitemap';
+                    } elseif (strcasecmp($moduleName, 'In-Out-Register') == 0) {
+                        $icon = 'fa-exchange';
+                    }
                     ?>
                     
                     <li> 
                         <a href="<?php echo $url; ?>">
-                            <i class="fa fa-circle"></i>
+                            <i class="fa <?php echo $icon; ?>"></i>
                             <span><?php echo $module['module']; ?></span>
                         </a>
                     </li>
@@ -599,20 +948,20 @@ table tbody td:last-child {
                         ?>
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-file-text"></i> <span>Assembly Issue</span>
+                                <i class="fa fa-file-alt"></i> <span>Assembly Issue</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">
                                 <?php if ($hasBlockLevel): ?>
-                                <li><a href="<?php echo $blockLevelUrl; ?>"><i class="fa fa-circle-o"></i> <span>Block-Level</span></a></li>
+                                <li><a href="<?php echo $blockLevelUrl; ?>"><i class="fa fa-cube"></i> <span>Block-Level</span></a></li>
                                 <?php endif; ?>
                                 <?php if ($hasBhopalLevel): ?>
-                                <li><a href="<?php echo $bhopalLevelUrl; ?>"><i class="fa fa-circle-o"></i> <span>Bhopal-Level</span></a></li>
+                                <li><a href="<?php echo $bhopalLevelUrl; ?>"><i class="fa fa-building"></i> <span>Bhopal-Level</span></a></li>
                                 <?php endif; ?>
                                 <?php if ($hasUSSLevel): ?>
-                                <li><a href="<?php echo $ussLevelUrl; ?>"><i class="fa fa-circle-o"></i> <span>USS-Level</span></a></li>
+                                <li><a href="<?php echo $ussLevelUrl; ?>"><i class="fa fa-university"></i> <span>USS-Level</span></a></li>
                                 <?php endif; ?>
                             </ul>
                         </li>
@@ -625,7 +974,7 @@ table tbody td:last-child {
                         ?>
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-users"></i> <span>Member List</span>
+                                <i class="fa fa-id-card"></i> <span>Member List</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -640,7 +989,7 @@ table tbody td:last-child {
                                         $memberUrl = base_url() . $path;
                                     }
                                 ?>
-                                <li><a href="<?php echo $memberUrl; ?>"><i class="fa fa-circle-o"></i> <span><?php echo str_replace('-', ' ', $memberModule['module']); ?></span></a></li>
+                                <li><a href="<?php echo $memberUrl; ?>"><i class="fa fa-user"></i> <span><?php echo str_replace('-', ' ', $memberModule['module']); ?></span></a></li>
                                 <?php endforeach; ?>
                             </ul>
                         </li>
@@ -652,7 +1001,7 @@ table tbody td:last-child {
                         ?>
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-users"></i> <span>Vidhasabha Samiti</span>
+                                <i class="fa fa-sitemap"></i> <span>Vidhasabha Samiti</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -666,8 +1015,31 @@ table tbody td:last-child {
                                         $path = preg_replace('#^janumang/#', '', $path);
                                         $samitiUrl = base_url() . $path;
                                     }
+                                    
+                                    // Determine icon based on samiti name
+                                    $samitiIcon = 'fa-circle-o';
+                                    $samitiName = $samitiModule['module'];
+                                    if (strcasecmp($samitiName, 'Ganesh-Samiti') == 0) {
+                                        $samitiIcon = 'fa-star';
+                                    } elseif (strcasecmp($samitiName, 'Khel-Samiti') == 0) {
+                                        $samitiIcon = 'fa-trophy';
+                                    } elseif (strcasecmp($samitiName, 'Tenkar-Samiti') == 0) {
+                                        $samitiIcon = 'fa-balance-scale';
+                                    } elseif (strcasecmp($samitiName, 'Mandir-Samiti') == 0) {
+                                        $samitiIcon = 'fa-heart';
+                                    } elseif (strcasecmp($samitiName, 'Bhagoria-Samiti') == 0) {
+                                        $samitiIcon = 'fa-heart-o';
+                                    } elseif (strcasecmp($samitiName, 'Nirman-Samiti') == 0) {
+                                        $samitiIcon = 'fa-building';
+                                    } elseif (strcasecmp($samitiName, 'Booth-Samiti') == 0) {
+                                        $samitiIcon = 'fa-th-large';
+                                    } elseif (strcasecmp($samitiName, 'Block-Samiti') == 0) {
+                                        $samitiIcon = 'fa-th';
+                                    } elseif (strcasecmp($samitiName, 'DP-Samiti') == 0) {
+                                        $samitiIcon = 'fa-sitemap';
+                                    }
                                 ?>
-                                <li><a href="<?php echo $samitiUrl; ?>"><i class="fa fa-circle-o"></i> <span><?php echo $samitiModule['module']; ?></span></a></li>
+                                <li><a href="<?php echo $samitiUrl; ?>"><i class="fa <?php echo $samitiIcon; ?>"></i> <span><?php echo $samitiModule['module']; ?></span></a></li>
                                 <?php endforeach; ?>
                             </ul>
                         </li>
@@ -680,20 +1052,20 @@ table tbody td:last-child {
                     ?>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-file-text"></i> <span>Assembly Issue</span>
+                            <i class="fa fa-file-alt"></i> <span>Assembly Issue</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
                             <?php if ($hasBlockLevel): ?>
-                            <li><a href="<?php echo $blockLevelUrl; ?>"><i class="fa fa-circle-o"></i> <span>Block-Level</span></a></li>
+                            <li><a href="<?php echo $blockLevelUrl; ?>"><i class="fa fa-cube"></i> <span>Block-Level</span></a></li>
                             <?php endif; ?>
                             <?php if ($hasBhopalLevel): ?>
-                            <li><a href="<?php echo $bhopalLevelUrl; ?>"><i class="fa fa-circle-o"></i> <span>Bhopal-Level</span></a></li>
+                            <li><a href="<?php echo $bhopalLevelUrl; ?>"><i class="fa fa-building"></i> <span>Bhopal-Level</span></a></li>
                             <?php endif; ?>
                             <?php if ($hasUSSLevel): ?>
-                            <li><a href="<?php echo $ussLevelUrl; ?>"><i class="fa fa-circle-o"></i> <span>USS-Level</span></a></li>
+                            <li><a href="<?php echo $ussLevelUrl; ?>"><i class="fa fa-university"></i> <span>USS-Level</span></a></li>
                             <?php endif; ?>
                         </ul>
                     </li>
@@ -705,7 +1077,7 @@ table tbody td:last-child {
                     ?>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-users"></i> <span>Vidhasabha Samiti</span>
+                            <i class="fa fa-sitemap"></i> <span>Vidhasabha Samiti</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
@@ -719,8 +1091,31 @@ table tbody td:last-child {
                                     $path = preg_replace('#^janumang/#', '', $path);
                                     $samitiUrl = base_url() . $path;
                                 }
+                                
+                                // Determine icon based on samiti name
+                                $samitiIcon = 'fa-circle-o';
+                                $samitiName = $samitiModule['module'];
+                                if (strcasecmp($samitiName, 'Ganesh-Samiti') == 0) {
+                                    $samitiIcon = 'fa-star';
+                                } elseif (strcasecmp($samitiName, 'Khel-Samiti') == 0) {
+                                    $samitiIcon = 'fa-trophy';
+                                } elseif (strcasecmp($samitiName, 'Tenkar-Samiti') == 0) {
+                                    $samitiIcon = 'fa-balance-scale';
+                                } elseif (strcasecmp($samitiName, 'Mandir-Samiti') == 0) {
+                                    $samitiIcon = 'fa-heart';
+                                } elseif (strcasecmp($samitiName, 'Bhagoria-Samiti') == 0) {
+                                    $samitiIcon = 'fa-heart-o';
+                                } elseif (strcasecmp($samitiName, 'Nirman-Samiti') == 0) {
+                                    $samitiIcon = 'fa-building';
+                                } elseif (strcasecmp($samitiName, 'Booth-Samiti') == 0) {
+                                    $samitiIcon = 'fa-th-large';
+                                } elseif (strcasecmp($samitiName, 'Block-Samiti') == 0) {
+                                    $samitiIcon = 'fa-th';
+                                } elseif (strcasecmp($samitiName, 'DP-Samiti') == 0) {
+                                    $samitiIcon = 'fa-sitemap';
+                                }
                             ?>
-                            <li><a href="<?php echo $samitiUrl; ?>"><i class="fa fa-circle-o"></i> <span><?php echo $samitiModule['module']; ?></span></a></li>
+                            <li><a href="<?php echo $samitiUrl; ?>"><i class="fa <?php echo $samitiIcon; ?>"></i> <span><?php echo $samitiModule['module']; ?></span></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </li>
@@ -732,7 +1127,7 @@ table tbody td:last-child {
                     ?>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-users"></i> <span>Member List</span>
+                            <i class="fa fa-id-card"></i> <span>Member List</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
@@ -747,7 +1142,7 @@ table tbody td:last-child {
                                     $memberUrl = base_url() . $path;
                                 }
                             ?>
-                            <li><a href="<?php echo $memberUrl; ?>"><i class="fa fa-circle-o"></i> <span><?php echo str_replace('-', ' ', $memberModule['module']); ?></span></a></li>
+                            <li><a href="<?php echo $memberUrl; ?>"><i class="fa fa-user"></i> <span><?php echo str_replace('-', ' ', $memberModule['module']); ?></span></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </li>

@@ -29,10 +29,11 @@ class FundSummary extends BaseController {
             $current_fy = $current_year . '-' . ($current_year + 1);
         }
 
-        // If no financial year selected, use current financial year
-        if (empty($filters['financial_year'])) {
-            $filters['financial_year'] = $current_fy;
-        }
+        // Don't set default financial year - let user see all data if no filter is applied
+        // Only use current FY for display purposes
+        // if (empty($filters['financial_year'])) {
+        //     $filters['financial_year'] = $current_fy;
+        // }
 
         $data['funds_data'] = $this->FundSummary_model->get_funds_data($filters);
         

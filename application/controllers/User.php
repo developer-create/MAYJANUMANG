@@ -828,9 +828,18 @@ $insert_id = $this->db->insert_id();
             $code = $this->input->post("code");
             $district = $this->input->post("district");
             $vidhan_sabha_id = $this->input->post("vidhan_sabha_id");
-            $this->db->select("*");
+            $this->db->select("servayapp.*, tbl_users.name as user_name, district.name as district_name_str, vidhan_sabha.vidhan_sabha_name as vs_name_str, block.name as block_name_str, booth.name as booth_name_str, panchayat.name as panchayat_name_str, village.name as village_name_str, samiti.name as samiti_name_str, party.name as party_name_str");
             $this->db->from("servayapp");
-            $this->db->order_by("id", "DESC");
+            $this->db->join("tbl_users", "tbl_users.userId = servayapp.user_id", "left");
+            $this->db->join("district", "district.id = servayapp.district", "left");
+            $this->db->join("vidhan_sabha", "vidhan_sabha.id = servayapp.vidhan_sabha_id", "left");
+            $this->db->join("block", "block.id = servayapp.block_name_number", "left");
+            $this->db->join("booth", "booth.id = servayapp.boothname", "left");
+            $this->db->join("panchayat", "panchayat.id = servayapp.grampanchayat", "left");
+            $this->db->join("village", "village.id = servayapp.village", "left");
+            $this->db->join("samiti", "samiti.id = servayapp.samithi", "left");
+            $this->db->join("party", "party.id = servayapp.parti", "left");
+            $this->db->order_by("servayapp.id", "DESC");
             // Apply filters if provided
             if ($block !== null && $block !== "") {
                 $this->db->where("block_name_number", $block);
@@ -864,6 +873,7 @@ $insert_id = $this->db->insert_id();
             if ($code !== null && $code !== "") {
                 $this->db->like("code", $code);
             }
+
             // Execute the query
             $query = $this->db->get();
             $data["userRecords"] = $query->result();

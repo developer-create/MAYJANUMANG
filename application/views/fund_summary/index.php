@@ -241,39 +241,45 @@
     margin-bottom: 10px;
 }
 
-button.dt-button {
-    background-color: #3c8dbc !important;
+.dt-button {
+    background-color: #337ab7 !important;
     color: white !important;
-    border: 1px solid #367fa9 !important;
-    padding: 8px 15px !important;
+    border: 1px solid #2e6da4 !important;
+    padding: 6px 12px !important;
     margin-right: 5px !important;
-    border-radius: 3px !important;
-    font-size: 13px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
 }
 
-button.dt-button:hover {
-    background-color: #367fa9 !important;
+.dt-button:hover {
+    background-color: #286090 !important;
+    border-color: #204d74 !important;
 }
 
-button.dt-button.buttons-excel {
+.dt-button.buttons-excel {
     background-color: #28a745 !important;
     border-color: #218838 !important;
 }
 
-button.dt-button.buttons-excel:hover {
+.dt-button.buttons-excel:hover {
     background-color: #218838 !important;
 }
 
 /* Length menu styling */
 .dataTables_length {
     float: left;
-    margin-left: 15px;
+    margin-right: 20px;
 }
 
 .dataTables_length select {
     padding: 5px;
     border: 1px solid #d2d6de;
     border-radius: 3px;
+}
+
+/* Filter styling */
+.dataTables_filter {
+    float: right;
 }
 
 /* Wrapper styling */
@@ -319,12 +325,38 @@ table.dataTable thead>tr>th.sorting_desc:before {
     margin: 2px !important;
     border: 1px solid #ddd !important;
     border-radius: 3px !important;
+    background-color: #ffffff !important;
+    color: #333 !important;
+    cursor: pointer !important;
+}
+
+.paginate_button:hover {
+    background-color: #f5f5f5 !important;
 }
 
 .paginate_button.current {
-    background-color: #3c8dbc !important;
+    background-color: #337ab7 !important;
     color: white !important;
-    border-color: #367fa9 !important;
+    border-color: #2e6da4 !important;
+}
+
+.paginate_button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
+.dataTables_paginate {
+    margin-top: 15px;
+}
+
+/* Table hover effect */
+.table-hover tbody tr:hover td {
+    background-color: #f5f5f5;
+}
+
+/* Prevent full table flash before DataTables initializes */
+table#fundSummaryTable:not(.dataTable) tbody {
+    display: none;
 }
 </style>
 
@@ -337,16 +369,18 @@ table.dataTable thead>tr>th.sorting_desc:before {
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
 
 <script type="text/javascript">
-$(document).ready(function() {
-    var table = $('#fundSummaryTable').DataTable({
+jQuery(document).ready(function(){
+    // Initialize DataTables with Export and Pagination
+    var table = jQuery('#fundSummaryTable').DataTable({
         "processing": true,
-        "serverSide": false,
+        "serverSide": false, // Client-side processing
         "dom": '<"top"lfB>rt<"bottom"ip>',
         "buttons": [
             {
                 extend: 'excelHtml5',
                 text: '<i class="fa fa-download"></i> Export Excel',
                 title: 'Approved Fund Summary Report',
+                className: 'btn btn-success',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -354,29 +388,37 @@ $(document).ready(function() {
             {
                 extend: 'print',
                 text: '<i class="fa fa-print"></i> Print',
-                title: 'Approved Fund Summary Report'
+                title: 'Approved Fund Summary Report',
+                className: 'btn btn-info'
             },
             {
                 extend: 'colvis',
                 text: '<i class="fa fa-columns"></i> Show/Hide Columns',
-                titleAttr: 'Show/Hide Columns'
+                className: 'btn btn-warning'
             }
         ],
-        "paging": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "pageLength": 20,
+        "paging": true, // Enable pagination
+        "searching": true, // Enable searching
+        "ordering": true, // Enable ordering
+        "info": true, // Display info
         "lengthMenu": [
             [10, 20, 50, 100, 500, -1],
             [10, 20, 50, 100, 500, "All"]
         ],
-        "order": [[17, "desc"]], // Order by Date column
-        "rowCallback": function(row, data, index) {
-            // Auto-increment serial number based on current page
-            var pageInfo = table.page.info();
-            var serialNumber = pageInfo.iStart + index + 1;
-            $('td:eq(0)', row).html(serialNumber);
+        "pageLength": 20,
+        "responsive": true,
+        "scrollX": true,
+        "order": [[ 21, "desc" ]], // Order by Date column
+        "columnDefs": [
+            {
+                "targets": 0,
+                "render": function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            }
+        ],
+        "initComplete": function() {
+            jQuery('#fundSummaryTable tbody').css('display', 'table-row-group');
         }
     });
 });

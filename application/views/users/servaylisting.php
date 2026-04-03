@@ -311,38 +311,9 @@
                                  ?>
                                         <tr>
                                             <td><?php echo $i++; ?></td>
-                                            <td><?php $uid=$record->user_id;
-                                    if($uid!='')
-                                    {
-                                    $cc=$this->db->query("SELECT * FROM `tbl_users` WHERE `userId`='$uid'");
-                                    @$Uu=$cc->row();
-                                    if(@$Uu->name!='')
-                                    {
-                                        echo @$Uu->name;
-                                    }
-                                    }
-                                    ?></td>
-                                            <td>
-                                                <?php $district_id= $record->district;
-                                       $q=$this->db->query("SELECT * FROM `district` WHERE `id`='$district_id' ");
-                                       $row=$q->row();
-                                       if(!empty($row)){
-                                       echo $row->name;
-                                       }
-                                       ?>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $vidhan_sabha_id = isset($record->vidhan_sabha_id) ? $record->vidhan_sabha_id : null;
-                                                if (!empty($vidhan_sabha_id) && (int)$vidhan_sabha_id > 0) {
-                                                    $vsq = $this->db->query("SELECT vidhan_sabha_name FROM vidhan_sabha WHERE id = " . (int)$vidhan_sabha_id);
-                                                    $vsrow = $vsq ? $vsq->row() : null;
-                                                    echo $vsrow ? htmlspecialchars($vsrow->vidhan_sabha_name) : 'N/A';
-                                                } else {
-                                                    echo 'N/A';
-                                                }
-                                                ?>
-                                            </td>
+                                            <td><?php echo isset($record->user_name) ? htmlspecialchars($record->user_name) : ''; ?></td>
+                                            <td><?php echo isset($record->district_name_str) ? htmlspecialchars($record->district_name_str) : ''; ?></td>
+                                            <td><?php echo isset($record->vs_name_str) && $record->vs_name_str != '' ? htmlspecialchars($record->vs_name_str) : 'N/A'; ?></td>
                                             <td><?php echo @$record->name ?></td>
                                             <td><?php echo @$record->votarcode ?></td>
                                             <td><?php echo @$record->mobile ?></td>
@@ -351,54 +322,14 @@
                                              </td>
                                              <td><?php if(!empty($record->dom) && $record->dom != '0000-00-00'){ echo date('d-m-Y',strtotime($record->dom));} ?>
                                              </td>
-                                            <td>
-                                                <?php $block_name_number= $record->block_name_number;
-                                       $q=$this->db->query("SELECT * FROM `block` WHERE `id`='$block_name_number' ");
-                                       $row=$q->row();
-                                       if(!empty($row)){
-                                       echo $row->name;
-                                       }
-                                       ?>
-                                            </td>
+                                            <td><?php echo isset($record->block_name_str) ? htmlspecialchars($record->block_name_str) : ''; ?></td>
                                             <td><?php echo @$record->janpad_panchayat; ?></td>
                                             <td><?php echo @$record->mandalam; ?></td>
-                                            <td>
-                                                <?php $boothnumber= $record->boothname;
-                                       $q=$this->db->query("SELECT * FROM `booth` WHERE `id`='$boothnumber' ");
-                                       $row=$q->row();
-                                       if(!empty($row)){
-                                       echo $row->name;
-                                       }
-                                       ?>
-                                            </td>
+                                            <td><?php echo isset($record->booth_name_str) ? htmlspecialchars($record->booth_name_str) : ''; ?></td>
                                             <td><?php echo @$record->boothnumber; ?> </td>
-                                            <td>
-                                                <?php $grampanchayat= $record->grampanchayat;
-                                       $q=$this->db->query("SELECT * FROM `panchayat` WHERE `id`='$grampanchayat' ");
-                                       $row=$q->row();
-                                       if(!empty($row)){
-                                       echo $row->name;
-                                       }
-                                       ?>
-                                            </td>
-                                            <td>
-                                                <?php $village= $record->village;
-                                       $q=$this->db->query("SELECT * FROM `village` WHERE `id`='$village' ");
-                                       $row=$q->row();
-                                       if(!empty($row)){
-                                       echo $row->name;
-                                       }
-                                       ?>
-                                            </td>
-                                            <td>
-                                                <?php $samiti= $record->samithi;
-                                       $q=$this->db->query("SELECT * FROM `samiti` WHERE `id`='$samiti' ");
-                                       $row=$q->row();
-                                       if(!empty($row)){
-                                       echo $row->name;
-                                       }
-                                       ?>
-                                            </td>
+                                            <td><?php echo isset($record->panchayat_name_str) ? htmlspecialchars($record->panchayat_name_str) : ''; ?></td>
+                                            <td><?php echo isset($record->village_name_str) ? htmlspecialchars($record->village_name_str) : ''; ?></td>
+                                            <td><?php echo isset($record->samiti_name_str) ? htmlspecialchars($record->samiti_name_str) : ''; ?></td>
 
                                             <td><?php echo @$record->toll;  ?></td>
                                             <td><?php echo @$record->jaati; ?></td>
@@ -409,15 +340,7 @@
                                             <td><?php echo @$record->vehicle; ?></td>
                                             <td><?php echo @$record->group; ?></td>
                                             <td><?php echo @$record->government_employee; ?></td>
-                                            <td>
-                                                <?php $parti= $record->parti;
-                                       $q=$this->db->query("SELECT * FROM `party` WHERE `id`='$parti' ");
-                                       $row=$q->row();
-                                       if(!empty($row)){
-                                       echo $row->name;
-                                       }
-                                       ?>
-                                            </td>
+                                            <td><?php echo isset($record->party_name_str) ? htmlspecialchars($record->party_name_str) : ''; ?></td>
                                             <td><?php echo @$record->padvarsh; ?></td>
                                             <td><?php echo @$record->code; ?></td>
                                             <td><?php echo @$record->respect_for_women; ?></td>
@@ -644,6 +567,11 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
 <style>
+    /* Prevent table data flash before DataTables initialization */
+    table#feedbackTa:not(.dataTable) tbody {
+        display: none;
+    }
+    
     #feedbackTa tbody tr {
         cursor: pointer;
     }
