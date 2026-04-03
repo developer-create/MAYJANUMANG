@@ -34,8 +34,7 @@
                                             <option value="Bhopal" <?php echo ($event['office'] === 'Bhopal') ? 'selected' : ''; ?>>Bhopal</option>
                                             <option value="Dhar" <?php echo ($event['office'] === 'Dhar') ? 'selected' : ''; ?>>Dhar</option>
                                             <option value="Gandhwani" <?php echo ($event['office'] === 'Gandhwani') ? 'selected' : ''; ?>>Gandhwani</option>
-                                            <option value="Tanda" <?php echo ($event['office'] === 'Tanda') ? 'selected' : ''; ?>>Tanda</option>
-                                            <option value="Bagh" <?php echo ($event['office'] === 'Bagh') ? 'selected' : ''; ?>>Bagh</option>
+                                            <option value="TandaBagh" <?php echo ($event['office'] === 'TandaBagh') ? 'selected' : ''; ?>>TandaBagh</option>
                                         </select>
                                     </div>
                                 </div>
@@ -228,15 +227,6 @@
                                     <div class="form-group">
                                         <label for="press">Press Conference:</label>
                                         <input type="text" class="form-control" id="press" name="press" value="<?php echo $event['press']; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="priority">Priority:</label>
-                                        <select name="priority" class="form-control">
-                                           <option value="HIGH" <?php echo ($event['priority'] === 'HIGH') ? 'selected' : ''; ?>>HIGH</option>
-                                           <option value="LOW" <?php echo ($event['priority'] === 'LOW') ? 'selected' : ''; ?>>LOW</option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>

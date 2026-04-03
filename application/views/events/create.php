@@ -33,8 +33,7 @@
                                             <option value="Bhopal" <?php echo set_select('office', 'Bhopal'); ?>>Bhopal</option>
                                             <option value="Dhar" <?php echo set_select('office', 'Dhar'); ?>>Dhar</option>
                                             <option value="Gandhwani" <?php echo set_select('office', 'Gandhwani'); ?>>Gandhwani</option>
-                                            <option value="Tanda" <?php echo set_select('office', 'Tanda'); ?>>Tanda</option>
-                                            <option value="Bagh" <?php echo set_select('office', 'Bagh'); ?>>Bagh</option>
+                                            <option value="TandaBagh" <?php echo set_select('office', 'TandaBagh'); ?>>TandaBagh</option>
                                         </select>
                                     </div>
                                 </div>

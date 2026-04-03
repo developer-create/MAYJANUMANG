@@ -25,98 +25,6 @@ color:#000000 !important;
     font-size: 15px !important;
     font-weight: bold !important;
 }
-
-/* Enhanced Calendar Styling */
-#eventsFullCalendar {
-    background: white !important;
-    border-radius: 8px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-    padding: 15px !important;
-}
-
-/* Calendar header styling */
-#eventsFullCalendar .fc-toolbar {
-    margin-bottom: 20px !important;
-}
-
-#eventsFullCalendar .fc-toolbar-title {
-    font-size: 24px !important;
-    font-weight: bold !important;
-    color: #333 !important;
-}
-
-/* Day header styling */
-#eventsFullCalendar .fc-col-header-cell {
-    background-color: #3c8dbc !important;
-    color: white !important;
-    font-weight: bold !important;
-    padding: 12px 0 !important;
-    border: 1px solid #2e6da4 !important;
-}
-
-/* Day cells styling */
-#eventsFullCalendar .fc-daygrid-day {
-    border: 1px solid #ddd !important;
-    background-color: #fafafa !important;
-}
-
-#eventsFullCalendar .fc-daygrid-day:hover {
-    background-color: #f0f8ff !important;
-    transition: background-color 0.3s ease !important;
-}
-
-/* Today cell styling */
-#eventsFullCalendar .fc-daygrid-day.fc-day-today {
-    background-color: #e3f2fd !important;
-    border: 2px solid #2196F3 !important;
-}
-
-/* Event styling */
-#eventsFullCalendar .fc-event {
-    border-radius: 4px !important;
-    padding: 4px 6px !important;
-    font-size: 12px !important;
-    font-weight: 500 !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-}
-
-#eventsFullCalendar .fc-event:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-    transform: translateY(-2px) !important;
-}
-
-/* Event colors based on priority */
-#eventsFullCalendar .fc-event-title {
-    font-weight: bold !important;
-    color: white !important;
-}
-
-/* Button styling */
-#eventsFullCalendar .fc-button-primary {
-    background-color: #3c8dbc !important;
-    border-color: #2e6da4 !important;
-}
-
-#eventsFullCalendar .fc-button-primary:hover {
-    background-color: #2e6da4 !important;
-}
-
-#eventsFullCalendar .fc-button-primary.fc-button-active {
-    background-color: #1e4d6b !important;
-}
-
-/* Day number styling */
-#eventsFullCalendar .fc-daygrid-day-number {
-    padding: 8px !important;
-    color: #333 !important;
-}
-
-/* Other month days */
-#eventsFullCalendar .fc-daygrid-day.fc-day-other {
-    background-color: #f5f5f5 !important;
-    opacity: 0.6 !important;
-}
     </style>
     <?php $eventsList = $events; /* Keep copy for calendar - table loop overwrites $events */ ?>
     <section class="content-header"> 
@@ -213,8 +121,7 @@ color:#000000 !important;
             <option value="Bhopal">Bhopal</option>
             <option value="Dhar">Dhar</option>
             <option value="Gandhwani">Gandhwani</option>
-            <option value="Tanda">Tanda</option>
-            <option value="Bagh">Bagh</option>
+            <option value="TandaBagh">TandaBagh</option>
         </select>
     </div>
     <div style="display: inline-block; margin-left: 15px;">
@@ -232,9 +139,6 @@ color:#000000 !important;
             <option value="">All</option>
             <option value="HIGH">HIGH</option>
             <option value="LOW">LOW</option>
-        </select>
-    </div>
-            <option value="Other">Other</option>
         </select>
     </div>
     <div style="display: inline-block; margin-left: 15px;">
@@ -316,11 +220,11 @@ color:#000000 !important;
                     <?php foreach ($events as $key => $events): ?>
                     <tr>    
                            <td><?php  echo $key+1;?></td>
-                           <td><strong><?php echo isset($events['unique_id']) ? $events['unique_id'] : '-'; ?></strong></td>
+                           <td><?php echo isset($events['unique_id']) ? $events['unique_id'] : 'N/A'; ?></strong></td>
                            <td><?php echo $events['district']; ?></td>
                            <td><?php 
                                $blockId = $events['block'];
-                               $blockName = '-';
+                               $blockName = 'N/A';
                                foreach ($blocks as $block) {
                                    if ($block->id == $blockId) {
                                        $blockName = $block->name;
@@ -329,10 +233,10 @@ color:#000000 !important;
                                }
                                echo $blockName;
                            ?></td>
-                           <td><?php echo isset($events['office']) ? $events['office'] : '-'; ?></td>
+                           <td><?php echo isset($events['office']) ? $events['office'] : 'N/A'; ?></td>
                             <td><?php echo $events['year']; ?></td>
                             <td><?php echo $events['month']; ?></td>
-                            <td><?php echo isset($events['day']) && !empty($events['day']) ? $events['day'] : '-'; ?></td>
+                            <td><?php echo isset($events['day']) && !empty($events['day']) ? $events['day'] : 'N/A'; ?></td>
                             <td><?php echo $events['date']; ?></td>
                             <td><?php echo $events['program_date']; ?></td>
                             <td><?php echo $events['time']; ?></td>
@@ -387,8 +291,8 @@ color:#000000 !important;
                 </div><!-- /.box-body -->
                 </div><!-- /#eventsTableView -->
                 <div id="eventsCalendarView" style="display: none;">
-                    <div class="box-body" style="padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
-                        <div id="eventsFullCalendar" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+                    <div class="box-body" style="padding: 15px;">
+                        <div id="eventsFullCalendar"></div>
                     </div>
                 </div>
                 <div class="box-footer clearfix">
@@ -491,25 +395,25 @@ $(document).ready(function() {
     // Filter table based on selected month
     $('#monthFilter').on('change', function() {
         var selectedMonth = $(this).val();
-        table.column(4).search(selectedMonth).draw(); // Column 4 is the 'Month' column (after Unique ID column)
+        table.column(6).search(selectedMonth).draw(); // Column 6 is the 'Month' column
     });
 
     // Filter table based on selected year
     $('#yearFilter').on('change', function() {
         var selectedYear = $(this).val();
-        table.column(3).search(selectedYear).draw(); // Column 3 is the 'Year' column
+        table.column(5).search(selectedYear).draw(); // Column 5 is the 'Year' column
     });
 
     // Filter table based on selected event type
     $('#eventTypeFilter').on('change', function() {
         var selectedEventType = $(this).val();
-        table.column(9).search(selectedEventType).draw(); // Column 9 is the 'Event Type' column
+        table.column(11).search(selectedEventType).draw(); // Column 11 is the 'Event Type' column
     });
 
     // Filter table based on selected day
     $('#dayFilter').on('change', function() {
         var selectedDay = $(this).val();
-        table.column(6).search(selectedDay).draw(); // Column 6 is the 'Day' column
+        table.column(7).search(selectedDay).draw(); // Column 7 is the 'Day' column
     });
 
     // Filter table based on selected office
@@ -520,8 +424,14 @@ $(document).ready(function() {
 
     // Filter table based on selected block
     $('#blockFilter').on('change', function() {
-        var selectedBlock = $(this).val();
-        table.column(3).search(selectedBlock).draw(); // Column 3 is the 'Block' column
+        var selectedBlockId = $(this).val();
+        if (selectedBlockId === '') {
+            table.column(3).search('').draw();
+        } else {
+            // Find the block name from the dropdown
+            var blockName = $(this).find('option:selected').text();
+            table.column(3).search(blockName).draw();
+        }
     });
 
     // Filter table based on selected priority
