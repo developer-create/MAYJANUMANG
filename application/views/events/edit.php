@@ -34,7 +34,8 @@
                                             <option value="Bhopal" <?php echo ($event['office'] === 'Bhopal') ? 'selected' : ''; ?>>Bhopal</option>
                                             <option value="Dhar" <?php echo ($event['office'] === 'Dhar') ? 'selected' : ''; ?>>Dhar</option>
                                             <option value="Gandhwani" <?php echo ($event['office'] === 'Gandhwani') ? 'selected' : ''; ?>>Gandhwani</option>
-                                            <option value="TandaBagh" <?php echo ($event['office'] === 'TandaBagh') ? 'selected' : ''; ?>>TandaBagh</option>
+                                            <option value="Tanda" <?php echo ($event['office'] === 'Tanda') ? 'selected' : ''; ?>>Tanda</option>
+                                            <option value="Bagh" <?php echo ($event['office'] === 'Bagh') ? 'selected' : ''; ?>>Bagh</option>
                                         </select>
                                     </div>
                                 </div>
@@ -145,7 +146,24 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="district">District:</label>
-                                        <input type="text" class="form-control required" id="district" name="district" value="<?php echo $event['district']; ?>" required>
+                                        <select class="form-control required" id="district" name="district">
+                                            <option value="">Select District</option>
+                                            <?php 
+                                            $districtFound = false;
+                                            foreach ($districts as $district): 
+                                                $isSelected = $event['district'] == $district['id'];
+                                                if ($isSelected) $districtFound = true;
+                                            ?>
+                                                <option value="<?php echo $district['id']; ?>" <?php echo $isSelected ? 'selected' : ''; ?>><?php echo $district['name']; ?></option>
+                                            <?php endforeach; ?>
+                                            <option value="other" <?php echo !$districtFound ? 'selected' : ''; ?>>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" id="other_district_field" style="display: <?php echo !$districtFound ? 'block' : 'none'; ?>;">
+                                    <div class="form-group">
+                                        <label for="other_district_name">Enter District Name:</label>
+                                        <input type="text" class="form-control" id="other_district_name" name="other_district_name" value="<?php echo !$districtFound ? $event['district'] : ''; ?>" placeholder="Enter new district name">
                                     </div>
                                 </div>
                             </div>
@@ -333,6 +351,9 @@ window.addEventListener('DOMContentLoaded', function() {
     const dispatchDate = document.getElementById('dispatch_date');
     const dispatchNumber = document.getElementById('dispatch_number');
     const remark = document.getElementById('remark');
+    const district = document.getElementById('district');
+    const otherDistrictField = document.getElementById('other_district_field');
+    const otherDistrictInput = document.getElementById('other_district_name');
     
     if (attended.value === 'NO') {
         notAttendedFields.style.display = 'flex';
@@ -344,6 +365,27 @@ window.addEventListener('DOMContentLoaded', function() {
         dispatchDate.disabled = true;
         dispatchNumber.disabled = true;
         remark.disabled = true;
+    }
+    
+    // Check if "Other" is selected on page load
+    if (district.value === 'other') {
+        otherDistrictField.style.display = 'block';
+        otherDistrictInput.classList.add('required');
+    }
+});
+
+// Handle District dropdown - show/hide "Other" input field
+document.getElementById('district').addEventListener('change', function() {
+    const otherDistrictField = document.getElementById('other_district_field');
+    const otherDistrictInput = document.getElementById('other_district_name');
+    
+    if (this.value === 'other') {
+        otherDistrictField.style.display = 'block';
+        otherDistrictInput.classList.add('required');
+    } else {
+        otherDistrictField.style.display = 'none';
+        otherDistrictInput.classList.remove('required');
+        otherDistrictInput.value = '';
     }
 });
 </script>

@@ -121,7 +121,8 @@ color:#000000 !important;
             <option value="Bhopal">Bhopal</option>
             <option value="Dhar">Dhar</option>
             <option value="Gandhwani">Gandhwani</option>
-            <option value="TandaBagh">TandaBagh</option>
+            <option value="Tanda">Tanda</option>
+            <option value="Bagh">Bagh</option>
         </select>
     </div>
     <div style="display: inline-block; margin-left: 15px;">
@@ -221,7 +222,24 @@ color:#000000 !important;
                     <tr>    
                            <td><?php  echo $key+1;?></td>
                            <td><?php echo isset($events['unique_id']) ? $events['unique_id'] : 'N/A'; ?></strong></td>
-                           <td><?php echo $events['district']; ?></td>
+                           <td><?php 
+                               // Display district - check if it's a numeric ID or custom name
+                               $districtValue = $events['district'];
+                               $districtDisplay = $districtValue;
+                               
+                               // If it's numeric, try to find the district name from districts array
+                               if (is_numeric($districtValue)) {
+                                   $districtDisplay = 'N/A';
+                                   foreach ($districts as $district) {
+                                       if ($district['id'] == $districtValue) {
+                                           $districtDisplay = $district['name'];
+                                           break;
+                                       }
+                                   }
+                               }
+                               // Otherwise, it's a custom district name, display as is
+                               echo $districtDisplay;
+                           ?></td>
                            <td><?php 
                                $blockId = $events['block'];
                                $blockName = 'N/A';

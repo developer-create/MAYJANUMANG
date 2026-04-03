@@ -480,7 +480,7 @@ table tbody td:last-child {
                       }
                   }
                   
-                  // First, collect Assembly Issue modules, Samiti modules, and other modules separately
+                  // First, collect Assembly Issue modules, Samiti modules, Member modules, and other modules separately
                   $hasBlockLevel = false;
                   $hasBhopalLevel = false;
                   $hasUSSLevel = false;
@@ -488,6 +488,7 @@ table tbody td:last-child {
                   $bhopalLevelUrl = '';
                   $ussLevelUrl = '';
                   $samitiModules = array();
+                  $memberModules = array();
                   $otherModules = array();
                  
                   foreach ($modulesToProcess as $module) {
@@ -533,18 +534,25 @@ table tbody td:last-child {
                                       strcasecmp($moduleName, 'Booth-Samiti') == 0 ||
                                       strcasecmp($moduleName, 'Block-Samiti') == 0);
                     
-                    // Collect modules (excluding Assembly Level modules and ActivityLog)
+                    // Check for Member modules
+                    $isMemberModule = (strcasecmp($moduleName, 'Vidhansabha-Member') == 0 ||
+                                      strcasecmp($moduleName, 'MP-Vidhansabha-Member') == 0);
+                    
+                    // Collect modules (excluding Assembly Level modules, ActivityLog, and MemberList)
                     $isAssemblyLevelModule = (strcasecmp($moduleName, 'Block-Level') == 0 || 
                                           strcasecmp($moduleName, 'Bhopal-Level') == 0 || 
                                           strcasecmp($moduleName, 'USS-Level') == 0);
                     $isActivityLog = (strcasecmp($moduleName, 'ActivityLog') == 0);
+                    $isMemberListOld = (strcasecmp($moduleName, 'MemberList') == 0);
                     
-                    if (!$isAssemblyLevelModule && !$isActivityLog) {
+                    if (!$isAssemblyLevelModule && !$isActivityLog && !$isMemberListOld) {
                         $hasList = isset($module['list']) && $module['list'] == 1;
                         $hasTotalAccess = isset($module['total_access']) && $module['total_access'] == 1;
                         if ($hasList || $hasTotalAccess) {
                             if ($isSamitiModule) {
                                 $samitiModules[] = $module;
+                            } elseif ($isMemberModule) {
+                                $memberModules[] = $module;
                             } else {
                                 $otherModules[] = $module;
                             }
@@ -610,6 +618,33 @@ table tbody td:last-child {
                         </li>
                         <?php
                         $assemblyIssueShown = true;
+                    }
+                    
+                    // Insert Vidhasabha Samiti dropdown right after MP-publicproblem (if it exists) and Assembly Issue
+                    if ($module['module'] == 'MP-publicproblem' && !empty($memberModules)) {
+                        ?>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-users"></i> <span>Member List</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <?php foreach ($memberModules as $memberModule): 
+                                    $memberUrl = $memberModule['url'];
+                                    if (strpos($memberUrl, 'http') === 0) {
+                                        $parsedUrl = parse_url($memberUrl);
+                                        $path = ltrim($parsedUrl['path'], '/');
+                                        $path = preg_replace('#^janumang/#', '', $path);
+                                        $memberUrl = base_url() . $path;
+                                    }
+                                ?>
+                                <li><a href="<?php echo $memberUrl; ?>"><i class="fa fa-circle-o"></i> <span><?php echo str_replace('-', ' ', $memberModule['module']); ?></span></a></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </li>
+                        <?php
                     }
                     
                     // Insert Vidhasabha Samiti dropdown right after MP-publicproblem (if it exists) and Assembly Issue
@@ -686,6 +721,33 @@ table tbody td:last-child {
                                 }
                             ?>
                             <li><a href="<?php echo $samitiUrl; ?>"><i class="fa fa-circle-o"></i> <span><?php echo $samitiModule['module']; ?></span></a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </li>
+                    <?php
+                }
+                
+                // If Member modules exist but MP-publicproblem was not shown, show Member List at the end
+                if (!empty($memberModules) && !$mpPublicProblemShown) {
+                    ?>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-users"></i> <span>Member List</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php foreach ($memberModules as $memberModule): 
+                                $memberUrl = $memberModule['url'];
+                                if (strpos($memberUrl, 'http') === 0) {
+                                    $parsedUrl = parse_url($memberUrl);
+                                    $path = ltrim($parsedUrl['path'], '/');
+                                    $path = preg_replace('#^janumang/#', '', $path);
+                                    $memberUrl = base_url() . $path;
+                                }
+                            ?>
+                            <li><a href="<?php echo $memberUrl; ?>"><i class="fa fa-circle-o"></i> <span><?php echo str_replace('-', ' ', $memberModule['module']); ?></span></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </li>

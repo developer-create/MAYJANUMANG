@@ -23,6 +23,11 @@ class Events extends BaseController {
             $data['events'] = $this->Events_model->get_events();
             $query = $this->db->get('block');
             $data['blocks'] = $query->result();
+            
+            // Load districts for display
+            $this->load->model('District_model');
+            $data['districts'] = $this->District_model->get_districts();
+            
             $this->global['pageTitle'] = 'Datacollector : Events';
             $this->loadViews("events/index", $this->global, $data, NULL);
         }
@@ -34,8 +39,13 @@ class Events extends BaseController {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
             $this->global['pageTitle'] = 'Datacollector : Create Events';
-              $query = $this->db->get('block');
-        $data['blocks'] = $query->result();
+            $query = $this->db->get('block');
+            $data['blocks'] = $query->result();
+            
+            // Load districts
+            $this->load->model('District_model');
+            $data['districts'] = $this->District_model->get_districts();
+            
             $this->loadViews("events/create", $this->global, $data, NULL);
         }
     }
@@ -79,6 +89,17 @@ public function store() {
     if (!$this->hasCreateAccess()) {
         $this->loadThis(); // Redirect to the unauthorized access page
     } else {
+        // Custom validation for "Other" district only
+        if ($this->input->post('district') === 'other') {
+            $this->form_validation->set_rules('other_district_name', 'District Name', 'required|min_length[2]');
+            
+            if ($this->form_validation->run() == FALSE) {
+                // Validation failed, reload create page with errors
+                $this->create();
+                return;
+            }
+        }
+        
         $dispatch_date = $this->input->post('dispatch_date');
         $dispatch_date = !empty($dispatch_date) ? date('Y-m-d', strtotime($dispatch_date)) : NULL;
 
@@ -92,6 +113,12 @@ public function store() {
         $month = $program_ts ? date('F', $program_ts) : $this->input->post('month');
         $year = $program_ts ? date('Y', $program_ts) : $this->input->post('year');
 
+        // Handle district - if "other" is selected, use the custom input
+        $district = $this->input->post('district');
+        if ($district === 'other') {
+            $district = $this->input->post('other_district_name') ?: 'NA';
+        }
+
         $data = array(
             'unique_id' => $unique_id,
             'year' => $year ?: 'NA',
@@ -101,7 +128,7 @@ public function store() {
             'month' => $month ?: 'NA',
             'time' => $this->input->post('time') ?: 'NA',
             'event_detail' => $this->input->post('event_detail') ?: 'NA',
-            'district' => $this->input->post('district') ?: 'NA',
+            'district' => $district,
             'venue_city' => $this->input->post('venue_city') ?: 'NA',
             'referance' => $this->input->post('referance') ?: 'NA',
             'date' => !empty($this->input->post('date')) ? date('Y-m-d', strtotime($this->input->post('date'))) : '0000-00-00',
@@ -169,6 +196,10 @@ public function store() {
             $query = $this->db->get('block');
             $data['blocks'] = $query->result();
             
+            // Load districts
+            $this->load->model('District_model');
+            $data['districts'] = $this->District_model->get_districts();
+            
             $this->loadViews("events/edit", $this->global, $data, NULL);
         }
     }
@@ -223,13 +254,19 @@ public function update($id) {
         $month = $program_ts ? date('F', $program_ts) : $this->input->post('month');
         $year = $program_ts ? date('Y', $program_ts) : $this->input->post('year');
 
+        // Handle district - if "other" is selected, use the custom input
+        $district = $this->input->post('district');
+        if ($district === 'other') {
+            $district = $this->input->post('other_district_name') ?: 'NA';
+        }
+
         $data = array(
             'year' => $year,
             'day' => $day,
             'event_type' => $this->input->post('event_type'),
             'month' => $month,
             'time' => $this->input->post('time'),
-            'district' => $this->input->post('district'),
+            'district' => $district,
             'event_detail' => $this->input->post('event_detail'),
             'priority' => $this->input->post('priority'),
             'venue_city' => $this->input->post('venue_city'),

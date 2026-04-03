@@ -12,6 +12,15 @@
                     <!-- form start -->
                     <form action="<?php echo site_url('events/store'); ?>" method="post">
                         <div class="box-body">
+                            <!-- Display Validation Errors -->
+                            <?php if ($this->form_validation->run() == FALSE): ?>
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+                                    <?php echo validation_errors(); ?>
+                                </div>
+                            <?php endif; ?>
+                            
                             <!-- Invitation Details Section -->
                             <h4 style="background-color: #3c8dbc; color: white; padding: 10px; margin-bottom: 20px;">Invitation Received Details</h4>
                             
@@ -33,7 +42,8 @@
                                             <option value="Bhopal" <?php echo set_select('office', 'Bhopal'); ?>>Bhopal</option>
                                             <option value="Dhar" <?php echo set_select('office', 'Dhar'); ?>>Dhar</option>
                                             <option value="Gandhwani" <?php echo set_select('office', 'Gandhwani'); ?>>Gandhwani</option>
-                                            <option value="TandaBagh" <?php echo set_select('office', 'TandaBagh'); ?>>TandaBagh</option>
+                                            <option value="Tanda" <?php echo set_select('office', 'Tanda'); ?>>Tanda</option>
+                                            <option value="Bagh" <?php echo set_select('office', 'Bagh'); ?>>Bagh</option>
                                         </select>
                                     </div>
                                 </div>
@@ -141,7 +151,19 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="district">District:</label>
-                                        <input type="text" class="form-control required" id="district" name="district" value="<?php echo set_value('district'); ?>">
+                                        <select class="form-control required" id="district" name="district">
+                                            <option value="">Select District</option>
+                                            <?php foreach ($districts as $district): ?>
+                                                <option value="<?php echo $district['id']; ?>" <?php echo set_value('district') == $district['id'] ? 'selected' : ''; ?>><?php echo $district['name']; ?></option>
+                                            <?php endforeach; ?>
+                                            <option value="other" <?php echo set_value('district') == 'other' ? 'selected' : ''; ?>>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" id="other_district_field" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="other_district_name">Enter District Name:</label>
+                                        <input type="text" class="form-control" id="other_district_name" name="other_district_name" value="<?php echo set_value('other_district_name'); ?>" placeholder="Enter new district name">
                                     </div>
                                 </div>
                             </div>
@@ -326,6 +348,21 @@ document.getElementById('attended').addEventListener('change', function() {
     }
 });
 
+// Handle District dropdown - show/hide "Other" input field
+document.getElementById('district').addEventListener('change', function() {
+    const otherDistrictField = document.getElementById('other_district_field');
+    const otherDistrictInput = document.getElementById('other_district_name');
+    
+    if (this.value === 'other') {
+        otherDistrictField.style.display = 'block';
+        otherDistrictInput.classList.add('required');
+    } else {
+        otherDistrictField.style.display = 'none';
+        otherDistrictInput.classList.remove('required');
+        otherDistrictInput.value = '';
+    }
+});
+
 // Check on page load (for validation errors)
 window.addEventListener('DOMContentLoaded', function() {
     const attended = document.getElementById('attended');
@@ -333,6 +370,9 @@ window.addEventListener('DOMContentLoaded', function() {
     const dispatchDate = document.getElementById('dispatch_date');
     const dispatchNumber = document.getElementById('dispatch_number');
     const remark = document.getElementById('remark');
+    const district = document.getElementById('district');
+    const otherDistrictField = document.getElementById('other_district_field');
+    const otherDistrictInput = document.getElementById('other_district_name');
     
     if (attended.value === 'NO') {
         notAttendedFields.style.display = 'flex';
@@ -344,6 +384,12 @@ window.addEventListener('DOMContentLoaded', function() {
         dispatchDate.disabled = true;
         dispatchNumber.disabled = true;
         remark.disabled = true;
+    }
+    
+    // Check if "Other" is selected on page load
+    if (district.value === 'other') {
+        otherDistrictField.style.display = 'block';
+        otherDistrictInput.classList.add('required');
     }
 });
 </script>
