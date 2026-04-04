@@ -118,6 +118,10 @@ public function store() {
         if ($district === 'other') {
             $district = $this->input->post('other_district_name') ?: 'NA';
         }
+        
+        // Check if user is admin - admin events are auto-approved
+        $isAdmin = ($this->role == 1);
+        $status = $isAdmin ? 'approved' : 'pending';
 
         $data = array(
             'unique_id' => $unique_id,
@@ -145,22 +149,31 @@ public function store() {
             'dispatch_number' => $this->input->post('dispatch_number') ?: 'NA',
             'remark' => $this->input->post('remark') ?: 'NA',
             'office' => $this->input->post('office') ?: 'NA',
+            'status' => $status,
             'created_by' => $this->vendorId,
         );
 
         $id = $this->Events_model->create_event($data);
         if ($id) {
             // Log activity
-            $this->logActivity('add', 'events', $id, $data, null, 'Event created with ID: ' . $id . ' (Name: ' . $data['name'] . ')');
+            $this->logActivity('add', 'events', $id, $data, null, 'Event created with ID: ' . $id . ' (Name: ' . $data['name'] . ', Status: ' . $status . ')');
             
-            // Sync with Google Calendar if enabled and verify status
-            $syncStatus = $this->syncToGoogleCalendar($id, $data);
-            
-            // Store sync result in session for feedback
-            if ($syncStatus) {
-                $this->session->set_flashdata('gcal_sync_success', 'Google Calendar synchronized successfully for event: ' . $data['name']);
+            // If event is pending, create notification for admins
+            if ($status == 'pending') {
+                $this->Events_model->create_notification($id);
+                $this->session->set_flashdata('success', 'Event created successfully and sent for approval.');
             } else {
-                $this->session->set_flashdata('gcal_sync_warning', 'Event created but Google Calendar sync could not be verified.');
+                $this->session->set_flashdata('success', 'Event created successfully.');
+                
+                // Sync with Google Calendar only if approved (admin created)
+                $syncStatus = $this->syncToGoogleCalendar($id, $data);
+                
+                // Store sync result in session for feedback
+                if ($syncStatus) {
+                    $this->session->set_flashdata('gcal_sync_success', 'Google Calendar synchronized successfully for event: ' . $data['name']);
+                } else {
+                    $this->session->set_flashdata('gcal_sync_warning', 'Event created but Google Calendar sync could not be verified.');
+                }
             }
         }
         redirect('events');
@@ -622,6 +635,106 @@ public function update($id) {
         
         header('Content-Type: application/json');
         echo json_encode($status);
+    }
+    
+    /**
+     * Approve event (Admin only)
+     */
+    public function approve($id) {
+        if ($this->role != 1) {
+            $this->session->set_flashdata('error', 'Only administrators can approve events.');
+            redirect('events');
+            return;
+        }
+        
+        $event = $this->Events_model->get_event($id);
+        if (!$event) {
+            $this->session->set_flashdata('error', 'Event not found.');
+            redirect('events');
+            return;
+        }
+        
+        if ($event['status'] != 'pending') {
+            $this->session->set_flashdata('error', 'Event is not pending approval.');
+            redirect('events');
+            return;
+        }
+        
+        $result = $this->Events_model->approve_event($id, $this->vendorId);
+        
+        if ($result) {
+            $this->Events_model->mark_notification_read($id, $this->vendorId);
+            $this->logActivity('approve', 'events', $id, array('status' => 'approved'), array('status' => 'pending'), 'Event approved with ID: ' . $id);
+            $this->session->set_flashdata('success', 'Event approved successfully.');
+        } else {
+            $this->session->set_flashdata('error', 'Failed to approve event.');
+        }
+        
+        redirect('events/approvals');
+    }
+    
+    /**
+     * Approval page - Admin only
+     */
+    public function approvals() {
+        // Check if user is admin
+        if ($this->role != 1) {
+            $this->session->set_flashdata('error', 'Only administrators can access approval page.');
+            redirect('events');
+            return;
+        }
+        
+        // Get pending events only
+        $this->db->where('status', 'pending');
+        $this->db->order_by('id', 'DESC');
+        $data['pending_events'] = $this->db->get('events')->result_array();
+        
+        $query = $this->db->get('block');
+        $data['blocks'] = $query->result();
+        
+        // Load districts for display
+        $this->load->model('District_model');
+        $data['districts'] = $this->District_model->get_districts();
+        
+        $this->global['pageTitle'] = 'Datacollector : Event Approvals';
+        $this->loadViews("events/approvals", $this->global, $data, NULL);
+    }
+    
+    /**
+     * Reject event (Admin only)
+     */
+    public function reject($id) {
+        if ($this->role != 1) {
+            $this->session->set_flashdata('error', 'Only administrators can reject events.');
+            redirect('events');
+            return;
+        }
+        
+        $event = $this->Events_model->get_event($id);
+        if (!$event) {
+            $this->session->set_flashdata('error', 'Event not found.');
+            redirect('events');
+            return;
+        }
+        
+        if ($event['status'] != 'pending') {
+            $this->session->set_flashdata('error', 'Event is not pending approval.');
+            redirect('events');
+            return;
+        }
+        
+        $reason = $this->input->post('rejection_reason') ?: 'No reason provided';
+        $result = $this->Events_model->reject_event($id, $this->vendorId, $reason);
+        
+        if ($result) {
+            $this->Events_model->mark_notification_read($id, $this->vendorId);
+            $this->logActivity('reject', 'events', $id, array('status' => 'rejected', 'rejection_reason' => $reason), array('status' => 'pending'), 'Event rejected with ID: ' . $id);
+            $this->session->set_flashdata('success', 'Event rejected successfully.');
+        } else {
+            $this->session->set_flashdata('error', 'Failed to reject event.');
+        }
+        
+        redirect('events/approvals');
     }
 
 }

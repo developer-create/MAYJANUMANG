@@ -213,6 +213,7 @@ color:#000000 !important;
                     <th>Dispatch Number</th>
                     <th>Remark</th>
                     <th>Added By</th>
+                    <th>Status</th>
                     <th>Google Calendar Status</th>
                     <th>Actions</th>
                 </tr>
@@ -290,6 +291,18 @@ color:#000000 !important;
                                  </td>
                             <td>
                                 <?php 
+                                $status = isset($events['status']) ? $events['status'] : 'approved';
+                                if ($status == 'pending') {
+                                    echo '<span class="label label-warning"><i class="fa fa-clock-o"></i> Pending</span>';
+                                } elseif ($status == 'approved') {
+                                    echo '<span class="label label-success"><i class="fa fa-check"></i> Approved</span>';
+                                } elseif ($status == 'rejected') {
+                                    echo '<span class="label label-danger"><i class="fa fa-times"></i> Rejected</span>';
+                                }
+                                ?>
+                            </td>
+                            <td>
+                                <?php 
                                 $googleEventId = isset($events['google_event_id']) ? $events['google_event_id'] : null;
                                 if (!empty($googleEventId)) {
                                     echo '<span class="label label-success"><i class="fa fa-check"></i> Synced</span>';
@@ -300,6 +313,14 @@ color:#000000 !important;
                             </td>
                             <td>
                             <a href="<?php echo site_url('events/edit/'.$events['id']); ?>" class="btn btn-info"><i class="fa fa-pencil"></i></a>
+                            <?php 
+                            $status = isset($events['status']) ? $events['status'] : 'approved';
+                            $isAdmin = ($this->session->userdata('role') == 1);
+                            if ($isAdmin && $status == 'pending') {
+                                echo '<a href="' . site_url('events/approve/'.$events['id']) . '" class="btn btn-success" title="Approve"><i class="fa fa-check"></i></a>';
+                                echo '<a href="' . site_url('events/reject/'.$events['id']) . '" class="btn btn-danger" title="Reject" onclick="return confirm(\'Are you sure?\');"><i class="fa fa-times"></i></a>';
+                            }
+                            ?>
                             <a href="<?php echo site_url('events/delete/'.$events['id']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure?');"><i class="fa fa-trash"></i></a>
                         </td>
                     </tr>
