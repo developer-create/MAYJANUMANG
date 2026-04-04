@@ -237,7 +237,10 @@ $(document).ready(function() {
         serverSide: true,
         ajax: {
             url: "<?php echo base_url('user/jansunwaidata'); ?>",
-            type: "POST"
+            type: "POST",
+            data: function (d) {
+                d.list_variant = "ajax_simple";
+            }
         },
         dom: '<"top"lfB>rt<"bottom"ip>',
         buttons: [

@@ -48,7 +48,8 @@
       <div class="row">
          <!-- Filter Form -->
          <div class="col-xs-12">
-            <form method="post" action="<?php echo base_url(
+            <?php $f = isset($filters) ? $filters : []; ?>
+            <form id="jansunwaiFilterForm" method="post" action="<?php echo base_url(
                "user/jansunwai"
                ); ?>">
                <div class="row">
@@ -60,7 +61,8 @@
                            <?php 
                               $department = $this->db->get("department")->result();
                               foreach ($department as $blk) {
-                                  echo "<option value='{$blk->id}'>{$blk->name}</option>";
+                                  $sel = (isset($f['department']) && (string)$f['department'] === (string)$blk->id) ? ' selected' : '';
+                                  echo "<option value='{$blk->id}'{$sel}>{$blk->name}</option>";
                               }
                               ?>  
                         </select>
@@ -88,7 +90,8 @@
                               }
                               $blocks = $this->db->get("block")->result();
                               foreach ($blocks as $blk) {
-                                  echo "<option value='{$blk->id}'>{$blk->name}</option>";
+                                  $sel = (isset($f['block']) && (string)$f['block'] === (string)$blk->id) ? ' selected' : '';
+                                  echo "<option value='{$blk->id}'{$sel}>{$blk->name}</option>";
                               }
                               ?>  
                         </select>
@@ -107,7 +110,8 @@
                               // Sort in descending order (newest first)
                               krsort($financial_years);
                               foreach ($financial_years as $fy) {
-                                  echo "<option value='{$fy}'>{$fy}</option>";
+                                  $sel = (isset($f['year']) && (string)$f['year'] === (string)$fy) ? ' selected' : '';
+                                  echo "<option value='{$fy}'{$sel}>{$fy}</option>";
                               }
                               ?>
                         </select>
@@ -134,7 +138,8 @@
                                   "12" => "December",
                               ];
                               foreach ($months as $key => $value) {
-                                  echo "<option value='{$key}'>{$value}</option>";
+                                  $sel = (isset($f['month']) && (string)$f['month'] === (string)$key) ? ' selected' : '';
+                                  echo "<option value='{$key}'{$sel}>{$value}</option>";
                               }
                               ?>
                         </select>
@@ -153,7 +158,8 @@
                                   "Reject" => "Reject"
                               ];
                               foreach ($months as $key => $value) {
-                                  echo "<option value='{$key}'>{$value}</option>";
+                                  $sel = (isset($f['work_status']) && (string)$f['work_status'] === (string)$key) ? ' selected' : '';
+                                  echo "<option value='{$key}'{$sel}>{$value}</option>";
                               }
                               ?>
                         </select>
@@ -167,7 +173,8 @@
                            <?php
                               $fund_options = ['MLA FUND', 'MLA Swechanudan', 'CLP Swechanudan', 'Jansampark Fund'];
                               foreach ($fund_options as $fund) {
-                                  echo "<option value='{$fund}'>{$fund}</option>";
+                                  $sel = (isset($f['approved_fund']) && (string)$f['approved_fund'] === (string)$fund) ? ' selected' : '';
+                                  echo "<option value='{$fund}'{$sel}>{$fund}</option>";
                               }
                            ?>
                         </select>
@@ -289,9 +296,10 @@
                         </tr>
                      </thead>
                      <tbody>
-                        <?php if (!empty($userRecords)) {
+                        <?php if (isset($userRecords) && !empty($userRecords)) {
                            $i = 1;
                            foreach ($userRecords as $key => $record) {
+                           /* Legacy path (e.g. filterJansunwai): full list rendered server-side */
                            
                                $createdAt = new DateTime($record->createdAt);
                                $updatedAt = isset($record->updatedAt)
@@ -450,6 +458,7 @@
       </div>
    </section>
 </div>
+<?php if (isset($userRecords)) { ?>
 <style>
    button.dt-button.buttons-excel.buttons-html5 {
    left: 3px !important;
@@ -463,34 +472,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.2/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
-<!--<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">-->
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
 <script>
-// Custom search function for status filtering
 $.fn.dataTable.ext.search.push(
     function(settings, data, dataIndex) {
-        // Only apply to our specific table
         if (settings.nTable.id !== 'feedbackTa') {
             return true;
         }
-        
-        // Get active tab
         var activeTab = $('ul.nav-tabs li.active a').attr('data-tab');
-        
         if (activeTab === 'all') {
-            return true; // Show all records
-        } else if (activeTab === 'approval') {
-            // Approval tab: only show Complete status records
-            // Status column - let's find it by checking multiple possible indices
-            for (var i = 0; i < data.length; i++) {
-                var cellData = data[i] || '';
-                if (cellData.indexOf('label-success') !== -1 || cellData.indexOf('Complete') !== -1) {
-                    return true; // Show this row if it contains Complete status
-                }
-            }
-            return false; // Hide this row if no Complete status found
-        } else if (activeTab === 'complete') {
-            // Complete tab: only show Complete status records
+            return true;
+        } else if (activeTab === 'approval' || activeTab === 'complete') {
             for (var i = 0; i < data.length; i++) {
                 var cellData = data[i] || '';
                 if (cellData.indexOf('label-success') !== -1 || cellData.indexOf('Complete') !== -1) {
@@ -499,7 +491,6 @@ $.fn.dataTable.ext.search.push(
             }
             return false;
         } else if (activeTab === 'incomplete') {
-            // Incomplete tab: only show Incomplete status records
             for (var i = 0; i < data.length; i++) {
                 var cellData = data[i] || '';
                 if (cellData.indexOf('label-danger') !== -1 || cellData.indexOf('Incomplete') !== -1) {
@@ -508,7 +499,6 @@ $.fn.dataTable.ext.search.push(
             }
             return false;
         } else if (activeTab === 'inprogress') {
-            // In Progress tab: only show In progress status records
             for (var i = 0; i < data.length; i++) {
                 var cellData = data[i] || '';
                 if (cellData.indexOf('label-warning') !== -1 || cellData.indexOf('In progress') !== -1) {
@@ -517,7 +507,6 @@ $.fn.dataTable.ext.search.push(
             }
             return false;
         } else if (activeTab === 'reject') {
-            // Reject tab: only show Reject status records
             for (var i = 0; i < data.length; i++) {
                 var cellData = data[i] || '';
                 if (cellData.indexOf('d73925') !== -1 || cellData.indexOf('Reject') !== -1) {
@@ -526,16 +515,14 @@ $.fn.dataTable.ext.search.push(
             }
             return false;
         }
-        
         return true;
     }
 );
-
    $(document).ready(function() {
         var table = $('#feedbackTa').DataTable({
-           "processing": true,  
-           "serverSide": false,  
-           "dom": '<"top"lfB>rt<"bottom"ip>', 
+           "processing": true,
+           "serverSide": false,
+           "dom": '<"top"lfB>rt<"bottom"ip>',
            "buttons": [
                {
                    extend: 'excelHtml5',
@@ -543,28 +530,23 @@ $.fn.dataTable.ext.search.push(
                    title: 'Public Problems List'
                },
                 {
-                   extend: 'colvis',  // This adds the column visibility button
+                   extend: 'colvis',
                    text: 'Show/Hide Columns',
                    titleAttr: 'Show/Hide Columns'
                }
            ],
-           "paging": true,  
-           "searching": true,  
-           "ordering": false,  
-           "info": true,  
-           "lengthMenu": [  
-               [10, 25, 50, 75, -1], 
-               [10, 25, 50, 75, "All"]  
+           "paging": true,
+           "searching": true,
+           "ordering": false,
+           "info": true,
+           "lengthMenu": [
+               [10, 25, 50, 75, -1],
+               [10, 25, 50, 75, "All"]
            ]
        });
-       
-       // Tab click handler
        $('ul.nav-tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-           // Update active tab tracking
            $('ul.nav-tabs li').removeClass('active');
            $(this).parent().addClass('active');
-           
-           // Redraw table to apply new filter
            table.draw();
        });
    });
@@ -576,24 +558,113 @@ $.fn.dataTable.ext.search.push(
            document.querySelectorAll("td[id^='timer-']").forEach(timer => {
                const createdAt = parseInt(timer.getAttribute("data-created-at"), 10);
                const timeElapsed = now - createdAt;
-   
-               // Calculate days, hours, minutes, and seconds
                const days = Math.floor(timeElapsed / (1000 * 60 * 60 * 24));
                const hours = Math.floor((timeElapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                const minutes = Math.floor((timeElapsed % (1000 * 60 * 60)) / (1000 * 60));
                const seconds = Math.floor((timeElapsed % (1000 * 60)) / 1000);
-   
-               // Display in format "DD:HH:MM:SS" with red color and bold tag
                timer.innerHTML = `<b style="color: red;">${days}d ${hours.toString().padStart(2, '0')}h:${minutes.toString().padStart(2, '0')}m:${seconds.toString().padStart(2, '0')}s</b>`;
            });
        }
-       
-       setInterval(updateTimers, 1000); // Update every second
-       updateTimers(); // Initial call
+       setInterval(updateTimers, 1000);
+       updateTimers();
    });
-   
-   
 </script>
+<?php } else { ?>
+<style>
+   button.dt-button.buttons-excel.buttons-html5 {
+   left: 3px !important;
+   }
+</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.2/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
+<script>
+$(document).ready(function() {
+    var liveTimerTick = null;
+    function startLiveTimers() {
+        if (liveTimerTick) {
+            clearInterval(liveTimerTick);
+        }
+        function tick() {
+            var now = Date.now();
+            document.querySelectorAll('.live-timer').forEach(function(span) {
+                var createdAt = parseInt(span.getAttribute('data-created-at'), 10);
+                if (!createdAt) return;
+                var diff = now - createdAt;
+                if (diff < 0) diff = 0;
+                var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                span.innerHTML = '<b style="color: red;">' + days + 'd ' +
+                    (hours < 10 ? '0' : '') + hours + 'h:' +
+                    (minutes < 10 ? '0' : '') + minutes + 'm:' +
+                    (seconds < 10 ? '0' : '') + seconds + 's</b>';
+            });
+        }
+        tick();
+        liveTimerTick = setInterval(tick, 1000);
+    }
+
+    var table = $('#feedbackTa').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "<?php echo base_url('user/jansunwaidata'); ?>",
+            type: "POST",
+            data: function(d) {
+                d.filter_block = $('#block').val();
+                d.filter_year = $('#year').val();
+                d.filter_month = $('#month').val();
+                d.filter_department = $('#department').val();
+                d.filter_approved_fund = $('#approved_fund').val();
+                d.filter_work_status = $('#work_status').val();
+                d.filter_tab = $('ul.nav-tabs li.active a').data('tab') || 'all';
+                d.list_variant = 'full';
+            }
+        },
+        dom: '<"top"lfB>rt<"bottom"ip>',
+        buttons: [
+            { extend: 'excelHtml5', text: 'Export Excel', title: 'Public Problems List' },
+            { extend: 'colvis', text: 'Show/Hide Columns', titleAttr: 'Show/Hide Columns' }
+        ],
+        lengthMenu: [[10, 25, 50, 75, -1], [10, 25, 50, 75, "All"]],
+        order: [],
+        columnDefs: [{ targets: '_all', orderable: false }],
+        rowCallback: function(row) {
+            var viewLink = $(row).find('a[href*="jansunwaicommentview"]');
+            if (viewLink.length) {
+                var href = viewLink.attr('href');
+                var match = href.match(/jansunwaicommentview\/(\d+)/);
+                if (match) {
+                    $(row).addClass('clickable-row').attr('data-id', match[1]).attr('data-stage', 1).css('cursor', 'pointer');
+                }
+            }
+        },
+        drawCallback: function() {
+            startLiveTimers();
+        }
+    });
+
+    $('#jansunwaiFilterForm').on('submit', function(e) {
+        e.preventDefault();
+        table.ajax.reload();
+    });
+
+    $('ul.nav-tabs a[data-toggle="tab"]').on('shown.bs.tab', function() {
+        $('ul.nav-tabs li').removeClass('active');
+        $(this).parent().addClass('active');
+        table.ajax.reload();
+    });
+});
+</script>
+<?php } ?>
 
 <!-- Modal for Viewing Record Details and Comments -->
 <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="recordModalLabel">

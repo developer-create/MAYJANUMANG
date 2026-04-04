@@ -65,7 +65,8 @@
                                 <br>
                                 <!-- Filter Form for All Records -->
                                 <div id="filter-form">
-                                    <form method="post" action="<?php echo base_url('user/servaylisting'); ?>">
+                                    <?php $f = isset($filters) ? $filters : []; ?>
+                                    <form id="servayFilterForm" method="post" action="<?php echo base_url('user/servaylisting'); ?>">
                                         <div class="row">
                                             <div class="col-md-2">
                                                 <div class="form-group">
@@ -89,7 +90,8 @@
                                                   }
                                                   $blocks = $this->db->get('block')->result();
                                                   foreach ($blocks as $blk) {
-                                                     echo "<option value='{$blk->id}'>{$blk->name}</option>";
+                                                     $sel = (isset($f['block']) && (string)$f['block'] === (string)$blk->id) ? ' selected' : '';
+                                                     echo "<option value='{$blk->id}'{$sel}>{$blk->name}</option>";
                                                   }
                                                   ?>
                                                     </select>
@@ -104,7 +106,8 @@
                                                   // Generate year options
                                                   $current_year = date('Y');
                                                   for ($i = $current_year; $i >= $current_year - 5; $i--) {
-                                                      echo "<option value='{$i}'>{$i}</option>";
+                                                      $sel = (isset($f['year']) && (string)$f['year'] === (string)$i) ? ' selected' : '';
+                                                      echo "<option value='{$i}'{$sel}>{$i}</option>";
                                                   }
                                                   ?>
                                                     </select>
@@ -122,7 +125,8 @@
                                                       '2 व्हीलर,4 व्हीलर' => 'Both', 
                                                   ];
                                                   foreach ($months as $key => $value) {
-                                                      echo "<option value='{$key}'>{$value}</option>";
+                                                      $sel = (isset($f['vehicle']) && (string)$f['vehicle'] === (string)$key) ? ' selected' : '';
+                                                      echo "<option value='{$key}'{$sel}>{$value}</option>";
                                                   }
                                                   ?>
                                                     </select>
@@ -137,7 +141,8 @@
                                                   // Fetch blocks from database
                                                   $blocks = $this->db->get('samiti')->result();
                                                   foreach ($blocks as $blk) {
-                                                      echo "<option value='{$blk->id}'>{$blk->name}</option>";
+                                                      $sel = (isset($f['samithi']) && (string)$f['samithi'] === (string)$blk->id) ? ' selected' : '';
+                                                      echo "<option value='{$blk->id}'{$sel}>{$blk->name}</option>";
                                                   }
                                                   ?>
                                                     </select>
@@ -151,7 +156,8 @@
                                                         <?php
                                                         if (!empty($districts_list)) {
                                                             foreach ($districts_list as $d) {
-                                                                echo '<option value="' . (int)$d->id . '">' . htmlspecialchars($d->name) . '</option>';
+                                                                $sel = (isset($f['district']) && (string)$f['district'] === (string)$d->id) ? ' selected' : '';
+                                                                echo '<option value="' . (int)$d->id . '"' . $sel . '>' . htmlspecialchars($d->name) . '</option>';
                                                             }
                                                         }
                                                         ?>
@@ -163,14 +169,15 @@
                                                     <label for="vidhan_sabha_id">Vidhan Sabha</label>
                                                     <select name="vidhan_sabha_id" id="filter_vidhan_sabha" class="form-control">
                                                         <option value="">Select Vidhan Sabha</option>
-                                                        <option value="0">N/A (no Vidhan Sabha)</option>
+                                                        <option value="0"<?php echo (isset($f['vidhan_sabha_id']) && (string)$f['vidhan_sabha_id'] === '0') ? ' selected' : ''; ?>>N/A (no Vidhan Sabha)</option>
                                                         <?php
                                                         if (!empty($vidhan_sabhas_list)) {
                                                             foreach ($vidhan_sabhas_list as $vs) {
                                                                 $vsId = isset($vs['id']) ? $vs['id'] : $vs->id;
                                                                 $vsName = isset($vs['vidhan_sabha_name']) ? $vs['vidhan_sabha_name'] : $vs->vidhan_sabha_name;
                                                                 $dName = isset($vs['district_name']) ? $vs['district_name'] : (isset($vs->district_name) ? $vs->district_name : '');
-                                                                echo '<option value="' . (int)$vsId . '">' . htmlspecialchars($vsName) . ($dName ? ' (' . htmlspecialchars($dName) . ')' : '') . '</option>';
+                                                                $sel = (isset($f['vidhan_sabha_id']) && (string)$f['vidhan_sabha_id'] === (string)$vsId) ? ' selected' : '';
+                                                                echo '<option value="' . (int)$vsId . '"' . $sel . '>' . htmlspecialchars($vsName) . ($dName ? ' (' . htmlspecialchars($dName) . ')' : '') . '</option>';
                                                             }
                                                         }
                                                         ?>
@@ -182,45 +189,16 @@
                                                     <label for="code">Code</label>
                                                     <select name="code" id="code" class="form-control">
                                                         <option value="">Select Code</option>
-                                                        <option value="SC">SC</option>
-                                                        <option value="YC">YC</option>
-                                                        <option value="WC">WC</option>
-                                                        <option value="PA">PA</option>
-                                                        <option value="SM">SM</option>
-                                                        <option value="EO">EO</option>
-                                                        <option value="GS">GS</option>
-                                                        <option value="DCC">DCC</option>
-                                                        <option value="PW">PW</option>
-                                                        <option value="NL">NL</option>
-                                                        <option value="FR">FR</option>
-                                                        <option value="SO">SO</option>
-                                                        <option value="ST">ST</option>
-                                                        <option value="REF">REF</option>
-                                                        <option value="US">US</option>
-                                                        <option value="SMW">SMW</option>
-                                                        <option value="DYC">DYC</option>
-                                                        <option value="OBC">OBC</option>
-                                                        <option value="DT">DT</option>
-                                                        <option value="DP">DP</option>
-                                                        <option value="MLA">MLA</option>
-                                                        <option value="AVP">AVP</option>
-                                                        <option value="MEET">MEET</option>
-                                                        <option value="MEDIA">MEDIA</option>
-                                                        <option value="X MLA">X MLA</option>
-                                                        <option value="BC (बूथ कमेटी)">BC (बूथ कमेटी)</option>
-                                                        <option value="PP (पेज प्रभारी)">PP (पेज प्रभारी)</option>
-                                                        <option value="IP (प्रभावशाली व्यक्ति)">IP (प्रभावशाली व्यक्ति)</option>
-                                                        <option value="FH (परिवार का मुखिया)">FH (परिवार का मुखिया)</option>
-                                                        <option value="SMM (सोशल मीडिया मित्र)">SMM (सोशल मीडिया मित्र)</option>
-                                                        <option value="MS (महिला समिति)">MS (महिला समिति)</option>
-                                                        <option value="FP (फलिया प्रभारी)">FP (फलिया प्रभारी)</option>
-                                                        <option value="ER (चुनाव प्रभारी)">ER (चुनाव प्रभारी)</option>
-                                                        <option value="वरिष्ठ">वरिष्ठ</option>
-                                                        <option value="युवा">युवा</option>
-                                                        <option value="वोटरप्रभारी(१० घर)">वोटरप्रभारी(१० घर)</option>
-                                                        <option value="BLA (बूथ लेवल एजेंट)">BLA (बूथ लेवल एजेंट)</option>
-                                                        <option value="FM (दानदाता)">FM (दानदाता)</option>
-                                                        <option value="AK (नवीन सदस्‍य को सक्रिय करना)">AK (नवीन सदस्‍य को सक्रिय करना)</option>
+                                                        <?php
+                                                        $code_opts = [
+                                                            'SC' => 'SC', 'YC' => 'YC', 'WC' => 'WC', 'PA' => 'PA', 'SM' => 'SM', 'EO' => 'EO', 'GS' => 'GS', 'DCC' => 'DCC', 'PW' => 'PW', 'NL' => 'NL', 'FR' => 'FR', 'SO' => 'SO', 'ST' => 'ST', 'REF' => 'REF', 'US' => 'US', 'SMW' => 'SMW', 'DYC' => 'DYC', 'OBC' => 'OBC', 'DT' => 'DT', 'DP' => 'DP', 'MLA' => 'MLA', 'AVP' => 'AVP', 'MEET' => 'MEET', 'MEDIA' => 'MEDIA', 'X MLA' => 'X MLA',
+                                                            'BC (बूथ कमेटी)' => 'BC (बूथ कमेटी)', 'PP (पेज प्रभारी)' => 'PP (पेज प्रभारी)', 'IP (प्रभावशाली व्यक्ति)' => 'IP (प्रभावशाली व्यक्ति)', 'FH (परिवार का मुखिया)' => 'FH (परिवार का मुखिया)', 'SMM (सोशल मीडिया मित्र)' => 'SMM (सोशल मीडिया मित्र)', 'MS (महिला समिति)' => 'MS (महिला समिति)', 'FP (फलिया प्रभारी)' => 'FP (फलिया प्रभारी)', 'ER (चुनाव प्रभारी)' => 'ER (चुनाव प्रभारी)', 'वरिष्ठ' => 'वरिष्ठ', 'युवा' => 'युवा', 'वोटरप्रभारी(१० घर)' => 'वोटरप्रभारी(१० घर)', 'BLA (बूथ लेवल एजेंट)' => 'BLA (बूथ लेवल एजेंट)', 'FM (दानदाता)' => 'FM (दानदाता)', 'AK (नवीन सदस्‍य को सक्रिय करना)' => 'AK (नवीन सदस्‍य को सक्रिय करना)',
+                                                        ];
+                                                        foreach ($code_opts as $cv => $cl) {
+                                                            $sel = (isset($f['code']) && (string)$f['code'] === (string)$cv) ? ' selected' : '';
+                                                            echo '<option value="' . htmlspecialchars($cv) . '"' . $sel . '>' . htmlspecialchars($cl) . '</option>';
+                                                        }
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -301,7 +279,7 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                                 if(!empty($userRecords))
+                                 if (isset($userRecords) && !empty($userRecords))
                                  {
                                      $i=1;
                                      foreach($userRecords  as  $key => $record)
@@ -567,11 +545,9 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
 <style>
-    /* Prevent table data flash before DataTables initialization */
     table#feedbackTa:not(.dataTable) tbody {
         display: none;
     }
-    
     #feedbackTa tbody tr {
         cursor: pointer;
     }
@@ -602,170 +578,179 @@
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
 <script>
-// Custom search function for member filtering
+/** Column indices match servaylisting / user/servaylistingdata row order (0-based). */
+function fillServayListingModal(d) {
+    if (!d) return;
+    var text = function (i) {
+        var v = d[i];
+        if (v === undefined || v === null) return '';
+        if (typeof v === 'string' && v.indexOf('<') !== -1) {
+            return $('<div>').html(v).text();
+        }
+        return v;
+    };
+    $('#modal-title-name').text(text(4));
+    $('#modal-name').text(text(4));
+    $('#modal-father').text(text(7));
+    $('#modal-gender').text(text(23));
+    $('#modal-age').text(text(20));
+    $('#modal-block').text(text(10));
+    $('#modal-janpad').text(text(11));
+    $('#modal-mandalam').text(text(12));
+    $('#modal-panchayat').text(text(15));
+    $('#modal-village').text(text(16));
+    $('#modal-booth-name').text(text(13));
+    $('#modal-booth-no').text(text(14));
+    $('#modal-toll').text(text(18));
+    $('#modal-mobile').text(text(6));
+    $('#modal-education').text(text(21));
+    $('#modal-jaati').text(text(19));
+    $('#modal-address').text(text(22));
+    $('#modal-dob').text(text(8));
+    $('#modal-dom').text(text(9));
+    $('#modal-vehicle').text(text(24));
+    $('#modal-group').text(text(25));
+    $('#modal-gov-emp').text(text(26));
+    $('#modal-party').text(text(27));
+    $('#modal-pad').text(text(28));
+    $('#modal-reference').text(text(35));
+    $('#modal-nari').text(text(30));
+    $('#modal-loan').text(text(31));
+    $('#modal-remark').text(text(36));
+    $('#modal-fb').text(text(32));
+    $('#modal-ig').text(text(33));
+    $('#modal-tw').text(text(34));
+    $('#modal-votar-id').text(text(5));
+    $('#modal-code').text(text(29));
+    $('#modal-samiti').text(text(17));
+    $('#modal-member-id').text(text(1));
+    $('#modal-created-date').text(text(44));
+    $('#modal-start-date').text(text(39));
+    $('#modal-start-lat').text(text(37));
+    $('#modal-start-long').text(text(38));
+    $('#modal-end-date').text(text(42));
+    $('#modal-end-lat').text(text(40));
+    $('#modal-end-long').text(text(41));
+    var imgCell = d[43];
+    var imgHref = '';
+    if (imgCell && typeof imgCell === 'string' && imgCell.indexOf('href=') !== -1) {
+        var $a = $('<div>').html(imgCell).find('a').first();
+        imgHref = $a.attr('href') || '';
+    }
+    if (imgHref) {
+        $('#modal-image-container').html('<img src="' + imgHref + '" class="img-responsive img-thumbnail" style="max-height: 250px; margin: 0 auto; cursor: pointer;" onclick="window.open(\'' + imgHref + '\', \'_blank\')">');
+    } else {
+        $('#modal-image-container').html('<div class="well">No Image</div>');
+    }
+    var actionHtml = d[46] || '';
+    var editHref = $('<div>').html(actionHtml).find('a[href*="editServay"]').first().attr('href');
+    if (editHref) {
+        $('#modal-edit-btn').attr('href', editHref).show();
+    } else {
+        $('#modal-edit-btn').hide();
+    }
+}
+
+function bindServayListingModal(table) {
+    $('#feedbackTa tbody').off('click.servayModal').on('click.servayModal', 'tr', function (e) {
+        if ($(e.target).closest('a, button').length) return;
+        var rowData = table.row(this).data();
+        if (!rowData) return;
+        fillServayListingModal(rowData);
+        $('#surveyDetailModal').modal('show');
+    });
+}
+</script>
+<?php if (isset($userRecords)) { ?>
+<script>
 $.fn.dataTable.ext.search.push(
-    function(settings, data, dataIndex) {
-        // Only apply to our specific table
-        if (settings.nTable.id !== 'feedbackTa') {
-            return true;
-        }
-        
-        // Get active tab
+    function (settings, data) {
+        if (settings.nTable.id !== 'feedbackTa') return true;
         var activeTab = $('ul.nav-tabs li.active a').attr('data-tab');
-        
-        if (activeTab === 'all') {
-            return true; // Show all records
-        } else if (activeTab === 'vidhan-sabha') {
-            // Vidhan Sabha Members: records with any block value (not empty, not Other)
-            // Block Name column is index 9 (0-based)
-            var blockName = data[9] || ''; // Get block name from column
-            return blockName.trim() !== '' && blockName.trim() !== '-' && blockName.trim() !== 'N/A' && blockName.trim().toLowerCase() !== 'other';
-        } else if (activeTab === 'mp') {
-            // MP Members: records with "Other" block designation  
-            // Block Name column is index 9 (0-based)
-            var blockName = data[9] || '';
-            return blockName.trim().toLowerCase() === 'other';
+        if (activeTab === 'all') return true;
+        var blockName = (data[10] || '').toString();
+        var t = blockName.trim().toLowerCase();
+        if (activeTab === 'vidhan-sabha') {
+            return t !== '' && t !== '-' && t !== 'n/a' && t !== 'other';
         }
-        
+        if (activeTab === 'mp') {
+            return t === 'other';
+        }
         return true;
     }
 );
-
-$(document).ready(function() {
-    // Initialize DataTable
+$(document).ready(function () {
     var table = $('#feedbackTa').DataTable({
-        "processing": true,
-        "serverSide": false,
-        "dom": '<"top"lfB>rt<"bottom"ip>',
-        "buttons": [{
-            extend: 'excelHtml5',
-            text: 'Export Excel',
-            title: 'Member List'
-        }],
-        "paging": true,
-        "searching": true,
-        "ordering": false,
-        "info": true,
-        "lengthMenu": [
-            [10, 25, 50, 75, -1],
-            [10, 25, 50, 75, "All"]
-        ]
+        processing: true,
+        serverSide: false,
+        dom: '<"top"lfB>rt<"bottom"ip>',
+        buttons: [{ extend: 'excelHtml5', text: 'Export Excel', title: 'Member List' }],
+        paging: true,
+        searching: true,
+        ordering: false,
+        info: true,
+        lengthMenu: [[10, 25, 50, 75, -1], [10, 25, 50, 75, 'All']]
     });
-    
-    // Tab click handler
-    $('ul.nav-tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-        // Update active tab tracking
+    $('ul.nav-tabs a[data-toggle="tab"]').on('shown.bs.tab', function () {
         $('ul.nav-tabs li').removeClass('active');
         $(this).parent().addClass('active');
-        
-        // Show/hide filter form based on active tab
         var activeTab = $(this).attr('data-tab');
         if (activeTab === 'all') {
             $('#filter-form').show();
         } else {
             $('#filter-form').hide();
         }
-        
-        // Redraw table to apply new filter
         table.draw();
     });
-
-    // Row click handler
-    $('#feedbackTa tbody').on('click', 'tr', function() {
-        var data = table.row(this).data();
-        if (!data) return;
-
-        // Indices:
-        // 1: Member (User) Name, 3: Applicant Name, 4: Votar Id, 5: Mobile, 6: Father, 7: DOB, 8: DOM
-        // 9: Block, 10: Booth Name, 11: Booth No, 12: Grampanchayat, 13: Village, 14: Samiti, 15: Toll
-        // 16: Jaati, 17: Age, 18: Education, 19: Address, 20: Gender, 21: Vehicle, 22: Group
-        // 23: Gov Emp, 24: Party, 25: Pad Varsh, 26: Code, 27: Nari Samman, 28: Farmer Loan
-        // 29-31: Social, 32: Reference, 33: Remark, 34-39: Tech, 40: Image, 41: Created, 43: Action
-
-        $('#modal-title-name').text(data[3]);
-        $('#modal-name').text(data[3]);
-        $('#modal-father').text(data[6]);
-        $('#modal-gender').text(data[20 + 2]);
-        $('#modal-age').text(data[17 + 2]);
-        
-        $('#modal-block').text(data[9]);
-        $('#modal-janpad').text(data[10]);
-        $('#modal-mandalam').text(data[11]);
-        
-        $('#modal-panchayat').text(data[12 + 2]);
-        $('#modal-village').text(data[13 + 2]);
-        $('#modal-booth-name').text(data[10 + 2]);
-        $('#modal-booth-no').text(data[11 + 2]);
-        $('#modal-toll').text(data[15 + 2]);
-        $('#modal-mobile').text(data[5]);
-        
-        $('#modal-education').text(data[18 + 2]);
-        $('#modal-jaati').text(data[16 + 2]);
-        $('#modal-address').text(data[19 + 2]);
-        
-        $('#modal-dob').text(data[7]);
-        $('#modal-dom').text(data[8]);
-        $('#modal-vehicle').text(data[21 + 2]);
-        $('#modal-group').text(data[22 + 2]);
-        
-        $('#modal-gov-emp').text(data[23 + 2]);
-        $('#modal-party').text(data[24 + 2]);
-        $('#modal-pad').text(data[25 + 2]);
-        $('#modal-reference').text(data[32 + 2]);
-        
-        $('#modal-nari').text(data[27 + 2]);
-        $('#modal-loan').text(data[28 + 2]);
-        $('#modal-remark').text(data[33 + 2]);
-        
-        $('#modal-fb').text(data[29 + 2]);
-        $('#modal-ig').text(data[30 + 2]);
-        $('#modal-tw').text(data[31 + 2]);
-        
-        $('#modal-votar-id').text(data[4]);
-        $('#modal-code').text(data[26 + 2]);
-        $('#modal-samiti').text(data[14 + 2]);
-        $('#modal-member-id').text(data[1]);
-        
-        $('#modal-created-date').text(data[41 + 2]);
-        $('#modal-start-date').text(data[36 + 2]);
-        $('#modal-start-lat').text(data[34 + 2]);
-        $('#modal-start-long').text(data[35 + 2]);
-        $('#modal-end-date').text(data[39 + 2]);
-        $('#modal-end-lat').text(data[37 + 2]);
-        $('#modal-end-long').text(data[38 + 2]);
-
-        // Handle image
-        var imgHtml = data[42];
-        var imgSrc = $(imgHtml).attr('src');
-        if (imgSrc) {
-            $('#modal-image-container').html('<img src="' + imgSrc + '" class="img-responsive img-thumbnail" style="max-height: 250px; margin: 0 auto; cursor: pointer;" onclick="window.open(\'' + imgSrc + '\', \'_blank\')">');
-        } else {
-            $('#modal-image-container').html('<div class="well">No Image</div>');
-        }
-
-        // Handle Edit Link - correct index 43
-        var actionHtml = data[43];
-        var editHref = $(actionHtml).find('a[title="Edit"]').attr('href');
-        if (!editHref) {
-             editHref = $(actionHtml).filter('a[title="Edit"]').attr('href');
-        }
-        
-        if (editHref) {
-            $('#modal-edit-btn').attr('href', editHref).show();
-        } else {
-            // Fallback: search all anchors for edit
-            var found = false;
-            $(actionHtml).each(function() {
-                if ($(this).attr('title') == 'Edit' || $(this).attr('href').indexOf('editservayview') !== -1) {
-                    $('#modal-edit-btn').attr('href', $(this).attr('href')).show();
-                    found = true;
-                    return false;
-                }
-            });
-            if (!found) $('#modal-edit-btn').hide();
-        }
-
-        $('#surveyDetailModal').modal('show');
-    });
+    bindServayListingModal(table);
 });
 </script>
+<?php } else { ?>
+<script>
+$(document).ready(function () {
+    var table = $('#feedbackTa').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '<?php echo base_url('user/servaylistingdata'); ?>',
+            type: 'POST',
+            data: function (post) {
+                post.filter_block = $('#block').val();
+                post.filter_year = $('#year').val();
+                post.filter_vehicle = $('#vehicle').val();
+                post.filter_samithi = $('#samithi').val();
+                post.filter_district = $('#filter_district').val();
+                post.filter_vidhan_sabha_id = $('#filter_vidhan_sabha').val();
+                post.filter_code = $('#code').val();
+                post.filter_tab = $('ul.nav-tabs li.active a').data('tab') || 'all';
+            }
+        },
+        dom: '<"top"lfB>rt<"bottom"ip>',
+        buttons: [{ extend: 'excelHtml5', text: 'Export Excel', title: 'Member List' }],
+        paging: true,
+        searching: true,
+        ordering: false,
+        info: true,
+        lengthMenu: [[10, 25, 50, 75, -1], [10, 25, 50, 75, 'All']],
+        order: [],
+        columnDefs: [{ targets: '_all', orderable: false }]
+    });
+    $('#servayFilterForm').on('submit', function (e) {
+        e.preventDefault();
+        table.ajax.reload();
+    });
+    $('ul.nav-tabs a[data-toggle="tab"]').on('shown.bs.tab', function () {
+        $('ul.nav-tabs li').removeClass('active');
+        $(this).parent().addClass('active');
+        var activeTab = $(this).attr('data-tab');
+        if (activeTab === 'all') {
+            $('#filter-form').show();
+        } else {
+            $('#filter-form').hide();
+        }
+        table.ajax.reload();
+    });
+    bindServayListingModal(table);
+});
+</script>
+<?php } ?>

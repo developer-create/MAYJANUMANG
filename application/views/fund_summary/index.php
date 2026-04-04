@@ -53,7 +53,7 @@
                         <h3 class="box-title"><i class="fa fa-filter"></i> Filter & Fund Details</h3>
                     </div>
                     <div class="box-body">
-                        <form action="<?php echo site_url('fundSummary'); ?>" method="get">
+                        <form id="fundSummaryFilterForm" action="<?php echo site_url('fundSummary'); ?>" method="get">
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group">
@@ -167,60 +167,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
-                                $total_cost = 0;
-                                foreach ($funds_data as $row): 
-                                    $total_cost += $row['approximate_cost'];
-                                ?>
-                                <tr>
-                                    <td></td>
-                                    <td><?php echo $row['registration_no']; ?></td>
-                                    <td><?php 
-                                        $display_year = $row['year'];
-                                        if (strlen($display_year) == 4 && is_numeric($display_year)) {
-                                            $next_year = (int)$display_year + 1;
-                                            $display_year = $display_year . '-' . substr($next_year, 2);
-                                        }
-                                        echo $display_year; 
-                                    ?></td>
-                                    <td><?php echo $row['uname']; ?></td>
-                                    <td><?php echo $row['mobile']; ?></td>
-                                    <!--<td><?php echo isset($row['address']) && !empty($row['address']) ? $row['address'] : '-'; ?></td>-->
-                                    <td><span class="label <?php echo $row['source'] == 'Jansunwai' ? 'label-info' : 'label-warning'; ?>"><?php echo $row['source']; ?></span></td>
-                                    <td><?php echo isset($row['district_name']) && !empty($row['district_name']) ? $row['district_name'] : '-'; ?></td>
-                                    
-                                    <td><?php echo isset($row['block_name']) && !empty($row['block_name']) ? $row['block_name'] : '-'; ?></td>
-                                    <td><?php echo isset($row['booth_no']) && !empty($row['booth_no']) ? $row['booth_no'] : '-'; ?></td>
-                                    <td><?php echo isset($row['booth_name']) && !empty($row['booth_name']) ? $row['booth_name'] : '-'; ?></td>
-                                    <td><?php echo isset($row['vidhan_sabha_name']) && !empty($row['vidhan_sabha_name']) ? $row['vidhan_sabha_name'] : '-'; ?></td>
-                                    <td><?php echo isset($row['panchayat_name']) && !empty($row['panchayat_name']) ? $row['panchayat_name'] : '-'; ?></td>
-                                    <td><?php echo isset($row['village_name']) && !empty($row['village_name']) ? $row['village_name'] : '-'; ?></td>
-                                    <td><?php echo isset($row['majra_faliya']) && !empty($row['majra_faliya']) ? $row['majra_faliya'] : '-'; ?></td>
-                                    <td><?php echo isset($row['department_name']) && !empty($row['department_name']) ? $row['department_name'] : '-'; ?></td>
-                                    <td><?php echo isset($row['work_problem']) && !empty($row['work_problem']) ? $row['work_problem'] : '-'; ?></td>
-                                    <td>
-                                        <?php 
-                                        $status_class = 'label-default';
-                                        if($row['work_status'] == 'Complete') $status_class = 'label-success';
-                                        if($row['work_status'] == 'In progress') $status_class = 'label-warning';
-                                        ?>
-                                        <span class="label <?php echo $status_class; ?>"><?php echo $row['work_status']; ?></span>
-                                    </td>
-                                    <td><?php echo $row['approved_fund']; ?></td>
-                                    <td>₹<?php echo number_format($row['approximate_cost'], 2); ?></td>
-                                    <td><?php echo isset($row['work_agency']) && !empty($row['work_agency']) ? $row['work_agency'] : '-'; ?></td>
-                                    <td><?php echo isset($row['remark']) && !empty($row['remark']) ? $row['remark'] : '-'; ?></td>
-                                    <td><?php echo date('d-m-Y', strtotime($row['date'])); ?></td>
-                                </tr>
-                                <?php 
-                                endforeach; 
-                                ?>
                             </tbody>
                         </table>
                     </div><!-- /.box-body -->
                     <div class="box-footer clearfix">
                         <div style="text-align: right; padding: 10px; font-weight: bold;">
-                            Total Used Fund: ₹<?php echo number_format($total_cost, 2); ?>
+                            Total Used Fund (filtered): ₹<span id="fundSummaryFooterTotal">—</span>
                         </div>
                     </div>
                 </div><!-- /.box -->
@@ -370,20 +322,40 @@ table#fundSummaryTable:not(.dataTable) tbody {
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
-    // Initialize DataTables with Export and Pagination
+    function formatMoney(n) {
+        var x = Number(n) || 0;
+        return x.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     var table = jQuery('#fundSummaryTable').DataTable({
-        "processing": true,
-        "serverSide": false, // Client-side processing
-        "dom": '<"top"lfB>rt<"bottom"ip>',
-        "buttons": [
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '<?php echo site_url('fundSummary/data'); ?>',
+            type: 'POST',
+            data: function (d) {
+                d.filter_fund_type = jQuery('#fundSummaryFilterForm select[name="fund_type"]').val();
+                d.filter_financial_year = jQuery('#fundSummaryFilterForm select[name="financial_year"]').val();
+                d.filter_from_date = jQuery('#fundSummaryFilterForm input[name="from_date"]').val();
+                d.filter_to_date = jQuery('#fundSummaryFilterForm input[name="to_date"]').val();
+                d.filter_work_status = jQuery('#fundSummaryFilterForm select[name="work_status"]').val();
+                d.filter_registration_no = jQuery('#fundSummaryFilterForm input[name="registration_no"]').val();
+            },
+            dataSrc: function (json) {
+                if (json && typeof json.sumFiltered !== 'undefined') {
+                    jQuery('#fundSummaryFooterTotal').text(formatMoney(json.sumFiltered));
+                }
+                return json.data;
+            }
+        },
+        dom: '<"top"lfB>rt<"bottom"ip>',
+        buttons: [
             {
                 extend: 'excelHtml5',
                 text: '<i class="fa fa-download"></i> Export Excel',
                 title: 'Approved Fund Summary Report',
                 className: 'btn btn-success',
-                exportOptions: {
-                    columns: ':visible'
-                }
+                exportOptions: { columns: ':visible' }
             },
             {
                 extend: 'print',
@@ -397,27 +369,19 @@ jQuery(document).ready(function(){
                 className: 'btn btn-warning'
             }
         ],
-        "paging": true, // Enable pagination
-        "searching": true, // Enable searching
-        "ordering": true, // Enable ordering
-        "info": true, // Display info
-        "lengthMenu": [
-            [10, 20, 50, 100, 500, -1],
-            [10, 20, 50, 100, 500, "All"]
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        lengthMenu: [[10, 20, 50, 100, 500, -1], [10, 20, 50, 100, 500, 'All']],
+        pageLength: 20,
+        responsive: true,
+        scrollX: true,
+        order: [[21, 'desc']],
+        columnDefs: [
+            { targets: [5, 16], orderable: false }
         ],
-        "pageLength": 20,
-        "responsive": true,
-        "scrollX": true,
-        "order": [[ 21, "desc" ]], // Order by Date column
-        "columnDefs": [
-            {
-                "targets": 0,
-                "render": function(data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            }
-        ],
-        "initComplete": function() {
+        initComplete: function () {
             jQuery('#fundSummaryTable tbody').css('display', 'table-row-group');
         }
     });

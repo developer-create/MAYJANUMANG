@@ -815,71 +815,261 @@ $insert_id = $this->db->insert_id();
         }
         return $return;
     }
+    private function servaylisting_datatable_joins()
+    {
+        $this->db->join("tbl_users", "tbl_users.userId = servayapp.user_id", "left");
+        $this->db->join("district", "district.id = servayapp.district", "left");
+        $this->db->join("vidhan_sabha", "vidhan_sabha.id = servayapp.vidhan_sabha_id", "left");
+        $this->db->join("block", "block.id = servayapp.block_name_number", "left");
+        $this->db->join("booth", "booth.id = servayapp.boothname", "left");
+        $this->db->join("panchayat", "panchayat.id = servayapp.grampanchayat", "left");
+        $this->db->join("village", "village.id = servayapp.village", "left");
+        $this->db->join("samiti", "samiti.id = servayapp.samithi", "left");
+        $this->db->join("party", "party.id = servayapp.parti", "left");
+    }
+
+    /** Exclude "own" survey rows (same as servaylisting view). */
+    private function servaylisting_datatable_where_not_own()
+    {
+        $this->db->group_start();
+        $this->db->where("servayapp.servayid IS NULL", null, false);
+        $this->db->or_where("servayapp.servayid !=", "own");
+        $this->db->group_end();
+    }
+
+    private function servaylisting_datatable_apply_form_filters($request)
+    {
+        $block = isset($request["filter_block"]) ? $request["filter_block"] : "";
+        $year = isset($request["filter_year"]) ? $request["filter_year"] : "";
+        $month = isset($request["filter_month"]) ? $request["filter_month"] : "";
+        $samithi = isset($request["filter_samithi"]) ? $request["filter_samithi"] : "";
+        $vehicle = isset($request["filter_vehicle"]) ? $request["filter_vehicle"] : "";
+        $code = isset($request["filter_code"]) ? $request["filter_code"] : "";
+        $district = isset($request["filter_district"]) ? $request["filter_district"] : "";
+        $vidhan_sabha_id = isset($request["filter_vidhan_sabha_id"]) ? $request["filter_vidhan_sabha_id"] : "";
+
+        if ($block !== null && $block !== "") {
+            $this->db->where("servayapp.block_name_number", $block);
+        }
+        if ($district !== null && $district !== "") {
+            $this->db->where("servayapp.district", $district);
+        }
+        if ($vidhan_sabha_id !== null && $vidhan_sabha_id !== "") {
+            if ($vidhan_sabha_id === "0" || $vidhan_sabha_id === 0) {
+                $this->db->group_start();
+                $this->db->where("servayapp.vidhan_sabha_id IS NULL", null, false);
+                $this->db->or_where("servayapp.vidhan_sabha_id", "");
+                $this->db->or_where("servayapp.vidhan_sabha_id", 0);
+                $this->db->group_end();
+            } else {
+                $this->db->where("servayapp.vidhan_sabha_id", $vidhan_sabha_id);
+            }
+        }
+        if ($year !== null && $year !== "") {
+            $this->db->where("YEAR(servayapp.create_date)", $year, false);
+        }
+        if ($month !== null && $month !== "") {
+            $this->db->where("MONTH(servayapp.create_date)", $month, false);
+        }
+        if ($samithi !== null && $samithi !== "") {
+            $this->db->where("servayapp.samithi", $samithi);
+        }
+        if ($vehicle !== null && $vehicle !== "") {
+            $this->db->like("servayapp.vehicle", $vehicle);
+        }
+        if ($code !== null && $code !== "") {
+            $this->db->like("servayapp.code", $code);
+        }
+    }
+
+    private function servaylisting_datatable_apply_tab($tab)
+    {
+        if ($tab === "vidhan-sabha") {
+            $this->db->where("block.id IS NOT NULL", null, false);
+            $this->db->where("block.name !=", "Other");
+        } elseif ($tab === "mp") {
+            $this->db->where("block.name", "Other");
+        }
+    }
+
+    private function servaylisting_datatable_apply_search($request)
+    {
+        if (empty($request["search"]["value"])) {
+            return;
+        }
+        $s = $request["search"]["value"];
+        $this->db->group_start();
+        $this->db->like("servayapp.name", $s);
+        $this->db->or_like("servayapp.votarcode", $s);
+        $this->db->or_like("servayapp.mobile", $s);
+        $this->db->or_like("servayapp.fathername", $s);
+        $this->db->or_like("servayapp.address", $s);
+        $this->db->or_like("servayapp.code", $s);
+        $this->db->or_like("servayapp.jaati", $s);
+        $this->db->or_like("servayapp.education", $s);
+        $this->db->or_like("servayapp.remark", $s);
+        $this->db->or_like("servayapp.reference", $s);
+        $this->db->or_like("tbl_users.name", $s);
+        $this->db->or_like("district.name", $s);
+        $this->db->or_like("vidhan_sabha.vidhan_sabha_name", $s);
+        $this->db->or_like("block.name", $s);
+        $this->db->or_like("booth.name", $s);
+        $this->db->or_like("panchayat.name", $s);
+        $this->db->or_like("village.name", $s);
+        $this->db->or_like("samiti.name", $s);
+        $this->db->or_like("party.name", $s);
+        $this->db->group_end();
+    }
+
+    public function servaylistingdata()
+    {
+        $request = $_REQUEST;
+
+        $this->db->reset_query();
+        $this->db->from("servayapp");
+        $this->servaylisting_datatable_where_not_own();
+        $recordsTotal = $this->db->count_all_results();
+
+        $tab = isset($request["filter_tab"]) ? $request["filter_tab"] : "all";
+
+        $this->db->reset_query();
+        $this->db->from("servayapp");
+        $this->servaylisting_datatable_joins();
+        $this->servaylisting_datatable_where_not_own();
+        $this->servaylisting_datatable_apply_form_filters($request);
+        if ($tab !== "all") {
+            $this->servaylisting_datatable_apply_tab($tab);
+        }
+        $this->servaylisting_datatable_apply_search($request);
+        $recordsFiltered = $this->db->count_all_results();
+
+        $this->db->reset_query();
+        $this->db->select(
+            "servayapp.*, tbl_users.name as user_name, district.name as district_name_str, " .
+            "vidhan_sabha.vidhan_sabha_name as vs_name_str, block.name as block_name_str, " .
+            "booth.name as booth_name_str, panchayat.name as panchayat_name_str, " .
+            "village.name as village_name_str, samiti.name as samiti_name_str, party.name as party_name_str"
+        );
+        $this->db->from("servayapp");
+        $this->servaylisting_datatable_joins();
+        $this->servaylisting_datatable_where_not_own();
+        $this->servaylisting_datatable_apply_form_filters($request);
+        if ($tab !== "all") {
+            $this->servaylisting_datatable_apply_tab($tab);
+        }
+        $this->servaylisting_datatable_apply_search($request);
+        $this->db->order_by("servayapp.id", "DESC");
+        $start = isset($request["start"]) ? (int) $request["start"] : 0;
+        $length = isset($request["length"]) ? (int) $request["length"] : 10;
+        if ($length > 0) {
+            $this->db->limit($length, $start);
+        }
+        $rows = $this->db->get()->result();
+
+        $response = [];
+        $i = $start + 1;
+        foreach ($rows as $row) {
+            $dobStr = (!empty($row->dob) && $row->dob !== "0000-00-00")
+                ? date("d-m-Y", strtotime($row->dob))
+                : "";
+            $domStr = (!empty($row->dom) && $row->dom !== "0000-00-00")
+                ? date("d-m-Y", strtotime($row->dom))
+                : "";
+
+            $vs = isset($row->vs_name_str) && $row->vs_name_str !== "" ? htmlspecialchars($row->vs_name_str) : "N/A";
+
+            $imgCell = "";
+            if (!empty($row->image)) {
+                $url = base_url("uploads/userservey/" . $row->image);
+                $imgCell = '<a href="' . htmlspecialchars($url) . '" class="btn btn-sm btn-primary" target="_blank" title="View Image"><i class="fa fa-eye"></i> view File</a>';
+            } else {
+                $imgCell = "No-Image";
+            }
+
+            $id = (int) $row->id;
+            $actions =
+                '<a class="btn btn-sm btn-info" href="' . base_url("ServayController/editServay/" . $id) . '" title="Edit"><i class="fa fa-pencil"></i></a> ' .
+                '<a class="btn btn-sm btn-info" href="' . base_url("editservayview/" . $id) . '" title="Edit"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
+                '<a class="btn btn-sm btn-danger" href="' . base_url("User/deletestatus/" . $id) . '" data-userid="' . $id . '" title="Delete"><i class="fa fa-trash"></i></a>';
+
+            $response[] = [
+                $i++,
+                htmlspecialchars(isset($row->user_name) ? $row->user_name : ""),
+                htmlspecialchars(isset($row->district_name_str) ? $row->district_name_str : ""),
+                $vs,
+                htmlspecialchars(isset($row->name) ? $row->name : ""),
+                htmlspecialchars(isset($row->votarcode) ? $row->votarcode : ""),
+                htmlspecialchars(isset($row->mobile) ? $row->mobile : ""),
+                htmlspecialchars(isset($row->fathername) ? $row->fathername : ""),
+                $dobStr,
+                $domStr,
+                htmlspecialchars(isset($row->block_name_str) ? $row->block_name_str : ""),
+                htmlspecialchars(isset($row->janpad_panchayat) ? $row->janpad_panchayat : ""),
+                htmlspecialchars(isset($row->mandalam) ? $row->mandalam : ""),
+                htmlspecialchars(isset($row->booth_name_str) ? $row->booth_name_str : ""),
+                htmlspecialchars(isset($row->boothnumber) ? $row->boothnumber : ""),
+                htmlspecialchars(isset($row->panchayat_name_str) ? $row->panchayat_name_str : ""),
+                htmlspecialchars(isset($row->village_name_str) ? $row->village_name_str : ""),
+                htmlspecialchars(isset($row->samiti_name_str) ? $row->samiti_name_str : ""),
+                htmlspecialchars(isset($row->toll) ? $row->toll : ""),
+                htmlspecialchars(isset($row->jaati) ? $row->jaati : ""),
+                htmlspecialchars(isset($row->age) ? $row->age : ""),
+                htmlspecialchars(isset($row->education) ? $row->education : ""),
+                htmlspecialchars(isset($row->address) ? $row->address : ""),
+                htmlspecialchars(isset($row->gender) ? $row->gender : ""),
+                htmlspecialchars(isset($row->vehicle) ? $row->vehicle : ""),
+                htmlspecialchars(isset($row->group) ? $row->group : ""),
+                htmlspecialchars(isset($row->government_employee) ? $row->government_employee : ""),
+                htmlspecialchars(isset($row->party_name_str) ? $row->party_name_str : ""),
+                htmlspecialchars(isset($row->padvarsh) ? $row->padvarsh : ""),
+                htmlspecialchars(isset($row->code) ? $row->code : ""),
+                htmlspecialchars(isset($row->respect_for_women) ? $row->respect_for_women : ""),
+                htmlspecialchars(isset($row->farmer_loan_waiver) ? $row->farmer_loan_waiver : ""),
+                htmlspecialchars(isset($row->facebook) ? $row->facebook : ""),
+                htmlspecialchars(isset($row->instagram) ? $row->instagram : ""),
+                htmlspecialchars(isset($row->twitter) ? $row->twitter : ""),
+                htmlspecialchars(isset($row->reference) ? $row->reference : ""),
+                htmlspecialchars(isset($row->remark) ? $row->remark : ""),
+                htmlspecialchars(isset($row->lat) ? $row->lat : ""),
+                htmlspecialchars(isset($row->long) ? $row->long : ""),
+                htmlspecialchars(isset($row->startdate) ? $row->startdate : ""),
+                htmlspecialchars(isset($row->end_lat) ? $row->end_lat : ""),
+                htmlspecialchars(isset($row->end_long) ? $row->end_long : ""),
+                htmlspecialchars(isset($row->enddate) ? $row->enddate : ""),
+                $imgCell,
+                htmlspecialchars(isset($row->create_date) ? $row->create_date : ""),
+                htmlspecialchars(isset($row->update_date) ? $row->update_date : ""),
+                '<div class="text-center">' . $actions . "</div>",
+            ];
+        }
+
+        $output = [
+            "draw" => intval($request["draw"] ?? 0),
+            "recordsTotal" => (int) $recordsTotal,
+            "recordsFiltered" => (int) $recordsFiltered,
+            "data" => $response,
+        ];
+        $this->output->set_content_type("application/json")->set_output(json_encode($output));
+    }
+
     public function servaylisting() {
         $this->module = "MemberList";
         if (!$this->hasListAccess()) {
             $this->loadThis();
         } else {
-            $block = $this->input->post("block");
-            $year = $this->input->post("year");
-            $month = $this->input->post("month");
-            $samithi = $this->input->post("samithi");
-            $vehicle = $this->input->post("vehicle");
-            $code = $this->input->post("code");
-            $district = $this->input->post("district");
-            $vidhan_sabha_id = $this->input->post("vidhan_sabha_id");
-            $this->db->select("servayapp.*, tbl_users.name as user_name, district.name as district_name_str, vidhan_sabha.vidhan_sabha_name as vs_name_str, block.name as block_name_str, booth.name as booth_name_str, panchayat.name as panchayat_name_str, village.name as village_name_str, samiti.name as samiti_name_str, party.name as party_name_str");
-            $this->db->from("servayapp");
-            $this->db->join("tbl_users", "tbl_users.userId = servayapp.user_id", "left");
-            $this->db->join("district", "district.id = servayapp.district", "left");
-            $this->db->join("vidhan_sabha", "vidhan_sabha.id = servayapp.vidhan_sabha_id", "left");
-            $this->db->join("block", "block.id = servayapp.block_name_number", "left");
-            $this->db->join("booth", "booth.id = servayapp.boothname", "left");
-            $this->db->join("panchayat", "panchayat.id = servayapp.grampanchayat", "left");
-            $this->db->join("village", "village.id = servayapp.village", "left");
-            $this->db->join("samiti", "samiti.id = servayapp.samithi", "left");
-            $this->db->join("party", "party.id = servayapp.parti", "left");
-            $this->db->order_by("servayapp.id", "DESC");
-            // Apply filters if provided
-            if ($block !== null && $block !== "") {
-                $this->db->where("block_name_number", $block);
-            }
-            if ($district !== null && $district !== "") {
-                $this->db->where("district", $district);
-            }
-            if ($vidhan_sabha_id !== null && $vidhan_sabha_id !== "") {
-                if ($vidhan_sabha_id === '0' || $vidhan_sabha_id === 0) {
-                    $this->db->group_start();
-                    $this->db->where("vidhan_sabha_id IS NULL", null, false);
-                    $this->db->or_where("vidhan_sabha_id", "");
-                    $this->db->or_where("vidhan_sabha_id", 0);
-                    $this->db->group_end();
-                } else {
-                    $this->db->where("vidhan_sabha_id", $vidhan_sabha_id);
-                }
-            }
-            if ($year !== null && $year !== "") {
-                $this->db->where("YEAR(create_date)", $year);
-            }
-            if ($month !== null && $month !== "") {
-                $this->db->where("MONTH(create_date)", $month);
-            }
-            if ($samithi !== null && $samithi !== "") {
-                $this->db->where("samithi", $samithi);
-            }
-            if ($vehicle !== null && $vehicle !== "") {
-                $this->db->like("vehicle", $vehicle);
-            }
-            if ($code !== null && $code !== "") {
-                $this->db->like("code", $code);
-            }
-
-            // Execute the query
-            $query = $this->db->get();
-            $data["userRecords"] = $query->result();
-            $this->load->model('Vidhan_sabha_model');
-            $data['vidhan_sabhas_list'] = $this->Vidhan_sabha_model->get_vidhan_sabhas();
-            $data['districts_list'] = $this->Comman_model->getAllData('district', [], '');
+            $data["filters"] = [
+                "block" => $this->input->post("block"),
+                "year" => $this->input->post("year"),
+                "month" => $this->input->post("month"),
+                "samithi" => $this->input->post("samithi"),
+                "vehicle" => $this->input->post("vehicle"),
+                "code" => $this->input->post("code"),
+                "district" => $this->input->post("district"),
+                "vidhan_sabha_id" => $this->input->post("vidhan_sabha_id"),
+            ];
+            $this->load->model("Vidhan_sabha_model");
+            $data["vidhan_sabhas_list"] = $this->Vidhan_sabha_model->get_vidhan_sabhas();
+            $data["districts_list"] = $this->Comman_model->getAllData("district", [], "");
             $this->loadViews("users/servaylisting", $this->global, $data, null);
         }
     }
@@ -1058,9 +1248,14 @@ $insert_id = $this->db->insert_id();
                 $_POST['work_status'] = $status;
             }
             
-            $data["userRecords"] = $this->user_model->jansunwailist($block, $year, $month, $department, $approved_fund);
-            $data["departments"] = $this->Comman_model->get_all_data("department");
-           
+            $data["filters"] = [
+                "block" => $block,
+                "year" => $year,
+                "month" => $month,
+                "department" => $department,
+                "approved_fund" => $approved_fund,
+                "work_status" => $this->input->post("work_status"),
+            ];
             $this->global["pageTitle"] = "Jansunwai";
             $this->loadViews("users/jansunwailist", $this->global, $data, null);
         }
@@ -1081,176 +1276,313 @@ $insert_id = $this->db->insert_id();
 
 
 
-public function jansunwaidata()
-{
-    $request = $_REQUEST;
+    /**
+     * Session block scope (same idea as User_model::jansunwailist).
+     */
+    private function jansunwai_datatable_session_scope()
+    {
+        $blockid = $this->session->userdata("blockId");
+        if ($blockid != 0) {
+            $this->db->where_in("jansunwai.block", explode(",", $blockid));
+        }
+    }
 
-    $columns = [
-        0 => 'jansunwai.registration_no',
-        1 => 'jansunwai.sector_name',
-        2 => 'jansunwai.micro_sector_no',
-        // Add all other relevant columns as per index
-    ];
+    /**
+     * Form filters + status tab (POSTed from DataTables as filter_*).
+     */
+    private function jansunwai_datatable_apply_filters($request)
+    {
+        $this->jansunwai_datatable_session_scope();
 
-    $this->db->select('jansunwai.*, tbl_users.name as added_by, subtype_of_work.name as sub_work_type_name');
-    $this->db->from('jansunwai');
-    $this->db->join('tbl_users', 'tbl_users.userId = jansunwai.createdBy', 'left');
-    $this->db->join('subtype_of_work', 'subtype_of_work.id = jansunwai.sub_work_type_id', 'left');
+        if (!empty($request["filter_block"])) {
+            $this->db->where("jansunwai.block", $request["filter_block"]);
+        }
+        if (!empty($request["filter_department"])) {
+            $this->db->where("jansunwai.department", $request["filter_department"]);
+        }
+        if (!empty($request["filter_approved_fund"])) {
+            $this->db->where("jansunwai.approved_fund", $request["filter_approved_fund"]);
+        }
+        if (!empty($request["filter_year"])) {
+            $this->db->where("jansunwai.year", $request["filter_year"]);
+        }
+        if (!empty($request["filter_month"])) {
+            $this->db->where("jansunwai.month", $request["filter_month"]);
+        }
+        if (!empty($request["filter_work_status"])) {
+            $this->db->where("jansunwai.work_status", $request["filter_work_status"]);
+        }
 
-    // Filtering (Search)
-    if (!empty($request['search']['value'])) {
-        $search = $request['search']['value'];
+        $tab = isset($request["filter_tab"]) ? $request["filter_tab"] : "all";
+        if ($tab === "approval" || $tab === "complete") {
+            $this->db->where("jansunwai.work_status", "Complete");
+        } elseif ($tab === "incomplete") {
+            $this->db->where("jansunwai.work_status", "Incomplete");
+        } elseif ($tab === "inprogress") {
+            $this->db->where("jansunwai.work_status", "In progress");
+        } elseif ($tab === "reject") {
+            $this->db->where("jansunwai.work_status", "Reject");
+        }
+    }
+
+    private function jansunwai_datatable_joins()
+    {
+        $this->db->join("tbl_users", "tbl_users.userId = jansunwai.createdBy", "left");
+        $this->db->join("block", "block.id = jansunwai.block", "left");
+        $this->db->join("booth", "booth.id = jansunwai.booth_name", "left");
+        $this->db->join("village", "village.id = jansunwai.village", "left");
+        $this->db->join("panchayat", "panchayat.id = jansunwai.panchayat_name", "left");
+        $this->db->join("department", "department.id = jansunwai.department", "left");
+        $this->db->join("subtype_of_work", "subtype_of_work.id = jansunwai.sub_work_type_id", "left");
+    }
+
+    private function jansunwai_datatable_apply_search($request)
+    {
+        if (empty($request["search"]["value"])) {
+            return;
+        }
+        $search = $request["search"]["value"];
         $this->db->group_start();
-        $this->db->like('jansunwai.registration_no', $search);
-        $this->db->or_like('jansunwai.sector_name', $search);
-        $this->db->or_like('jansunwai.uname', $search);
-        $this->db->or_like('jansunwai.mobile', $search);
-        $this->db->or_like('jansunwai.sector_name', $search);
-        $this->db->or_like('jansunwai.micro_sector_no', $search);
-        $this->db->or_like('jansunwai.year', $search);
-        $this->db->or_like('jansunwai.district', $search);
-        $this->db->or_like('jansunwai.assembly', $search);
-        $this->db->or_like('jansunwai.majra_faliya', $search);
-        $this->db->or_like('jansunwai.work_problem', $search);
-        $this->db->or_like('jansunwai.office', $search);
-        $this->db->or_like('jansunwai.address', $search);
-        $this->db->or_like('jansunwai.approximate_cost', $search);
-        $this->db->or_like('jansunwai.priority', $search);
-        $this->db->or_like('jansunwai.type_of_work', $search);
-        $this->db->or_like('jansunwai.as_no_date', $search);
-        $this->db->or_like('jansunwai.middle_men', $search);
-        $this->db->or_like('jansunwai.cont_no', $search);
-        $this->db->or_like('jansunwai.work_status', $search);
-        $this->db->or_like('jansunwai.beneficial', $search);
-        $this->db->or_like('jansunwai.remark_goshana', $search);
-        $this->db->or_like('jansunwai.recommended_letter_no', $search);
-        $this->db->or_like('tbl_users.name', $search);
+        $this->db->like("jansunwai.registration_no", $search);
+        $this->db->or_like("jansunwai.sector_name", $search);
+        $this->db->or_like("jansunwai.uname", $search);
+        $this->db->or_like("jansunwai.mobile", $search);
+        $this->db->or_like("jansunwai.micro_sector_no", $search);
+        $this->db->or_like("jansunwai.year", $search);
+        $this->db->or_like("jansunwai.district", $search);
+        $this->db->or_like("jansunwai.assembly", $search);
+        $this->db->or_like("jansunwai.majra_faliya", $search);
+        $this->db->or_like("jansunwai.work_problem", $search);
+        $this->db->or_like("jansunwai.office", $search);
+        $this->db->or_like("jansunwai.address", $search);
+        $this->db->or_like("jansunwai.approximate_cost", $search);
+        $this->db->or_like("jansunwai.priority", $search);
+        $this->db->or_like("jansunwai.type_of_work", $search);
+        $this->db->or_like("jansunwai.as_no_date", $search);
+        $this->db->or_like("jansunwai.middle_men", $search);
+        $this->db->or_like("jansunwai.cont_no", $search);
+        $this->db->or_like("jansunwai.work_status", $search);
+        $this->db->or_like("jansunwai.beneficial", $search);
+        $this->db->or_like("jansunwai.remark_goshana", $search);
+        $this->db->or_like("jansunwai.recommended_letter_no", $search);
+        $this->db->or_like("jansunwai.approved_fund", $search);
+        $this->db->or_like("jansunwai.work_agency", $search);
+        $this->db->or_like("tbl_users.name", $search);
+        $this->db->or_like("block.name", $search);
+        $this->db->or_like("department.name", $search);
+        $this->db->or_like("subtype_of_work.name", $search);
         $this->db->group_end();
     }
 
-    // Ordering
-    if (isset($request['order'])) {
-        $orderColumn = $columns[$request['order'][0]['column']];
-        $orderDir = $request['order'][0]['dir'];
-        $this->db->order_by($orderColumn, $orderDir);
-    } else {
-        $this->db->order_by('jansunwai.id', 'DESC');
-    }
+    public function jansunwaidata()
+    {
+        $request = $_REQUEST;
+        $listVariant = isset($request["list_variant"]) ? $request["list_variant"] : "full";
 
-    // Pagination
-    $this->db->limit($request['length'], $request['start']);
+        $this->db->reset_query();
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_session_scope();
+        $recordsTotal = $this->db->count_all_results();
 
-    $data = $this->db->get()->result();
+        $this->db->reset_query();
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_joins();
+        $this->jansunwai_datatable_apply_filters($request);
+        $this->jansunwai_datatable_apply_search($request);
+        $recordsFiltered = $this->db->count_all_results();
 
-    // Total count (Filtered)
-    $filteredRecords = $this->db->query("SELECT COUNT(*) as total FROM jansunwai")->row()->total;
-
-    // Total count (All)
-    $totalRecords = $this->db->count_all('jansunwai');
-
-    $response = [];
-    $i = $request['start'] + 1;
-    foreach ($data as $row) {
-        // Prepare Timer
-        $createdAt = new DateTime($row->createdAt);
-        $updatedAt = isset($row->updatedAt) ? new DateTime($row->updatedAt) : null;
-        $createdAtTimestamp = $createdAt->getTimestamp() * 1000;
-
-        if ($row->work_status == "Complete" && $updatedAt) {
-            $timeDiff = $updatedAt->diff($createdAt);
-            $timer = $timeDiff->format("%dd, %hh, %im, %ss");
-        } else {
-            $timer = '<span class="live-timer" data-created-at="' . $createdAtTimestamp . '"></span>';
+        $this->db->reset_query();
+        $this->db->select(
+            "jansunwai.*, tbl_users.name as added_by, subtype_of_work.name as sub_work_type_name, " .
+            "block.name as block_join_name, booth.bnumber as booth_number_join, booth.name as booth_display_name, " .
+            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name"
+        );
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_joins();
+        $this->jansunwai_datatable_apply_filters($request);
+        $this->jansunwai_datatable_apply_search($request);
+        $this->db->order_by("jansunwai.id", "DESC");
+        $start = isset($request["start"]) ? (int) $request["start"] : 0;
+        $length = isset($request["length"]) ? (int) $request["length"] : 10;
+        if ($length > 0) {
+            $this->db->limit($length, $start);
         }
-   $currentTime = new DateTime();
-$isWithin24Hours = true; // Replace with actual time check logic if needed
+        $rows = $this->db->get()->result();
 
-$timeDifferenceInSeconds = $currentTime->getTimestamp() - $createdAt->getTimestamp();
-$isWithin24Hours = $timeDifferenceInSeconds < (48 * 60 * 60); 
-$actionButtons = '
-    <td class="text-center">
-        <a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View"><i class="fa fa-eye" aria-hidden="true"></i></a>
-        <a class="btn btn-sm btn-success ' . (!$isWithin24Hours ? "disabled" : "") . '" href="' . base_url("user/submit_form/" . $row->id . "/1") . '" data-userid="' . $row->id . '" title="Comment"><i class="fa fa-edit"></i></a>
-        <a class="btn btn-sm btn-warning" href="' . base_url("user/editJansunwai/" . $row->id) . '" title="Edit"><i class="fa fa-eye" aria-hidden="true"></i></a>
-    </td>
-';
-$monthNames = [
-    1 => 'January', 2 => 'February', 3 => 'March',
-    4 => 'April', 5 => 'May', 6 => 'June',
-    7 => 'July', 8 => 'August', 9 => 'September',
-    10 => 'October', 11 => 'November', 12 => 'December'
-];
-
-
-        $response[] = [
-            $i++,
-            $row->registration_no,
-            $timer, // Timer column
-            $row->sector_name,
-            $row->micro_sector_no,
-            $row->micro_sector_name,
-            $row->year,
-            $monthNames[(int)$row->month] ?? 'Unknown',
-            $row->date,
-            $row->district,
-            $row->assembly,
-            $this->db->query("SELECT name FROM block WHERE id = '{$row->block}'")->row()->name ?? 'N/A',
-            $row->recommended_letter_no,
-            $this->db->query("SELECT bnumber FROM booth WHERE id = '{$row->booth_no}'")->row()->bnumber ?? 'N/A',
-            $this->db->query("SELECT name FROM booth WHERE id = '{$row->booth_name}'")->row()->name ?? 'N/A',
-            $this->db->query("SELECT name FROM panchayat WHERE id = '{$row->panchayat_name}'")->row()->name ?? 'N/A',
-            $this->db->query("SELECT name FROM village WHERE id = '{$row->village}'")->row()->name ?? 'N/A',
-            $row->majra_faliya,
-            $row->work_problem,
-            $row->office,
-            $row->approximate_cost,
-            $this->db->query("SELECT name FROM department WHERE id = '{$row->department}'")->row()->name ?? 'N/A',
-            $row->priority,
-            $row->ts_no_date,
-            $row->as_no_date,
-            $row->type_of_work,
-            isset($row->sub_work_type_name) ? $row->sub_work_type_name : '-',
-            $row->middle_men,
-            $row->cont_no,
-            $row->beneficial,
-            $row->po,
-            $this->getWorkStatusLabel($row->work_status),
-            $row->remark_goshana,
-            $row->remark,
-            $row->added_by,
-            $row->mobile,
-            $row->lat.'</br>'.$row->lng,
-            $row->createdAt,
-              !empty($row->uploaded_file) 
-        ? '<a class="btn btn-sm btn-info" href="' . base_url("uploads/" . $row->uploaded_file) . '" title="Image" target="_blank">View File</a>' 
-        : '<span>No File Uploaded</span>',
-             $actionButtons
+        $monthNames = [
+            1 => "January", 2 => "February", 3 => "March",
+            4 => "April", 5 => "May", 6 => "June",
+            7 => "July", 8 => "August", 9 => "September",
+            10 => "October", 11 => "November", 12 => "December",
         ];
+
+        $response = [];
+        $i = $start + 1;
+        $currentTime = new DateTime();
+
+        foreach ($rows as $row) {
+            $createdAt = new DateTime($row->createdAt);
+            $updatedAt = !empty($row->updatedAt) ? new DateTime($row->updatedAt) : null;
+            $createdAtTimestamp = $createdAt->getTimestamp() * 1000;
+
+            if ($row->work_status == "Complete" && $updatedAt) {
+                $timeDiff = $updatedAt->diff($createdAt);
+                $timer = "<b style=\"color: red;\">" . $timeDiff->format("%dd, %hh, %im, %ss") . "</b>";
+            } else {
+                $timer = '<span class="live-timer" data-created-at="' . $createdAtTimestamp . '"><b style="color: red;"></b></span>';
+            }
+
+            $timeDifferenceInSeconds = $currentTime->getTimestamp() - $createdAt->getTimestamp();
+            $isWithin72Hours = $timeDifferenceInSeconds < (72 * 60 * 60);
+            $isWithin48Hours = $timeDifferenceInSeconds < (48 * 60 * 60);
+
+            $monthKey = (int) $row->month;
+            $monthLabel = isset($monthNames[$monthKey]) ? $monthNames[$monthKey] : ($row->month ?: "N/A");
+
+            $blockName = $row->block_join_name ?: "N/A";
+            $boothNo = $row->booth_number_join ?: "N/A";
+            $boothNameDisp = $row->booth_display_name ?: "N/A";
+            $panchayatName = $row->panchayat_join_name ?: "N/A";
+            $villageName = $row->village_join_name ?: "N/A";
+            $departmentName = $row->department_join_name ?: "N/A";
+
+            $approvedFundCell = !empty($row->approved_fund) ? $row->approved_fund : "-";
+            $workAgencyCell = !empty($row->work_agency) ? $row->work_agency : "-";
+
+            if ($listVariant === "ajax_simple") {
+                $commentWindow = $isWithin48Hours;
+                $actionSimple =
+                    '<a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
+                    '<a class="btn btn-sm btn-success ' . (!$commentWindow ? "disabled" : "") . '" href="' . base_url("user/submit_form/" . $row->id . "/1") . '" data-userid="' . $row->id . '" title="Comment"><i class="fa fa-edit"></i></a> ' .
+                    '<a class="btn btn-sm btn-warning" href="' . base_url("user/editJansunwai/" . $row->id) . '" title="Edit"><i class="fa fa-eye" aria-hidden="true"></i></a>';
+                $response[] = [
+                    $i++,
+                    $row->registration_no,
+                    $timer,
+                    $row->sector_name,
+                    $row->micro_sector_no,
+                    $row->micro_sector_name,
+                    $row->year,
+                    $monthLabel,
+                    $row->date,
+                    $row->district,
+                    $row->assembly,
+                    $blockName,
+                    $row->recommended_letter_no,
+                    $boothNo,
+                    $boothNameDisp,
+                    $panchayatName,
+                    $villageName,
+                    $row->majra_faliya,
+                    $row->work_problem,
+                    $row->office,
+                    $row->approximate_cost,
+                    $departmentName,
+                    $row->priority,
+                    $row->ts_no_date,
+                    $row->as_no_date,
+                    $row->type_of_work,
+                    isset($row->sub_work_type_name) ? $row->sub_work_type_name : "-",
+                    $row->middle_men,
+                    $row->cont_no,
+                    $row->beneficial,
+                    $row->po,
+                    $this->getWorkStatusLabel($row->work_status),
+                    $row->remark_goshana,
+                    $row->remark,
+                    $row->added_by,
+                    $row->mobile,
+                    $row->lat . "<br>" . $row->lng,
+                    $row->createdAt,
+                    !empty($row->uploaded_file)
+                        ? '<a class="btn btn-sm btn-info" href="' . base_url("uploads/" . $row->uploaded_file) . '" title="Image" target="_blank">View File</a>'
+                        : "<span>No File Uploaded</span>",
+                    '<div class="text-center">' . $actionSimple . "</div>",
+                ];
+                continue;
+            }
+
+            $actionButtons =
+                '<a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View Comment"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
+                '<a class="btn btn-sm btn-success ' . (!$isWithin72Hours ? "disabled" : "") . '" href="' . base_url("user/submit_form/" . $row->id . "/1") . '" data-userid="' . $row->id . '" title="Add Comment"><i class="fa fa-edit"></i></a> ' .
+                '<a class="btn btn-sm btn-warning" href="' . base_url("user/editJansunwai/" . $row->id) . '" title="Edit"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
+                '<a class="btn btn-sm btn-danger" href="' . base_url("user/delete_jansunwai/" . $row->id) . '" onclick="return confirm(\'Are you sure you want to delete this record?\');" title="Delete"><i class="fa fa-trash"></i></a>';
+
+            $response[] = [
+                $i++,
+                $row->registration_no,
+                $timer,
+                $row->sector_name,
+                $row->micro_sector_no,
+                $row->micro_sector_name,
+                $row->year,
+                $monthLabel,
+                $row->date,
+                $row->district,
+                $row->assembly,
+                $blockName,
+                $row->recommended_letter_no,
+                $boothNo,
+                $boothNameDisp,
+                $panchayatName,
+                $villageName,
+                $row->majra_faliya,
+                $row->work_problem,
+                $row->office,
+                $row->approximate_cost,
+                $departmentName,
+                $approvedFundCell,
+                $workAgencyCell,
+                $row->priority,
+                $row->ts_no_date,
+                $row->as_no_date,
+                $row->type_of_work,
+                isset($row->sub_work_type_name) ? $row->sub_work_type_name : "-",
+                $row->middle_men,
+                $row->cont_no,
+                $row->beneficial,
+                $row->po,
+                $this->getWorkStatusLabel($row->work_status),
+                $row->remark_goshana,
+                $row->remark,
+                $row->added_by,
+                $row->mobile,
+                $row->lat . "<br>" . $row->lng,
+                $row->createdAt,
+                !empty($row->uploaded_file)
+                    ? '<a class="btn btn-sm btn-info" href="' . base_url("uploads/" . $row->uploaded_file) . '" title="Image" target="_blank">View File</a>'
+                    : "<span>No File Uploaded</span>",
+                '<div class="text-center">' . $actionButtons . "</div>",
+            ];
+        }
+
+        $output = [
+            "draw" => intval($request["draw"] ?? 0),
+            "recordsTotal" => (int) $recordsTotal,
+            "recordsFiltered" => (int) $recordsFiltered,
+            "data" => $response,
+        ];
+
+        $this->output->set_content_type("application/json")->set_output(json_encode($output));
     }
 
-    $output = [
-        "draw" => intval($request['draw']),
-        "recordsTotal" => $totalRecords,
-        "recordsFiltered" => $filteredRecords,
-        "data" => $response
-    ];
-
-    echo json_encode($output);
-}
-
-public function getWorkStatusLabel($status)
-{
-    switch ($status) {
-        case 'Complete':
-            return '<span class="label label-success">' . $status . '</span>';
-        case 'Incomplete':
-            return '<span class="label label-danger">' . $status . '</span>';
-        case 'In progress':
-            return '<span class="label label-warning">' . $status . '</span>';
-        default:
-            return '<span class="label label-default">Unknown</span>';
+    public function getWorkStatusLabel($status)
+    {
+        switch ($status) {
+            case "Complete":
+                return '<span class="label label-success">' . $status . "</span>";
+            case "Incomplete":
+                return '<span class="label label-danger">' . $status . "</span>";
+            case "In progress":
+                return '<span class="label label-warning">' . $status . "</span>";
+            case "Reject":
+                return '<span class="label label-default" style="background-color: #d73925; color: white;">' . $status . "</span>";
+            case "Approval":
+                return '<span class="label label-default">' . $status . "</span>";
+            default:
+                return '<span class="label label-default">' . ($status ?: "Unknown") . "</span>";
+        }
     }
-}
     function filterJansunwai() {
         $this->module = "Block-Level";
         if (!$this->hasListAccess()) {
@@ -1802,6 +2134,12 @@ public function getWorkStatusLabel($status)
             // Execute the query
             $query = $this->db->get();
             $data["userRecords"] = $query->result();
+            $data["filters"] = [
+                "block" => $this->input->get("block"),
+                "district" => $this->input->get("district_id"),
+                "vidhan_sabha_id" => $this->input->get("vidhan_sabha_id"),
+                "code" => $this->input->get("code"),
+            ];
             $this->load->model('Vidhan_sabha_model');
             $data['vidhan_sabhas_list'] = $this->Vidhan_sabha_model->get_vidhan_sabhas();
             $data['districts_list'] = $this->Comman_model->getAllData('district', [], '');

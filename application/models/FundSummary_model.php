@@ -2,8 +2,9 @@
 
 class FundSummary_model extends CI_Model {
 
-    public function get_funds_data($filters = []) {
-        // Query for jansunwai
+    /** UNION subquery (jansunwai + districtpublicproblem), no outer filters. */
+    private function build_union_subquery_sql()
+    {
         $this->db->select("j.id, j.registration_no, j.uname, j.mobile, j.district, 'Jansunwai' as source, j.work_problem, 
                           CASE 
                             WHEN TRIM(j.approved_fund) LIKE 'MLA Swechanudan' THEN 'MLA Sweechanudan'
@@ -27,10 +28,8 @@ class FundSummary_model extends CI_Model {
         $this->db->join('booth', 'booth.id = j.booth_name', 'left');
         $this->db->where('j.approved_fund !=', '');
         $this->db->where('j.approved_fund IS NOT NULL', NULL, FALSE);
-        
         $query1 = $this->db->get_compiled_select();
 
-        // Query for districtpublicproblem
         $this->db->select("dp.id, dp.registration_no, dp.uname, dp.mobile, dp.district, 'MP Public Problem' as source, dp.work_problem, 
                           CASE 
                             WHEN TRIM(dp.approved_fund) LIKE 'MLA Swechanudan' THEN 'MLA Sweechanudan'
@@ -53,46 +52,43 @@ class FundSummary_model extends CI_Model {
         $this->db->join('department d', 'd.id = dp.department', 'left');
         $this->db->where('dp.approved_fund !=', '');
         $this->db->where('dp.approved_fund IS NOT NULL', NULL, FALSE);
-        
         $query2 = $this->db->get_compiled_select();
 
-        // UNION both queries
-        $combined_query = "({$query1}) UNION ({$query2})";
-        
-        // Wrap combined query to apply filters
+        return "({$query1}) UNION ({$query2})";
+    }
+
+    /** SELECT * FROM (union) WHERE 1=1 + list filters (no ORDER/LIMIT). */
+    private function build_filtered_inner_sql($filters = [])
+    {
+        $combined_query = $this->build_union_subquery_sql();
         $sql = "SELECT * FROM ({$combined_query}) as combined_funds WHERE 1=1";
-        
+
         if (!empty($filters['fund_type'])) {
-            $fund_type = $filters['fund_type'];
-            // Since combined_funds already has normalized 'approved_fund', we can filter on that
-            $sql .= " AND approved_fund = " . $this->db->escape($fund_type);
+            $sql .= " AND approved_fund = " . $this->db->escape($filters['fund_type']);
         }
-        
-        // Use only financial_year if provided (priority over year)
+
         if (!empty($filters['financial_year'])) {
             $fin_year = $filters['financial_year'];
             $parts = explode('-', $fin_year);
             if (count($parts) == 2) {
                 $start_year = $parts[0];
                 $fin_year_short = $start_year . '-' . substr($parts[1], -2);
-                
-                $sql .= " AND (year = " . $this->db->escape($start_year) . 
-                        " OR year = " . $this->db->escape($fin_year) . 
-                        " OR year = " . $this->db->escape($fin_year_short) . ")";
+                $sql .= " AND (year = " . $this->db->escape($start_year) .
+                    " OR year = " . $this->db->escape($fin_year) .
+                    " OR year = " . $this->db->escape($fin_year_short) . ")";
             }
-        } else if (!empty($filters['year'])) {
-            // Fallback to year filter if financial_year not provided
+        } elseif (!empty($filters['year'])) {
             $sql .= " AND year = " . $this->db->escape($filters['year']);
         }
-        
+
         if (!empty($filters['from_date'])) {
             $sql .= " AND DATE(date) >= " . $this->db->escape($filters['from_date']);
         }
-        
+
         if (!empty($filters['to_date'])) {
             $sql .= " AND DATE(date) <= " . $this->db->escape($filters['to_date']);
         }
-        
+
         if (!empty($filters['work_status'])) {
             $sql .= " AND work_status = " . $this->db->escape($filters['work_status']);
         }
@@ -101,8 +97,89 @@ class FundSummary_model extends CI_Model {
             $sql .= " AND registration_no LIKE " . $this->db->escape('%' . $filters['registration_no'] . '%');
         }
 
+        return $sql;
+    }
+
+    private function append_datatable_search_sql($sql, $search)
+    {
+        $search = trim((string) $search);
+        if ($search === '') {
+            return $sql;
+        }
+        $term = $this->db->escape('%' . $search . '%');
+        $sql .= " AND (registration_no LIKE {$term} OR uname LIKE {$term} OR mobile LIKE {$term} OR source LIKE {$term} OR district_name LIKE {$term} OR block_name LIKE {$term} OR panchayat_name LIKE {$term} OR village_name LIKE {$term} OR department_name LIKE {$term} OR work_problem LIKE {$term} OR work_status LIKE {$term} OR approved_fund LIKE {$term} OR work_agency LIKE {$term} OR remark LIKE {$term} OR CAST(year AS CHAR) LIKE {$term} OR vidhan_sabha_name LIKE {$term})";
+        return $sql;
+    }
+
+    public function count_fund_summary_total()
+    {
+        $inner = $this->build_filtered_inner_sql([]);
+        $q = $this->db->query("SELECT COUNT(*) AS c FROM ({$inner}) AS cnt");
+        $row = $q->row_array();
+        return (int) ($row['c'] ?? 0);
+    }
+
+    public function count_fund_summary_filtered($filters, $search = '')
+    {
+        $inner = $this->build_filtered_inner_sql($filters);
+        $inner = $this->append_datatable_search_sql($inner, $search);
+        $q = $this->db->query("SELECT COUNT(*) AS c FROM ({$inner}) AS cnt");
+        $row = $q->row_array();
+        return (int) ($row['c'] ?? 0);
+    }
+
+    public function sum_fund_summary_filtered($filters, $search = '')
+    {
+        $inner = $this->build_filtered_inner_sql($filters);
+        $inner = $this->append_datatable_search_sql($inner, $search);
+        $q = $this->db->query("SELECT COALESCE(SUM(approximate_cost), 0) AS s FROM ({$inner}) AS t");
+        $row = $q->row_array();
+        return (float) ($row['s'] ?? 0);
+    }
+
+    public function get_fund_summary_page($filters, $search, $start, $length, $order_col, $order_dir)
+    {
+        $orderMap = [
+            1 => 'registration_no',
+            2 => 'year',
+            3 => 'uname',
+            4 => 'mobile',
+            5 => 'source',
+            6 => 'district_name',
+            7 => 'block_name',
+            8 => 'booth_no',
+            9 => 'booth_name',
+            10 => 'vidhan_sabha_name',
+            11 => 'panchayat_name',
+            12 => 'village_name',
+            13 => 'majra_faliya',
+            14 => 'department_name',
+            15 => 'work_problem',
+            16 => 'work_status',
+            17 => 'approved_fund',
+            18 => 'approximate_cost',
+            19 => 'work_agency',
+            20 => 'remark',
+            21 => 'date',
+        ];
+        $col = isset($orderMap[$order_col]) ? $orderMap[$order_col] : 'date';
+        $dir = strtoupper($order_dir) === 'ASC' ? 'ASC' : 'DESC';
+
+        $inner = $this->build_filtered_inner_sql($filters);
+        $inner = $this->append_datatable_search_sql($inner, $search);
+        $inner .= " ORDER BY `{$col}` {$dir}";
+        if ($length > 0) {
+            $inner .= " LIMIT " . (int) $length . " OFFSET " . (int) $start;
+        }
+
+        $query = $this->db->query($inner);
+        return $query->result_array();
+    }
+
+    public function get_funds_data($filters = [])
+    {
+        $sql = $this->build_filtered_inner_sql($filters);
         $sql .= " ORDER BY date DESC";
-        
         $query = $this->db->query($sql);
         return $query->result_array();
     }
