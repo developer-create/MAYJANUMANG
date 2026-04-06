@@ -656,6 +656,12 @@ table tbody td:last-child {
                     
                     // Special handling for Events - convert to dropdown
                     if (strcasecmp($moduleName, 'Events') == 0) {
+                        // Get pending approvals count for admin
+                        $pendingCount = 0;
+                        if ($this->session->userdata('role') == 1) {
+                            $this->load->model('Events_model');
+                            $pendingCount = $this->Events_model->get_pending_count();
+                        }
                         ?>
                         <li class="treeview">
                             <a href="#">
@@ -667,7 +673,13 @@ table tbody td:last-child {
                             <ul class="treeview-menu">
                                 <li><a href="<?php echo $url; ?>"><i class="fa fa-list"></i> <span>Events List</span></a></li>
                                 <?php if ($this->session->userdata('role') == 1): ?>
-                                <li><a href="<?php echo base_url('events/approvals'); ?>"><i class="fa fa-check-circle"></i> <span>Approvals</span></a></li>
+                                <li><a href="<?php echo base_url('events/approvals'); ?>"><i class="fa fa-check-circle"></i> <span>Approvals</span>
+                                    <?php if ($pendingCount > 0): ?>
+                                    <span class="pull-right-container">
+                                        <small class="label pull-right bg-red"><?php echo $pendingCount; ?></small>
+                                    </span>
+                                    <?php endif; ?>
+                                </a></li>
                                 <?php endif; ?>
                             </ul>
                         </li>
