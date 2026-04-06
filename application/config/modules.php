@@ -71,6 +71,11 @@ $config['moduleList'] = array(
         'url' => $url . 'fundSummary'
     ),
     array(
+        'module' => 'Fund-Budget-Limits',
+        'total_access' => 0, 'list' => 0, 'create_records' => 0, 'edit_records' => 0, 'delete_records' => 0,
+        'url' => $url . 'fundBudget'
+    ),
+    array(
         'module' => 'Visitors',
         'total_access' => 0, 'list' => 0, 'create_records' => 0, 'edit_records' => 0, 'delete_records' => 0,
         'url' => $url . 'Visitors'

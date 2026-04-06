@@ -298,6 +298,20 @@ $data["results"] = $query->result();
             if ($this->form_validation->run() == false) {
                 $this->loadViews("users/addJansunwai", $this->global, $data, null);
             } else {
+                $this->load->helper("fund_budget");
+                $this->load->model("Fund_budget_model");
+                $resolved_fund = resolve_approved_fund_post($this->input->post("approved_fund"), $this->input->post("approved_fund_other"));
+                $norm_fund = normalize_approved_fund_name($resolved_fund);
+                if ($norm_fund !== null) {
+                    $fy = canonicalize_financial_year_for_budget($this->input->post("year"));
+                    $chk = $this->Fund_budget_model->check_budget($norm_fund, $fy, (float) $this->input->post("approximate_cost"), null, null);
+                    if (!$chk["ok"]) {
+                        $this->session->set_flashdata("error", $chk["message"]);
+                        redirect("user/addNewJansunwai");
+                        return;
+                    }
+                }
+
                 // Gather post data
                 
                 $config['upload_path'] = './uploads/'; // Specify the upload directory
@@ -467,6 +481,21 @@ $insert_id = $this->db->insert_id();
             $id = $this->input->post("id");
             $this->editJansunwai($id);
         } else {
+            $this->load->helper("fund_budget");
+            $this->load->model("Fund_budget_model");
+            $id = (int) $this->input->post("id");
+            $resolved_fund = resolve_approved_fund_post($this->input->post("approved_fund"), $this->input->post("approved_fund_other"));
+            $norm_fund = normalize_approved_fund_name($resolved_fund);
+            if ($norm_fund !== null) {
+                $fy = canonicalize_financial_year_for_budget($this->input->post("year"));
+                $chk = $this->Fund_budget_model->check_budget($norm_fund, $fy, (float) $this->input->post("approximate_cost"), "jansunwai", $id);
+                if (!$chk["ok"]) {
+                    $this->session->set_flashdata("error", $chk["message"]);
+                    redirect("user/editJansunwai/" . $id);
+                    return;
+                }
+            }
+
             $config['upload_path'] = './uploads/'; // Specify the upload directory
                 $config['allowed_types'] = '*'; // Specify allowed file types
                 $config['max_size'] = '*'; // Set maximum file size in KB (2MB)

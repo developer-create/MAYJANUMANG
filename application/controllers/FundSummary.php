@@ -7,50 +7,71 @@ class FundSummary extends BaseController {
     public function __construct() {
         parent::__construct();
         $this->load->model('FundSummary_model');
+        $this->load->model('Fund_budget_model');
+        $this->load->helper(['financial_year', 'fund_budget']);
         $this->isLoggedIn();
     }
 
     public function index() {
+        // First visit with no query string: default to current FY so cards/table match (YYYY-YYYY like dropdown)
+        if (empty($_GET)) {
+            $m = (int) date('n');
+            $y = (int) date('Y');
+            $start = $m < 4 ? $y - 1 : $y;
+            $default_fy = $start . '-' . ($start + 1);
+            redirect('fundSummary?financial_year=' . rawurlencode($default_fy));
+            return;
+        }
+
         $filters = [
-            'fund_type' => $this->input->get('fund_type'),
-            'financial_year' => $this->input->get('financial_year'),
-            'from_date' => $this->input->get('from_date'),
-            'to_date' => $this->input->get('to_date'),
-            'work_status' => $this->input->get('work_status'),
-            'registration_no' => $this->input->get('registration_no')
+            'fund_type' => trim((string) $this->input->get('fund_type')),
+            'financial_year' => trim((string) $this->input->get('financial_year')),
+            'from_date' => trim((string) $this->input->get('from_date')),
+            'to_date' => trim((string) $this->input->get('to_date')),
+            'work_status' => trim((string) $this->input->get('work_status')),
+            'registration_no' => trim((string) $this->input->get('registration_no')),
         ];
 
-        // Get current financial year (April to March)
+        // Get current financial year (April to March) — full year end for display (YYYY-YYYY)
         $current_month = date('n');
-        $current_year = date('Y');
+        $current_year = (int) date('Y');
         if ($current_month < 4) {
             $current_fy = ($current_year - 1) . '-' . $current_year;
         } else {
             $current_fy = $current_year . '-' . ($current_year + 1);
         }
 
-        // Don't set default financial year - let user see all data if no filter is applied
-        // Only use current FY for display purposes
-        // if (empty($filters['financial_year'])) {
-        //     $filters['financial_year'] = $current_fy;
-        // }
-
         // Table rows load via AJAX (fundSummary/data); keep optional full data for exports if needed
         $data['funds_data'] = [];
 
-        // Get totals for the selected filters (summary cards)
+        // Get totals for the selected filters (summary cards) — same FY + fund_type as table
         $data['used_totals'] = $this->FundSummary_model->get_fund_totals($filters);
         
-        // Fund allocations per financial year
-        $data['fund_limits'] = [
-            'MLA FUND' => 25000000,           // 2.5 Cr
-            'MLA Sweechanudan' => 7500000,    // 75 Lakh
-            'CLP Sweechanudan' => 10000000,   // 1 Cr
-            'Jansampark Fund' => 200000       // 2 Lakh
-        ];
+        if (!empty($filters['financial_year'])) {
+            $fy_canonical = canonicalize_financial_year_for_budget($filters['financial_year']);
+            $db_limits = $this->Fund_budget_model->get_limits_map_for_fy($fy_canonical);
+            $defaults = [
+                'MLA FUND' => 25000000,
+                'MLA Sweechanudan' => 7500000,
+                'CLP Sweechanudan' => 10000000,
+                'Jansampark Fund' => 200000,
+            ];
+            $data['fund_limits'] = [];
+            foreach ($defaults as $k => $def) {
+                $data['fund_limits'][$k] = isset($db_limits[$k]) ? $db_limits[$k] : $def;
+            }
+            $data['card_mode_all_fy'] = false;
+        } else {
+            $data['fund_limits'] = null;
+            $data['card_mode_all_fy'] = true;
+        }
 
         $data['filters'] = $filters;
         $data['current_fy'] = $current_fy;
+        $data['display_fy_title'] = !empty($filters['financial_year']) ? $filters['financial_year'] : 'All FY';
+        $data['card_subtitle'] = !empty($filters['financial_year'])
+            ? 'Cards and table use the same filters'
+            : 'Used amounts are across all years; select a financial year to compare with budget';
         $this->global['pageTitle'] = 'Jan Umang : Approved Fund Summary';
         
         $this->loadViews("fund_summary/index", $this->global, $data, NULL);

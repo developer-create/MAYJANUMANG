@@ -598,6 +598,8 @@ table tbody td:last-child {
                         $icon = 'fa-bar-chart';
                     } elseif (strcasecmp($moduleName, 'Fund-Summary') == 0) {
                         $icon = 'fa-money';
+                    } elseif (strcasecmp($moduleName, 'Fund-Budget-Limits') == 0) {
+                        $icon = 'fa-balance-scale';
                     } elseif (strcasecmp($moduleName, 'Visitors') == 0) {
                         $icon = 'fa-eye';
                     } elseif (strcasecmp($moduleName, 'Events') == 0) {

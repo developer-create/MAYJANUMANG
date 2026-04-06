@@ -488,9 +488,15 @@
                 ?>
                 <div class="alert alert-success alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <?php echo $this->session->flashdata('success'); ?>
+                    <?php echo $success; ?>
                 </div>
-                <?php } ?> 
+                <?php } ?>
+                <?php $ferr = $this->session->flashdata('error'); if ($ferr) { ?>
+                <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <?php echo $ferr; ?>
+                </div>
+                <?php } ?>
             </div>
         </div>    
     </section>

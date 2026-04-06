@@ -107,6 +107,20 @@ class Districtpublicproblem extends BaseController {
                 $year = $this->input->post("year");
                 $month = $this->input->post("month");
                 $financial_year = $year . '-' . substr($year + 1, -2);
+
+                $this->load->helper("fund_budget");
+                $this->load->model("Fund_budget_model");
+                $resolved_fund = resolve_approved_fund_post($this->input->post("approved_fund"), $this->input->post("approved_fund_other"));
+                $norm_fund = normalize_approved_fund_name($resolved_fund);
+                if ($norm_fund !== null) {
+                    $fy = canonicalize_financial_year_for_budget($financial_year);
+                    $chk = $this->Fund_budget_model->check_budget($norm_fund, $fy, (float) $this->input->post("approximate_cost"), null, null);
+                    if (!$chk["ok"]) {
+                        $this->session->set_flashdata("error", $chk["message"]);
+                        redirect("Districtpublicproblem/addNewDisctrictproblem");
+                        return;
+                    }
+                }
                 
                 // Handle approved_fund
                 $approved_fund = $this->input->post("approved_fund");
@@ -265,6 +279,21 @@ $lastRegQuery = $this->db->select("registration_no")
         $year = $this->input->post("year");
         $month = $this->input->post("month");
         $financial_year = $year . '-' . substr($year + 1, -2);
+
+        $this->load->helper("fund_budget");
+        $this->load->model("Fund_budget_model");
+        $id = (int) $this->input->post("id");
+        $resolved_fund = resolve_approved_fund_post($this->input->post("approved_fund"), $this->input->post("approved_fund_other"));
+        $norm_fund = normalize_approved_fund_name($resolved_fund);
+        if ($norm_fund !== null) {
+            $fy = canonicalize_financial_year_for_budget($financial_year);
+            $chk = $this->Fund_budget_model->check_budget($norm_fund, $fy, (float) $this->input->post("approximate_cost"), "districtpublicproblem", $id);
+            if (!$chk["ok"]) {
+                $this->session->set_flashdata("error", $chk["message"]);
+                redirect("Districtpublicproblem/editDisctrictproblem/" . $id);
+                return;
+            }
+        }
         
         // Handle approved_fund
         $approved_fund = $this->input->post("approved_fund");

@@ -1,8 +1,8 @@
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
-            <i class="fa fa-money"></i> Approved Fund Summary (FY: <?php echo $current_fy; ?>)
-            <small>Consolidated report of all approved funds for current financial year</small>
+            <i class="fa fa-money"></i> Approved Fund Summary (FY: <?php echo htmlspecialchars($display_fy_title); ?>)
+            <small><?php echo htmlspecialchars($card_subtitle); ?></small>
         </h1>
     </section>
 
@@ -24,17 +24,35 @@
                 'Jansampark Fund' => 'bg-red'
             ];
             
-            foreach ($fund_limits as $fund_name => $total_allocation): 
-                $used = isset($used_totals[$fund_name]) ? $used_totals[$fund_name] : 0;
-                $available = $total_allocation - $used;
+            $card_fund_order = ['MLA FUND', 'MLA Sweechanudan', 'CLP Sweechanudan', 'Jansampark Fund'];
+            foreach ($card_fund_order as $fund_name):
+                $used = isset($used_totals[$fund_name]) ? (float) $used_totals[$fund_name] : 0;
                 $color = isset($fund_colors[$fund_name]) ? $fund_colors[$fund_name] : 'bg-blue';
                 $display_name = isset($fund_display_names[$fund_name]) ? $fund_display_names[$fund_name] : $fund_name;
+                if (!empty($card_mode_all_fy)):
             ?>
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box <?php echo $color; ?>">
                     <span class="info-box-icon"><i class="fa fa-inr"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text"><b><?php echo $display_name; ?></b></span>
+                        <span class="info-box-text"><b><?php echo htmlspecialchars($display_name); ?></b></span>
+                        <span class="info-box-number">
+                            Total: —<br>
+                            Used (all FY): <?php echo number_format($used); ?><br>
+                            Avail: —
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <?php else:
+                    $total_allocation = isset($fund_limits[$fund_name]) ? (float) $fund_limits[$fund_name] : 0;
+                    $available = $total_allocation - $used;
+            ?>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box <?php echo $color; ?>">
+                    <span class="info-box-icon"><i class="fa fa-inr"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text"><b><?php echo htmlspecialchars($display_name); ?></b></span>
                         <span class="info-box-number">
                             Total: <?php echo number_format($total_allocation); ?><br>
                             Used: <?php echo number_format($used); ?><br>
@@ -43,7 +61,9 @@
                     </div>
                 </div>
             </div>
-            <?php endforeach; ?>
+            <?php
+                endif;
+            endforeach; ?>
         </div>
 
         <div class="row">
@@ -76,13 +96,12 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label>Financial Year</label>
-                                        <select name="financial_year" class="form-control">
+                                        <select name="financial_year" id="fundSummaryFinancialYear" class="form-control">
                                             <option value="">All FY</option>
-                                            <?php for($y=2020; $y<=2027; $y++): 
-                                                $fy = $y . '-' . ($y+1);
-                                                $fy_short = $y . '-' . substr($y+1, 2);
+                                            <?php for ($y = 2008; $y <= 2099; $y++):
+                                                $fy = $y . '-' . ($y + 1);
                                             ?>
-                                                <option value="<?php echo $fy; ?>" <?php echo $filters['financial_year'] == $fy ? 'selected' : ''; ?>><?php echo $fy; ?></option>
+                                                <option value="<?php echo htmlspecialchars($fy); ?>" <?php echo (string) $filters['financial_year'] === (string) $fy ? 'selected' : ''; ?>><?php echo htmlspecialchars($fy); ?></option>
                                             <?php endfor; ?>
                                         </select>
                                     </div>
@@ -120,7 +139,7 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label>&nbsp;</label>
-                                        <a href="<?php echo site_url('fundSummary'); ?>" class="btn btn-default form-control"><i class="fa fa-refresh"></i> Reset</a>
+                                        <a href="<?php echo site_url('fundSummary'); ?>?financial_year=" class="btn btn-default form-control"><i class="fa fa-refresh"></i> Reset</a>
                                     </div>
                                 </div>
                             </div>
@@ -326,6 +345,10 @@ jQuery(document).ready(function(){
         var x = Number(n) || 0;
         return x.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
+
+    jQuery('#fundSummaryFinancialYear').on('change', function () {
+        jQuery('#fundSummaryFilterForm').submit();
+    });
 
     var table = jQuery('#fundSummaryTable').DataTable({
         processing: true,

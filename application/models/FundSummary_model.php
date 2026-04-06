@@ -249,10 +249,14 @@ class FundSummary_model extends CI_Model {
                 FROM districtpublicproblem
                 WHERE approved_fund IS NOT NULL AND approved_fund != ''" . $filter_sql;
         
-        // Combined query - group by normalized names
+        // Combined query - group by normalized names (optional fund_type matches table filter)
         $combined_sql = "SELECT approved_fund, SUM(approximate_cost) as total_used 
                         FROM (({$sql1}) UNION ALL ({$sql2})) as combined 
-                        GROUP BY approved_fund";
+                        WHERE 1=1";
+        if (!empty($filters['fund_type'])) {
+            $combined_sql .= " AND approved_fund = " . $this->db->escape($filters['fund_type']);
+        }
+        $combined_sql .= " GROUP BY approved_fund";
         
         $query = $this->db->query($combined_sql);
         $results = $query->result_array();
