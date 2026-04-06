@@ -679,6 +679,24 @@ table tbody td:last-child {
                             </ul>
                         </li>
                         <?php
+                    } elseif (strcasecmp($moduleName, 'Fund-Summary') == 0) {
+                        // Special handling for Fund modules - convert to dropdown
+                        ?>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-money"></i> <span>Fund Management</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="<?php echo base_url('fundSummary'); ?>"><i class="fa fa-money"></i> <span>Fund Summary</span></a></li>
+                                <li><a href="<?php echo base_url('fundBudget'); ?>"><i class="fa fa-balance-scale"></i> <span>Fund Budget Limits</span></a></li>
+                            </ul>
+                        </li>
+                        <?php
+                    } elseif (strcasecmp($moduleName, 'Fund-Budget-Limits') == 0) {
+                        // Skip Fund-Budget-Limits as it's already handled in Fund-Summary dropdown
                     } else {
                     ?>
                     
