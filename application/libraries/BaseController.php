@@ -37,6 +37,14 @@ class BaseController extends CI_Controller {
 			$this->global ['last_login'] = $this->lastLogin;
 			$this->global ['is_admin'] = $this->isAdmin;
 			$this->global ['access_info'] = $this->accessInfo;
+			
+			// Add pending approvals count for admin users
+			if ($this->role == 1) {
+				$this->load->model('Events_model');
+				$this->global['pending_approvals_count'] = $this->Events_model->get_pending_count();
+			} else {
+				$this->global['pending_approvals_count'] = 0;
+			}
 		}
 	}
 	
