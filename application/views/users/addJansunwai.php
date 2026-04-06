@@ -20,7 +20,7 @@
                                     <div class="form-group">
                                         <label for="sector_name">Sector Name</label>
                                         <input type="text" class="form-control required" id="sector_name"
-                                            name="sector_name" value="<?php echo set_value('sector_name'); ?>">
+                                            name="sector_name" value="<?php echo isset($form_data['sector_name']) ? htmlspecialchars($form_data['sector_name']) : ''; ?>">
                                         <?php echo form_error('sector_name', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -29,7 +29,7 @@
                                     <div class="form-group">
                                         <label for="micro_sector_no">Micro Sector No.</label>
                                         <input type="text" class="form-control required" id="micro_sector_no"
-                                            name="micro_sector_no" value="<?php echo set_value('micro_sector_no'); ?>">
+                                            name="micro_sector_no" value="<?php echo isset($form_data['micro_sector_no']) ? htmlspecialchars($form_data['micro_sector_no']) : ''; ?>">
                                         <?php echo form_error('micro_sector_no', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -39,7 +39,7 @@
                                         <label for="micro_sector_name">Micro Sector Name</label>
                                         <input type="text" class="form-control required" id="micro_sector_name"
                                             name="micro_sector_name"
-                                            value="<?php echo set_value('micro_sector_name'); ?>">
+                                            value="<?php echo isset($form_data['micro_sector_name']) ? htmlspecialchars($form_data['micro_sector_name']) : ''; ?>">
                                         <?php echo form_error('micro_sector_name', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@
                                     <div class="form-group">
                                         <label for="date">Date <span class="text-danger">*</span></label>
                                         <input type="date" class="form-control required" id="date" name="date"
-                                            value="<?php echo set_value('date'); ?>">
+                                            value="<?php echo isset($form_data['date']) ? htmlspecialchars($form_data['date']) : ''; ?>">
                                         <?php echo form_error('date', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@
                                                 '12' => 'December'
                                             ];
                                             foreach ($months as $key => $value) {
-                                                echo "<option value='{$key}'>{$value}</option>";
+                                                echo "<option value='{$key}' " . set_select('month', $key) . ">{$value}</option>";
                                             }
                                             ?>
                                         </select>
@@ -100,7 +100,7 @@
                                             <?php
                                             krsort($financial_years);
                                             foreach ($financial_years as $fy) {
-                                                echo "<option value='{$fy}'>{$fy}</option>";
+                                                echo "<option value='{$fy}' " . set_select('year', $fy) . ">{$fy}</option>";
                                             }
                                             ?>
                                         </select>
@@ -115,7 +115,7 @@
                                     <div class="form-group">
                                         <label for="district">District</label>
                                         <input type="text" class="form-control required" id="district" name="district"
-                                            value="<?php echo set_value('district'); ?>">
+                                            value="<?php echo isset($form_data['district']) ? htmlspecialchars($form_data['district']) : ''; ?>">
                                         <?php echo form_error('district', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -124,7 +124,7 @@
                                     <div class="form-group">
                                         <label for="assembly">Assembly</label>
                                         <input type="text" class="form-control required" id="assembly" name="assembly"
-                                            value="<?php echo set_value('assembly'); ?>">
+                                            value="<?php echo isset($form_data['assembly']) ? htmlspecialchars($form_data['assembly']) : ''; ?>">
                                         <?php echo form_error('assembly', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@
                                         <select class="form-control select2 required" id="block" name="block">
                                             <option value="">Select</option>
                                             <?php foreach($blocks as $eachblock){ ?>
-                                            <option value="<?php echo $eachblock['id'] ?>">
+                                            <option value="<?php echo $eachblock['id'] ?>" <?php echo set_select('block', $eachblock['id']); ?>>
                                                 <?php echo $eachblock['name'] ?></option>
                                             <?php }   ?>
 
@@ -153,7 +153,7 @@
                                         <label for="recommended_letter_no">Recommended Letter No</label>
                                         <input type="text" class="form-control required" id="recommended_letter_no"
                                             name="recommended_letter_no"
-                                            value="<?php echo set_value('recommended_letter_no'); ?>">
+                                            value="<?php echo isset($form_data['recommended_letter_no']) ? htmlspecialchars($form_data['recommended_letter_no']) : ''; ?>">
                                         <?php echo form_error('recommended_letter_no', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -212,7 +212,7 @@
                                     <div class="form-group">
                                         <label for="majra_faliya">Majra/Faliya</label>
                                         <input type="text" class="form-control required" id="majra_faliya"
-                                            name="majra_faliya" value="<?php echo set_value('majra_faliya'); ?>">
+                                            name="majra_faliya" value="<?php echo isset($form_data['majra_faliya']) ? htmlspecialchars($form_data['majra_faliya']) : ''; ?>">
                                         <?php echo form_error('majra_faliya', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -225,7 +225,7 @@
                                     <div class="form-group">
                                         <label for="work_problem">Work/Problem</label>
                                         <input type="text" class="form-control required" id="work_problem"
-                                            name="work_problem" value="<?php echo set_value('work_problem'); ?>">
+                                            name="work_problem" value="<?php echo isset($form_data['work_problem']) ? htmlspecialchars($form_data['work_problem']) : ''; ?>">
                                         <?php echo form_error('work_problem', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -235,7 +235,7 @@
                                     <div class="form-group">
                                         <label for="office">Office</label>
                                         <input type="text" class="form-control required" id="office" name="office"
-                                            value="<?php echo set_value('office'); ?>">
+                                            value="<?php echo isset($form_data['office']) ? htmlspecialchars($form_data['office']) : ''; ?>">
                                         <?php echo form_error('office', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -245,7 +245,7 @@
                                         <label for="approximate_cost">Approximate Cost</label>
                                         <input type="text" class="form-control required" id="approximate_cost"
                                             name="approximate_cost"
-                                            value="<?php echo set_value('approximate_cost'); ?>">
+                                            value="<?php echo isset($form_data['approximate_cost']) ? htmlspecialchars($form_data['approximate_cost']) : ''; ?>">
                                         <?php echo form_error('approximate_cost', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -259,7 +259,7 @@
                                         <select class="form-control select2 required" id="department" name="department">
                                             <option value="">Select</option>
                                             <?php foreach($departments as $eachblock){ ?>
-                                            <option value="<?php echo $eachblock['id'] ?>">
+                                            <option value="<?php echo $eachblock['id'] ?>" <?php echo set_select('department', $eachblock['id']); ?>>
                                                 <?php echo $eachblock['name'] ?></option>
                                             <?php } ?>
                                         </select>
@@ -286,7 +286,7 @@
                                     <div class="form-group">
                                         <label for="approved_fund_other">Enter Fund Name</label>
                                         <input type="text" class="form-control" id="approved_fund_other" name="approved_fund_other"
-                                            value="<?php echo set_value('approved_fund_other'); ?>"
+                                            value="<?php echo isset($form_data['approved_fund_other']) ? htmlspecialchars($form_data['approved_fund_other']) : ''; ?>"
                                             placeholder="Enter custom fund name">
                                         <?php echo form_error('approved_fund_other', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -299,7 +299,7 @@
                                     <div class="form-group">
                                         <label for="work_agency">Work Agency</label>
                                         <input type="text" class="form-control" id="work_agency" name="work_agency"
-                                            value="<?php echo set_value('work_agency'); ?>"
+                                            value="<?php echo isset($form_data['work_agency']) ? htmlspecialchars($form_data['work_agency']) : ''; ?>"
                                             placeholder="Enter work executing agency">
                                         <?php echo form_error('work_agency', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -309,7 +309,7 @@
                                     <div class="form-group">
                                         <label for="priority">Priority</label>
                                         <input type="text" class="form-control required" id="priority" name="priority"
-                                            value="<?php echo set_value('priority'); ?>">
+                                            value="<?php echo isset($form_data['priority']) ? htmlspecialchars($form_data['priority']) : ''; ?>">
                                         <?php echo form_error('priority', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -318,7 +318,7 @@
                                     <div class="form-group">
                                         <label for="ts_no_date">TS No/Date</label>
                                         <input type="text" class="form-control" id="ts_no_date" name="ts_no_date"
-                                            value="<?php echo set_value('ts_no_date'); ?>">
+                                            value="<?php echo isset($form_data['ts_no_date']) ? htmlspecialchars($form_data['ts_no_date']) : ''; ?>">
                                         <?php echo form_error('ts_no_date', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -331,7 +331,7 @@
                                     <div class="form-group">
                                         <label for="as_no_date">AS No/Date</label>
                                         <input type="text" class="form-control" id="as_no_date" name="as_no_date"
-                                            value="<?php echo set_value('as_no_date'); ?>">
+                                            value="<?php echo isset($form_data['as_no_date']) ? htmlspecialchars($form_data['as_no_date']) : ''; ?>">
                                         <?php echo form_error('as_no_date', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -348,7 +348,7 @@
                                             name="type_of_work">
                                             <option value="">Select Type of Work</option>
                                             <?php foreach ($worktypes as $each_aa): ?>
-                                            <option value="<?= $each_aa->name ?>">
+                                            <option value="<?= $each_aa->name ?>" <?php echo set_select('type_of_work', $each_aa->name); ?>>
                                                 <?= htmlspecialchars($each_aa->name) ?></option>
                                             <?php endforeach; ?>
                                         </select>
@@ -372,7 +372,7 @@
                                     <div class="form-group">
                                         <label for="middle_men">Middle Men</label>
                                         <input type="text" class="form-control required" id="middle_men"
-                                            name="middle_men" value="<?php echo set_value('middle_men'); ?>">
+                                            name="middle_men" value="<?php echo isset($form_data['middle_men']) ? htmlspecialchars($form_data['middle_men']) : ''; ?>">
                                         <?php echo form_error('middle_men', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -384,7 +384,7 @@
                                     <div class="form-group">
                                         <label for="cont_no">Middle Man Cont No.</label>
                                         <input type="number" class="form-control required" id="cont_no" name="cont_no"
-                                            value="<?php echo set_value('cont_no'); ?>">
+                                            value="<?php echo isset($form_data['cont_no']) ? htmlspecialchars($form_data['cont_no']) : ''; ?>">
                                         <?php echo form_error('cont_no', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -393,7 +393,7 @@
                                     <div class="form-group">
                                         <label for="beneficial">Beneficial(Name)</label>
                                         <input type="text" class="form-control required" id="beneficial"
-                                            name="beneficial" value="<?php echo set_value('beneficial'); ?>">
+                                            name="beneficial" value="<?php echo isset($form_data['beneficial']) ? htmlspecialchars($form_data['beneficial']) : ''; ?>">
                                         <?php echo form_error('beneficial', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -402,7 +402,7 @@
                                     <div class="form-group">
                                         <label for="mobile">Beneficial Cont No.</label>
                                         <input type="number" class="form-control required" id="mobile" name="mobile"
-                                            value="<?php echo set_value('mobile'); ?>">
+                                            value="<?php echo isset($form_data['mobile']) ? htmlspecialchars($form_data['mobile']) : ''; ?>">
                                         <?php echo form_error('mobile', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -415,7 +415,7 @@
                                     <div class="form-group">
                                         <label for="po">PO</label>
                                         <input type="text" class="form-control required" id="po" name="po"
-                                            value="<?php echo set_value('po'); ?>">
+                                            value="<?php echo isset($form_data['po']) ? htmlspecialchars($form_data['po']) : ''; ?>">
                                         <?php echo form_error('po', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -434,7 +434,7 @@
                                     <div class="form-group">
                                         <label for="po">Account Details</label>
                                         <textarea class="form-control required" id="account_details"
-                                            name="account_details"><?php echo set_value('account_details'); ?></textarea>
+                                            name="account_details"><?php echo isset($form_data['account_details']) ? htmlspecialchars($form_data['account_details']) : ''; ?></textarea>
                                         <?php echo form_error('account_details', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -460,7 +460,7 @@
                                     <div class="form-group">
                                         <label for="id_proof_number">Adhar Card Number</label>
                                         <input type="text" class="form-control required" id="id_proof_number"
-                                            name="id_proof_number" value="<?php echo set_value('id_proof_number'); ?>">
+                                            name="id_proof_number" value="<?php echo isset($form_data['id_proof_number']) ? htmlspecialchars($form_data['id_proof_number']) : ''; ?>">
                                         <?php echo form_error('id_proof_number', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -470,7 +470,7 @@
                                         <label for="residential_number">IFSC Number</label>
                                         <input type="text" class="form-control required" id="residential_number"
                                             name="residential_number"
-                                            value="<?php echo set_value('residential_number'); ?>">
+                                            value="<?php echo isset($form_data['residential_number']) ? htmlspecialchars($form_data['residential_number']) : ''; ?>">
                                         <?php echo form_error('residential_number', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -490,7 +490,7 @@
                                     <div class="form-group">
                                         <label for="remark_goshana">Remark/Goshana (भईया द्वारा दिए गए निर्देश)</label>
                                         <textarea class="form-control required" id="remark_goshana"
-                                            name="remark_goshana"><?php echo set_value('remark_goshana'); ?></textarea>
+                                            name="remark_goshana"><?php echo isset($form_data['remark_goshana']) ? htmlspecialchars($form_data['remark_goshana']) : ''; ?></textarea>
                                         <?php echo form_error('remark_goshana', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -532,7 +532,69 @@
 
 
 <script type="text/javascript">
+// Store form data for restoration after validation errors
+var formData = <?php echo isset($form_data_json) ? $form_data_json : '{}'; ?>;
+
 $(document).ready(function() {
+    // Restore form data after validation error
+    if (Object.keys(formData).length > 0) {
+        restoreAllFormData();
+    }
+
+    function restoreAllFormData() {
+        // Restore all input, textarea, and select fields
+        $.each(formData, function(key, value) {
+            var $field = $('[name="' + key + '"]');
+            if ($field.length) {
+                if ($field.is('input[type="text"], input[type="number"], input[type="date"], input[type="email"], textarea')) {
+                    $field.val(value);
+                } else if ($field.is('select')) {
+                    $field.val(value);
+                }
+            }
+        });
+
+        // Trigger changes for dependent dropdowns with proper sequencing
+        if (formData.block) {
+            $('#block').val(formData.block).trigger('change');
+            // Wait for AJAX to complete before restoring dependent fields
+            setTimeout(function() {
+                if (formData.booth_name) {
+                    $('#booth_name').val(formData.booth_name).trigger('change');
+                }
+            }, 800);
+            
+            setTimeout(function() {
+                if (formData.panchayat_name) {
+                    $('#panchayat_name').val(formData.panchayat_name).trigger('change');
+                }
+            }, 1600);
+            
+            setTimeout(function() {
+                if (formData.village) {
+                    $('#village').val(formData.village);
+                }
+            }, 2400);
+        }
+        
+        if (formData.type_of_work) {
+            $('#type_of_work').val(formData.type_of_work).trigger('change');
+            setTimeout(function() {
+                if (formData.sub_work_type_id) {
+                    $('#sub_work_type_id').val(formData.sub_work_type_id);
+                }
+            }, 800);
+        }
+        
+        if (formData.approved_fund) {
+            $('#approved_fund').val(formData.approved_fund).trigger('change');
+        }
+        
+        if (formData.date) {
+            $('#date').val(formData.date).trigger('change');
+        }
+    }
+
     $('#block').change(function() {
         var blockId = $(this).val();
         if (blockId != 0) {
@@ -547,49 +609,36 @@ $(document).ready(function() {
                     $('#booth_name').empty();
                     $('#booth_name').append('<option value="">Select Booth</option>');
                     $.each(response, function(index, value) {
-                        $('#booth_name').append('<option bnumbervalue="' + value
-                            .bnumber + '"   value="' + value.id + '">' + value
-                            .name + '</option>');
+                        $('#booth_name').append('<option bnumbervalue="' + value.bnumber + '" value="' + value.id + '">' + value.name + '</option>');
                     });
 
+                    // Restore booth_name if it was selected
+                    if (formData.booth_name) {
+                        $('#booth_name').val(formData.booth_name).trigger('change');
+                    }
 
-                    $('#booth_no').empty().append(
-                        '<option value="">Select Booth No.</option>');
-
-
+                    $('#booth_no').empty().append('<option value="">Select Booth No.</option>');
                 }
             });
         } else {
-
             $('#booth_name').empty();
             $('#booth_name').append('<option value="">Select Booth</option>');
-
             $('#booth_no').empty().append('<option value="">Select Booth No.</option>');
-
-
-
-
         }
     });
 
     $('#booth_name').change(function() {
         var boothid = $(this).val();
         if (boothid != 0) {
-
-
             var selectedBooth = $('#booth_name option:selected');
             var bnumber = selectedBooth.attr('bnumbervalue');
 
             if (bnumber) {
                 $('#booth_no').empty().append('<option value="">Select Booth No.</option>');
-                $('#booth_no').append('<option value="' + selectedBooth.val() + '" selected>' +
-                    bnumber + '</option>');
+                $('#booth_no').append('<option value="' + selectedBooth.val() + '" selected>' + bnumber + '</option>');
             } else {
                 $('#booth_no').empty().append('<option value="">Select Booth No.</option>');
             }
-
-
-
 
             $.ajax({
                 url: '<?php echo site_url('panchayat/getpanchayatidByBooth'); ?>',
@@ -600,12 +649,15 @@ $(document).ready(function() {
                 dataType: 'json',
                 success: function(response) {
                     $('#panchayat_name').empty();
-                    $('#panchayat_name').append(
-                        '<option value="">Select Panchayat</option>');
+                    $('#panchayat_name').append('<option value="">Select Panchayat</option>');
                     $.each(response, function(index, value) {
-                        $('#panchayat_name').append('<option value="' + value.id +
-                            '">' + value.name + '</option>');
+                        $('#panchayat_name').append('<option value="' + value.id + '">' + value.name + '</option>');
                     });
+
+                    // Restore panchayat_name if it was selected
+                    if (formData.panchayat_name) {
+                        $('#panchayat_name').val(formData.panchayat_name).trigger('change');
+                    }
                 }
             });
         } else {
@@ -628,9 +680,13 @@ $(document).ready(function() {
                     $('#village').empty();
                     $('#village').append('<option value="">Select Village</option>');
                     $.each(response, function(index, value) {
-                        $('#village').append('<option value="' + value.id + '">' +
-                            value.name + '</option>');
+                        $('#village').append('<option value="' + value.id + '">' + value.name + '</option>');
                     });
+
+                    // Restore village if it was selected
+                    if (formData.village) {
+                        $('#village').val(formData.village);
+                    }
                 }
             });
         } else {
@@ -658,6 +714,11 @@ $(document).ready(function() {
                             $('#sub_work_type_id').append('<option value="' + value.id + '">' + 
                                 value.name + '</option>');
                         });
+
+                        // Restore sub_work_type_id if it was selected
+                        if (formData.sub_work_type_id) {
+                            $('#sub_work_type_id').val(formData.sub_work_type_id);
+                        }
                     }
                 },
                 error: function() {
@@ -728,32 +789,50 @@ $(document).ready(function() {
         $('#approved_fund_other').addClass('required');
     }
 
-    // Form submission - save custom fund if "others" is selected
+    // Save form data to localStorage before submit
     $('#addJansunwai').on('submit', function(e) {
-        var selectedFund = $('#approved_fund').val();
-        var customFund = $('#approved_fund_other').val();
-        
-        if (selectedFund === 'others' && !empty(customFund)) {
-            // Save custom fund to database
-            $.ajax({
-                url: '<?php echo base_url('user/saveCustomApprovedFund'); ?>',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    fund_name: customFund,
-                    description: 'Custom fund - ' + customFund
-                },
-                success: function(response) {
-                    if (response.success) {
-                        console.log('Custom fund saved successfully');
-                    }
-                },
-                error: function() {
-                    console.log('Error saving custom fund');
-                }
-            });
-        }
+        // Save all form data to localStorage
+        var formDataToSave = {};
+        $('#addJansunwai').find('input, select, textarea').each(function() {
+            var $field = $(this);
+            var fieldName = $field.attr('name');
+            if (fieldName) {
+                formDataToSave[fieldName] = $field.val();
+            }
+        });
+        localStorage.setItem('jansunwaiFormData', JSON.stringify(formDataToSave));
     });
+
+    // Restore form data from localStorage on page load
+    function restoreFromLocalStorage() {
+        var savedData = localStorage.getItem('jansunwaiFormData');
+        if (savedData) {
+            try {
+                var formDataToRestore = JSON.parse(savedData);
+                
+                // Restore all fields
+                $.each(formDataToRestore, function(key, value) {
+                    var $field = $('[name="' + key + '"]');
+                    if ($field.length) {
+                        $field.val(value);
+                    }
+                });
+
+                // Trigger cascading dropdowns
+                if (formDataToRestore.block) {
+                    $('#block').trigger('change');
+                }
+                
+                // Clear localStorage after restoration
+                localStorage.removeItem('jansunwaiFormData');
+            } catch(e) {
+                console.log('Error restoring form data:', e);
+            }
+        }
+    }
+
+    // Call restore function on page load
+    restoreFromLocalStorage();
 
     // Helper function to check if string is empty
     function empty(mixed_var) {
