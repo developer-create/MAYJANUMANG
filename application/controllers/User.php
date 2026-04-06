@@ -278,7 +278,7 @@ $data["results"] = $query->result();
             $this->form_validation->set_rules("majra_faliya", "Majra-Faliya", "required");
             $this->form_validation->set_rules("work_problem", "Work/Problem", "required");
             $this->form_validation->set_rules("office", "Office", "required");
-            $this->form_validation->set_rules("approximate_cost", "Approximate Cost", "required|decimal");
+            $this->form_validation->set_rules("approximate_cost", "Approximate Cost", "required|numeric");
             $this->form_validation->set_rules("department", "Department", "required");
             $this->form_validation->set_rules("priority", "Priority", "required");
             // $this->form_validation->set_rules("ts_no_date", "TS No/Date", "required");
@@ -295,7 +295,18 @@ $data["results"] = $query->result();
             $this->global["pageTitle"] = "CodeInsect : Add New Jansunwai";
             $data["blocks"] = $this->Comman_model->get_all_data("block");
             $data["departments"] = $this->Comman_model->get_all_data("department");
+            
             if ($this->form_validation->run() == false) {
+                // Preserve form data on validation error
+                $post_data = $this->input->post();
+                $data["form_data"] = $post_data;
+                $data["form_data_json"] = json_encode($post_data);
+                
+                // Helper function to get old value
+                $data["get_old_value"] = function($field_name, $default = '') use ($post_data) {
+                    return isset($post_data[$field_name]) ? $post_data[$field_name] : $default;
+                };
+                
                 $this->loadViews("users/addJansunwai", $this->global, $data, null);
             } else {
                 $this->load->helper("fund_budget");
