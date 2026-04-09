@@ -45,24 +45,13 @@
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4><strong>1. Receiving information</strong></h4>
-                                    <hr>
+                                    <h4 style="background-color: #3C8DBC; color: white; padding: 10px; display: block; border-radius: 4px;"><strong>1. Receiving information</strong></h4>
                                 </div>
                             </div>
 
                             <div class="row">
 
-                                <!-- Date (First - to auto-fetch Month and Year) -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="date">Date <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control required" id="date" name="date"
-                                            value="<?php echo isset($form_data['date']) ? htmlspecialchars($form_data['date']) : ''; ?>">
-                                        <?php echo form_error('date', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
-                                 <div class="row">
-                                <!-- Office -->
+                            <!-- Office -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="office">Office</label>
@@ -77,8 +66,23 @@
                                         <?php echo form_error('office', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
+
+                                <!-- Date (First - to auto-fetch Month and Year) -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="date">Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control required" id="date" name="date"
+                                            value="<?php echo isset($form_data['date']) ? htmlspecialchars($form_data['date']) : ''; ?>">
+                                        <?php echo form_error('date', '<div class="text-danger">', '</div>'); ?>
+                                    </div>
+                                </div>
+
+                                
+
+                                
                             </div>
 
+                            <div class="row">
                                 <!-- Month (Auto-filled from Date) -->
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -108,7 +112,6 @@
                                         <?php echo form_error('month', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
-
                                 <!-- Financial Year (Auto-filled from Date) -->
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -131,12 +134,9 @@
                                 </div>
                             </div>
 
-                           
-
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4><strong>2. Geography Details</strong></h4>
-                                    <hr>
+                                    <h4 style="background-color: #3C8DBC; color: white; padding: 10px; display: block; border-radius: 4px;"><strong>2. Geographyical Details</strong></h4>
                                 </div>
                             </div>
                             <div class="row">
@@ -271,8 +271,7 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4><strong>3. Work Info</strong></h4>
-                                    <hr>
+                                    <h4 style="background-color: #3C8DBC; color: white; padding: 10px; display: block; border-radius: 4px;"><strong>3. Work Info</strong></h4>
                                 </div>
                             </div>
                             <div class="row">
@@ -341,8 +340,7 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4><strong>4. Department & Fund Info</strong></h4>
-                                    <hr>
+                                    <h4 style="background-color: #3C8DBC; color: white; padding: 10px; display: block; border-radius: 4px;"><strong>4. Department & Fund Info</strong></h4>
                                 </div>
                             </div>
                             <div class="row">
@@ -460,27 +458,24 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4><strong>5. Middle Man - Beneficial Details</strong></h4>
-                                    <hr>
+                                    <h4 style="background-color: #3C8DBC; color: white; padding: 10px; display: block; border-radius: 4px;"><strong>5. Middle Man - Beneficial Details</strong></h4>
                                 </div>
                             </div>
                             <div class="row">
-
-
-                             <!-- Middle Men -->
+                                <!-- Middle Men -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="middle_men">Middle Men</label>
+                                        <label for="middle_men">Middle Man name</label>
                                         <input type="text" class="form-control required" id="middle_men"
                                             name="middle_men" value="<?php echo isset($form_data['middle_men']) ? htmlspecialchars($form_data['middle_men']) : ''; ?>">
                                         <?php echo form_error('middle_men', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
-                                <!-- Cont No -->
+                                <!-- Middle Man Cont No -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="cont_no">Middle Man Cont No. <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control required" id="cont_no" name="cont_no" 
+                                        <label for="cont_no">Middle Man Cont No.</label>
+                                        <input type="text" class="form-control" id="cont_no" name="cont_no" 
                                             maxlength="10" placeholder="10 digits only"
                                             value="<?php echo isset($form_data['cont_no']) ? htmlspecialchars($form_data['cont_no']) : ''; ?>">
                                         <small class="text-muted">Must be exactly 10 digits</small>
@@ -496,47 +491,38 @@
                                         <?php echo form_error('beneficial', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
+                            </div>
 
-                                 <!-- PO -->
+                            <div class="row">
+                                <!-- PO -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="po">PO</label>
+                                        <label for="po">Beneficial PO</label>
                                         <input type="text" class="form-control required" id="po" name="po"
                                             value="<?php echo isset($form_data['po']) ? htmlspecialchars($form_data['po']) : ''; ?>">
                                         <?php echo form_error('po', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
-                                <!-- Cont No -->
+                                <!-- Beneficial Cont No -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="mobile">Beneficial Cont No. <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control required" id="mobile" name="mobile" 
+                                        <label for="mobile">Beneficial Cont No.</label>
+                                        <input type="text" class="form-control" id="mobile" name="mobile" 
                                             maxlength="10" placeholder="10 digits only"
                                             value="<?php echo isset($form_data['mobile']) ? htmlspecialchars($form_data['mobile']) : ''; ?>">
                                         <small class="text-muted">Must be exactly 10 digits</small>
                                         <?php echo form_error('mobile', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
-                            </div>
-
-
-                            <div class="row">
-                               
-
-
-                                
-
 
                                 <!-- Work Status - Hidden, default to Incomplete -->
                                 <input type="hidden" id="work_status" name="work_status" value="Incomplete">
-
                             </div>
 
                             <div id="section6_wrapper" style="display:none;">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4><strong>6. Section Details</strong></h4>
-                                    <hr>
+                                    <h4 style="background-color: #3C8DBC; color: white; padding: 10px; display: block; border-radius: 4px;"><strong>6. Section Details</strong></h4>
                                 </div>
                             </div>
                             <div class="row">
@@ -544,8 +530,8 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="account_details">Account Details</label>
-                                        <textarea class="form-control" id="account_details"
-                                            name="account_details"><?php echo isset($form_data['account_details']) ? htmlspecialchars($form_data['account_details']) : ''; ?></textarea>
+                                        <input class="form-control" id="account_details"
+                                            name="account_details"><?php echo isset($form_data['account_details']) ? htmlspecialchars($form_data['account_details']) : ''; ?></inpute>
                                         <?php echo form_error('account_details', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -580,12 +566,14 @@
                                     </div>
                                 </div>
                             </div>
+                            </div>
+
                             <div class="row">
                                 <!-- Remark/Goshana -->
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="remark_goshana">Remark/Goshana (भईया द्वारा दिए गए निर्देश)</label>
-                                        <textarea class="form-control required" id="remark_goshana"
+                                        <textarea class="form-control" id="remark_goshana"
                                             name="remark_goshana"><?php echo isset($form_data['remark_goshana']) ? htmlspecialchars($form_data['remark_goshana']) : ''; ?></textarea>
                                         <?php echo form_error('remark_goshana', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -597,7 +585,6 @@
                                         <?php echo form_error('file', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
-                            </div>
                             </div>
 
                         </div><!-- /.box-body -->
