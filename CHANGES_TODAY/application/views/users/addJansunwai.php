@@ -11,37 +11,42 @@
                     <!-- /.box-header -->
                     <!-- form start -->
                     <?php $this->load->helper("form"); ?>
+                    
+                    <!-- Check if form data exists in session (from budget error) -->
+                    <?php 
+                    if (!isset($form_data) || empty($form_data)) {
+                        $form_data = $this->session->userdata('jansunwai_form_data');
+                        if (!$form_data) {
+                            $form_data = [];
+                        }
+                    }
+                    ?>
+                    
+                    <!-- Budget Error Modal -->
+                    <div id="budgetErrorModal" class="modal fade" role="dialog" style="display: none;">
+                        <div class="modal-dialog" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; width: auto; max-width: 500px;">
+                            <div class="modal-content" style="background-color: #f8d7da; border: 2px solid #f5c6cb; border-radius: 5px;">
+                                <div class="modal-header" style="background-color: #f5c6cb; border-bottom: 1px solid #f5c6cb;">
+                                    <h4 class="modal-title" style="color: #721c24;">⚠️ बजट सीमा अतिक्रमण</h4>
+                                    <button type="button" class="close" data-dismiss="modal" style="color: #721c24;">&times;</button>
+                                </div>
+                                <div class="modal-body" style="color: #721c24; padding: 20px;">
+                                    <p id="budgetErrorMessage"></p>
+                                </div>
+                                <div class="modal-footer" style="border-top: 1px solid #f5c6cb;">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">बंद करें</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <form role="form" id="addJansunwai" action="<?php echo base_url() ?>user/addNewJansunwai"
                         enctype="multipart/form-data" method="post">
                         <div class="box-body">
                             <div class="row">
-                                <!-- Sector Name -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="sector_name">Sector Name</label>
-                                        <input type="text" class="form-control required" id="sector_name"
-                                            name="sector_name" value="<?php echo isset($form_data['sector_name']) ? htmlspecialchars($form_data['sector_name']) : ''; ?>">
-                                        <?php echo form_error('sector_name', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
-                                <!-- Micro Sector No -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="micro_sector_no">Micro Sector No.</label>
-                                        <input type="text" class="form-control required" id="micro_sector_no"
-                                            name="micro_sector_no" value="<?php echo isset($form_data['micro_sector_no']) ? htmlspecialchars($form_data['micro_sector_no']) : ''; ?>">
-                                        <?php echo form_error('micro_sector_no', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
-                                <!-- Micro Sector Name -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="micro_sector_name">Micro Sector Name</label>
-                                        <input type="text" class="form-control required" id="micro_sector_name"
-                                            name="micro_sector_name"
-                                            value="<?php echo isset($form_data['micro_sector_name']) ? htmlspecialchars($form_data['micro_sector_name']) : ''; ?>">
-                                        <?php echo form_error('micro_sector_name', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
+                                <div class="col-md-12">
+                                    <h4><strong>1. Sector Details</strong></h4>
+                                    <hr>
                                 </div>
                             </div>
 
@@ -109,6 +114,60 @@
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <!-- Office -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="office">Office</label>
+                                        <select class="form-control required" id="office" name="office">
+                                            <option value="">Select Office</option>
+                                            <option value="Bhopal" <?php echo set_select('office', 'Bhopal'); ?>>Bhopal</option>
+                                            <option value="Dhar" <?php echo set_select('office', 'Dhar'); ?>>Dhar</option>
+                                            <option value="Bagh" <?php echo set_select('office', 'Bagh'); ?>>Bagh</option>
+                                            <option value="Gandhwani" <?php echo set_select('office', 'Gandhwani'); ?>>Gandhwani</option>
+                                            <option value="Tanda" <?php echo set_select('office', 'Tanda'); ?>>Tanda</option>
+                                        </select>
+                                        <?php echo form_error('office', '<div class="text-danger">', '</div>'); ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4><strong>2. Section Details</strong></h4>
+                                    <hr>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!-- Sector Name -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="sector_name">Sector Name</label>
+                                        <input type="text" class="form-control required" id="sector_name"
+                                            name="sector_name" value="<?php echo isset($form_data['sector_name']) ? htmlspecialchars($form_data['sector_name']) : ''; ?>">
+                                        <?php echo form_error('sector_name', '<div class="text-danger">', '</div>'); ?>
+                                    </div>
+                                </div>
+                                <!-- Micro Sector No -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="micro_sector_no">Micro Sector No.</label>
+                                        <input type="text" class="form-control required" id="micro_sector_no"
+                                            name="micro_sector_no" value="<?php echo isset($form_data['micro_sector_no']) ? htmlspecialchars($form_data['micro_sector_no']) : ''; ?>">
+                                        <?php echo form_error('micro_sector_no', '<div class="text-danger">', '</div>'); ?>
+                                    </div>
+                                </div>
+                                <!-- Micro Sector Name -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="micro_sector_name">Micro Sector Name</label>
+                                        <input type="text" class="form-control required" id="micro_sector_name"
+                                            name="micro_sector_name"
+                                            value="<?php echo isset($form_data['micro_sector_name']) ? htmlspecialchars($form_data['micro_sector_name']) : ''; ?>">
+                                        <?php echo form_error('micro_sector_name', '<div class="text-danger">', '</div>'); ?>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <!-- District -->
                                 <div class="col-md-4">
@@ -219,6 +278,12 @@
                             </div>
 
                             <div class="row">
+                                <div class="col-md-12">
+                                    <h4><strong>3. Section Details</strong></h4>
+                                    <hr>
+                                </div>
+                            </div>
+                            <div class="row">
 
                                 <!-- Work/Problem -->
                                 <div class="col-md-4">
@@ -230,15 +295,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Office -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="office">Office</label>
-                                        <input type="text" class="form-control required" id="office" name="office"
-                                            value="<?php echo isset($form_data['office']) ? htmlspecialchars($form_data['office']) : ''; ?>">
-                                        <?php echo form_error('office', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
                                 <!-- Approximate Cost -->
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -293,6 +349,12 @@
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4><strong>4. Section Details</strong></h4>
+                                    <hr>
+                                </div>
+                            </div>
                             <div class="row">
                                 <!-- Work Agency -->
                                 <div class="col-md-4">
@@ -379,12 +441,20 @@
                             </div>
 
                             <div class="row">
+                                <div class="col-md-12">
+                                    <h4><strong>5. Section Details</strong></h4>
+                                    <hr>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <!-- Cont No -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="cont_no">Middle Man Cont No.</label>
-                                        <input type="number" class="form-control required" id="cont_no" name="cont_no"
+                                        <label for="cont_no">Middle Man Cont No. <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control required" id="cont_no" name="cont_no" 
+                                            maxlength="10" placeholder="10 digits only"
                                             value="<?php echo isset($form_data['cont_no']) ? htmlspecialchars($form_data['cont_no']) : ''; ?>">
+                                        <small class="text-muted">Must be exactly 10 digits</small>
                                         <?php echo form_error('cont_no', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -400,9 +470,11 @@
                                 <!-- Cont No -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="mobile">Beneficial Cont No.</label>
-                                        <input type="number" class="form-control required" id="mobile" name="mobile"
+                                        <label for="mobile">Beneficial Cont No. <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control required" id="mobile" name="mobile" 
+                                            maxlength="10" placeholder="10 digits only"
                                             value="<?php echo isset($form_data['mobile']) ? htmlspecialchars($form_data['mobile']) : ''; ?>">
+                                        <small class="text-muted">Must be exactly 10 digits</small>
                                         <?php echo form_error('mobile', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -430,31 +502,28 @@
                                 </div>
 
 
+                                <!-- Work Status - Hidden, default to Incomplete -->
+                                <input type="hidden" id="work_status" name="work_status" value="Incomplete">
+
+                            </div>
+
+                            <div id="section6_wrapper" style="display:none;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4><strong>6. Section Details</strong></h4>
+                                    <hr>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!-- Account Details -->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="po">Account Details</label>
-                                        <textarea class="form-control required" id="account_details"
+                                        <label for="account_details">Account Details</label>
+                                        <textarea class="form-control" id="account_details"
                                             name="account_details"><?php echo isset($form_data['account_details']) ? htmlspecialchars($form_data['account_details']) : ''; ?></textarea>
                                         <?php echo form_error('account_details', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
-                                <!-- Work Status -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="work_status">Status</label>
-                                        <select class="form-control" id="work_status" name="work_status">
-                                            <option value="Incomplete" <?php echo set_value('work_status', 'Incomplete') == 'Incomplete' ? 'selected' : ''; ?>>Incomplete</option>
-                                            <option value="In progress" <?php echo set_value('work_status') == 'In progress' ? 'selected' : ''; ?>>In progress</option>
-                                            <option value="Complete" <?php echo set_value('work_status') == 'Complete' ? 'selected' : ''; ?>>Complete</option>
-                                            <option value="Reject" <?php echo set_value('work_status') == 'Reject' ? 'selected' : ''; ?>>Reject</option>
-                                        </select>
-                                        <?php echo form_error('work_status', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="row">
                                 <!-- ID Proof Number -->
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -494,6 +563,7 @@
                                         <?php echo form_error('remark_goshana', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
+                            </div>
                             </div>
 
                         </div><!-- /.box-body -->
@@ -536,9 +606,82 @@
 var formData = <?php echo isset($form_data_json) ? $form_data_json : '{}'; ?>;
 
 $(document).ready(function() {
+    // Check if there's a budget error message in the session
+    <?php if ($this->session->flashdata('error')): ?>
+        var errorMessage = "<?php echo addslashes($this->session->flashdata('error')); ?>";
+        $('#budgetErrorMessage').html(errorMessage);
+        $('#budgetErrorModal').modal('show');
+        
+        // When modal is closed, clear the session data
+        $('#budgetErrorModal').on('hidden.bs.modal', function() {
+            // Session data will be cleared on next page load
+        });
+        
+        // Restore form data from session
+        var formDataFromSession = <?php echo json_encode($form_data); ?>;
+        if (formDataFromSession && Object.keys(formDataFromSession).length > 0) {
+            restoreAllFormDataFromSession(formDataFromSession);
+        }
+        return false;
+    <?php endif; ?>
+    
     // Restore form data after validation error
     if (Object.keys(formData).length > 0) {
         restoreAllFormData();
+    }
+    
+    function restoreAllFormDataFromSession(formDataFromSession) {
+        // Restore all input, textarea, and select fields
+        $.each(formDataFromSession, function(key, value) {
+            var $field = $('[name="' + key + '"]');
+            if ($field.length) {
+                if ($field.is('input[type="text"], input[type="number"], input[type="date"], input[type="email"], textarea')) {
+                    $field.val(value);
+                } else if ($field.is('select')) {
+                    $field.val(value);
+                }
+            }
+        });
+
+        // Trigger changes for dependent dropdowns with proper sequencing
+        if (formDataFromSession.block) {
+            $('#block').val(formDataFromSession.block).trigger('change');
+            // Wait for AJAX to complete before restoring dependent fields
+            setTimeout(function() {
+                if (formDataFromSession.booth_name) {
+                    $('#booth_name').val(formDataFromSession.booth_name).trigger('change');
+                }
+            }, 800);
+            
+            setTimeout(function() {
+                if (formDataFromSession.panchayat_name) {
+                    $('#panchayat_name').val(formDataFromSession.panchayat_name).trigger('change');
+                }
+            }, 1600);
+            
+            setTimeout(function() {
+                if (formDataFromSession.village) {
+                    $('#village').val(formDataFromSession.village);
+                }
+            }, 2400);
+        }
+        
+        if (formDataFromSession.type_of_work) {
+            $('#type_of_work').val(formDataFromSession.type_of_work).trigger('change');
+            setTimeout(function() {
+                if (formDataFromSession.sub_work_type_id) {
+                    $('#sub_work_type_id').val(formDataFromSession.sub_work_type_id);
+                }
+            }, 800);
+        }
+        
+        if (formDataFromSession.approved_fund) {
+            $('#approved_fund').val(formDataFromSession.approved_fund).trigger('change');
+        }
+        
+        if (formDataFromSession.date) {
+            $('#date').val(formDataFromSession.date).trigger('change');
+        }
     }
 
     function restoreAllFormData() {
@@ -696,6 +839,20 @@ $(document).ready(function() {
     });
 
     // Filter Sub Work Type based on Type of Work selection
+    function toggleSectionSixBySubWorkType() {
+        var selectedText = $('#sub_work_type_id option:selected').text().trim().toLowerCase();
+        var shouldShowSectionSix = (selectedText.indexOf('स्वेछानुदान') !== -1) ||
+            (selectedText.indexOf('स्वेच्छानुदान') !== -1) ||
+            (selectedText.indexOf('swechanudan') !== -1);
+        if (shouldShowSectionSix) {
+            $('#section6_wrapper').slideDown();
+            $('#account_details, #id_proof_number, #residential_number, #remark_goshana').addClass('required');
+        } else {
+            $('#section6_wrapper').slideUp();
+            $('#account_details, #id_proof_number, #residential_number, #remark_goshana').removeClass('required');
+        }
+    }
+
     $('#type_of_work').change(function() {
         var workTypeName = $(this).val();
         if (workTypeName) {
@@ -720,16 +877,23 @@ $(document).ready(function() {
                             $('#sub_work_type_id').val(formData.sub_work_type_id);
                         }
                     }
+                    toggleSectionSixBySubWorkType();
                 },
                 error: function() {
                     $('#sub_work_type_id').empty();
                     $('#sub_work_type_id').append('<option value="">Select Sub Work Type</option>');
+                    toggleSectionSixBySubWorkType();
                 }
             });
         } else {
             $('#sub_work_type_id').empty();
             $('#sub_work_type_id').append('<option value="">Select Sub Work Type</option>');
+            toggleSectionSixBySubWorkType();
         }
+    });
+
+    $('#sub_work_type_id').change(function() {
+        toggleSectionSixBySubWorkType();
     });
 
     // Auto-fill Month and Financial Year from Date
@@ -789,8 +953,29 @@ $(document).ready(function() {
         $('#approved_fund_other').addClass('required');
     }
 
+    // Initial state for section 6 visibility
+    toggleSectionSixBySubWorkType();
+
     // Save form data to localStorage before submit
     $('#addJansunwai').on('submit', function(e) {
+        // Validate contact numbers - must be exactly 10 digits
+        var contNo = $('#cont_no').val().trim();
+        var mobileNo = $('#mobile').val().trim();
+        
+        // Check if cont_no is exactly 10 digits
+        if (!/^\d{10}$/.test(contNo)) {
+            e.preventDefault();
+            showCenteredMessage('Middle Man Contact Number must be exactly 10 digits', 'error');
+            return false;
+        }
+        
+        // Check if mobile is exactly 10 digits
+        if (!/^\d{10}$/.test(mobileNo)) {
+            e.preventDefault();
+            showCenteredMessage('Beneficial Contact Number must be exactly 10 digits', 'error');
+            return false;
+        }
+        
         // Save all form data to localStorage
         var formDataToSave = {};
         $('#addJansunwai').find('input, select, textarea').each(function() {
@@ -801,6 +986,49 @@ $(document).ready(function() {
             }
         });
         localStorage.setItem('jansunwaiFormData', JSON.stringify(formDataToSave));
+    });
+
+    // Function to show centered message
+    function showCenteredMessage(message, type) {
+        // Remove existing message if any
+        $('#centeredMessage').remove();
+        
+        var messageClass = type === 'error' ? 'alert-danger' : 'alert-success';
+        var messageHtml = '<div id="centeredMessage" class="alert ' + messageClass + ' alert-dismissable" style="' +
+            'position: fixed; ' +
+            'top: 50%; ' +
+            'left: 50%; ' +
+            'transform: translate(-50%, -50%); ' +
+            'z-index: 9999; ' +
+            'min-width: 400px; ' +
+            'text-align: center; ' +
+            'box-shadow: 0 4px 6px rgba(0,0,0,0.1); ' +
+            'padding: 20px; ' +
+            '">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+            '<strong>' + message + '</strong>' +
+            '</div>';
+        
+        $('body').append(messageHtml);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(function() {
+            $('#centeredMessage').fadeOut(function() {
+                $(this).remove();
+            });
+        }, 5000);
+    }
+
+    // Add real-time validation for contact numbers
+    $('#cont_no, #mobile').on('input', function() {
+        var value = $(this).val();
+        // Remove non-numeric characters
+        value = value.replace(/\D/g, '');
+        // Limit to 10 digits
+        if (value.length > 10) {
+            value = value.substring(0, 10);
+        }
+        $(this).val(value);
     });
 
     // Restore form data from localStorage on page load

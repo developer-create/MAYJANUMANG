@@ -258,6 +258,11 @@ $data["results"] = $query->result();
         if (!$this->hasCreateAccess()) {
             $this->loadThis();
         } else {
+            // Clear session data if form is being loaded fresh (not from error)
+            if (!$this->input->post()) {
+                $this->session->unset_userdata('jansunwai_form_data');
+            }
+            
             // Set form validation rules
             $this->form_validation->set_rules("sector_name", "Sector Name", "required");
             $this->form_validation->set_rules("micro_sector_no", "Micro Sector No.", "required");
@@ -269,8 +274,6 @@ $data["results"] = $query->result();
             $this->form_validation->set_rules("assembly", "Assembly", "required");
             $this->form_validation->set_rules("block", "Block", "required");
             $this->form_validation->set_rules("recommended_letter_no", "Recommended Letter No.", "required");
-            $this->form_validation->set_rules("id_proof_number", "ID Proof Number", "required");
-            $this->form_validation->set_rules("residential_number", "Residential Number", "required");
             $this->form_validation->set_rules("booth_no", "Booth No.", "required");
             $this->form_validation->set_rules("booth_name", "Booth Name", "required");
             $this->form_validation->set_rules("panchayat_name", "Panchayat Name", "required");
@@ -285,13 +288,37 @@ $data["results"] = $query->result();
             // $this->form_validation->set_rules("as_no_date", "AS No/Date", "required");
             $this->form_validation->set_rules("type_of_work", "Type of Work", "required");
             $this->form_validation->set_rules("middle_men", "Middle Men", "required");
-            $this->form_validation->set_rules("cont_no", "Cont No.", "required");
+            $this->form_validation->set_rules("cont_no", "Middle Man Cont No.", "required|regex_match[/^\d{10}$/]");
             $this->form_validation->set_rules("beneficial", "Beneficial", "required");
+            $this->form_validation->set_rules("mobile", "Beneficial Cont No.", "required|regex_match[/^\d{10}$/]");
             $this->form_validation->set_rules("po", "PO", "required");
             $this->form_validation->set_rules("work_status", "Work Status", "required");
-            $this->form_validation->set_rules("remark_goshana", "Remark/Goshana", "required");
             $this->form_validation->set_rules("work_agency", "Work Agency", "required");
             $this->form_validation->set_rules("approved_fund", "Approved Fund", "required");
+            
+            // Section 6 fields are required only for Swechanudan sub work type
+            $subWorkTypeId = $this->input->post("sub_work_type_id");
+            if (!empty($subWorkTypeId)) {
+                $subWorkType = $this->db->select("name")
+                    ->from("subtype_of_work")
+                    ->where("id", $subWorkTypeId)
+                    ->get()
+                    ->row();
+
+                if ($subWorkType) {
+                    $subWorkTypeName = mb_strtolower(trim($subWorkType->name), 'UTF-8');
+                    $isSwechanudan = (mb_strpos($subWorkTypeName, 'स्वेछानुदान', 0, 'UTF-8') !== false)
+                        || (mb_strpos($subWorkTypeName, 'स्वेच्छानुदान', 0, 'UTF-8') !== false)
+                        || (strpos($subWorkTypeName, 'swechanudan') !== false);
+
+                    if ($isSwechanudan) {
+                        $this->form_validation->set_rules("account_details", "Account Details", "required");
+                        $this->form_validation->set_rules("id_proof_number", "Adhar Card Number", "required");
+                        $this->form_validation->set_rules("residential_number", "IFSC Number", "required");
+                        $this->form_validation->set_rules("remark_goshana", "Remark/Goshana", "required");
+                    }
+                }
+            }
             $this->global["pageTitle"] = "CodeInsect : Add New Jansunwai";
             $data["blocks"] = $this->Comman_model->get_all_data("block");
             $data["departments"] = $this->Comman_model->get_all_data("department");
@@ -317,6 +344,9 @@ $data["results"] = $query->result();
                     $fy = canonicalize_financial_year_for_budget($this->input->post("year"));
                     $chk = $this->Fund_budget_model->check_budget($norm_fund, $fy, (float) $this->input->post("approximate_cost"), null, null);
                     if (!$chk["ok"]) {
+                        // Save form data to session before redirecting
+                        $post_data = $this->input->post();
+                        $this->session->set_userdata('jansunwai_form_data', $post_data);
                         $this->session->set_flashdata("error", $chk["message"]);
                         redirect("user/addNewJansunwai");
                         return;
@@ -361,8 +391,9 @@ $data["results"] = $query->result();
                       "beneficial" => $this->input->post("beneficial"),
                        "uname" => $this->input->post("beneficial"),
                         "po" => $this->input->post("po"),
-                         "work_status" => $this->input->post("work_status"),
-                          "remark_goshana" => $this->input->post("remark_goshana"),
+                         "work_status" => "Incomplete",
+                         "remark_goshana" => $this->input->post("remark_goshana"),
+                         "account_details" => $this->input->post("account_details"),
                           "work_agency" => $this->input->post("work_agency"),
                           "approved_fund" => $this->input->post("approved_fund") === 'others' ? $this->input->post("approved_fund_other") : $this->input->post("approved_fund"),
                            "createdBy" => $this->vendorId,
@@ -425,6 +456,8 @@ $insert_id = $this->db->insert_id();
                 if ($insert_id) {
                     // Log activity
                     $this->logActivity('add', 'jansunwai', $insert_id, $data, null, 'Jansunwai record created with ID: ' . $insert_id);
+                    // Clear session data after successful submission
+                    $this->session->unset_userdata('jansunwai_form_data');
                     // Redirect or load success view
                     $this->session->set_flashdata("success", "Data added successfully.");
                     redirect("user/jansunwai");
