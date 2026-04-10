@@ -119,7 +119,7 @@ $userId = @$userInfo->userId;
                                 <div class="col-md-6">                                
                                     <div class="form-group">
                                         <label for="fname"> मोबाइल नंबर </label>
-                                        <input type="text" class="form-control" id="mobile" placeholder="मोबाइल नंबर" name="mobile" value="<?php echo @$userInfo->mobile; ?>">
+                                        <input type="text" class="form-control" id="mobile" placeholder="मोबाइल नंबर" name="mobile" value="<?php echo @$userInfo->mobile; ?>" maxlength="10" pattern="[0-9]{10}">
                                     </div>
                                     
                                 </div>

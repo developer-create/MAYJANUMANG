@@ -130,7 +130,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="contact_no">Contact Number</label>
-                                        <input type="text" class="form-control required" value="<?php echo $projectInfo->contact_no; ?>" id="contact_no" name="contact_no" maxlength="20">
+                                        <input type="text" class="form-control required" value="<?php echo $projectInfo->contact_no; ?>" id="contact_no" name="contact_no" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits only">
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +177,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="phone_no">Phone No</label>
-                                        <input type="text" class="form-control" value="<?php echo $projectInfo->phone_no; ?>" id="phone_no" name="phone_no" maxlength="20">
+                                        <input type="text" class="form-control" value="<?php echo $projectInfo->phone_no; ?>" id="phone_no" name="phone_no" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits only">
                                     </div>
                                 </div>
                             </div>

@@ -476,7 +476,7 @@
                                     <div class="form-group">
                                         <label for="cont_no">Middle Man Cont No.</label>
                                         <input type="text" class="form-control" id="cont_no" name="cont_no" 
-                                            maxlength="10" placeholder="10 digits only"
+                                            maxlength="10" pattern="[0-9]{10}" placeholder="10 digits only"
                                             value="<?php echo isset($form_data['cont_no']) ? htmlspecialchars($form_data['cont_no']) : ''; ?>">
                                         <small class="text-muted">Must be exactly 10 digits</small>
                                         <?php echo form_error('cont_no', '<div class="text-danger">', '</div>'); ?>
@@ -508,7 +508,7 @@
                                     <div class="form-group">
                                         <label for="mobile">Beneficial Cont No.</label>
                                         <input type="text" class="form-control" id="mobile" name="mobile" 
-                                            maxlength="10" placeholder="10 digits only"
+                                            maxlength="10" pattern="[0-9]{10}" placeholder="10 digits only"
                                             value="<?php echo isset($form_data['mobile']) ? htmlspecialchars($form_data['mobile']) : ''; ?>">
                                         <small class="text-muted">Must be exactly 10 digits</small>
                                         <?php echo form_error('mobile', '<div class="text-danger">', '</div>'); ?>

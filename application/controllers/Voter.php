@@ -50,7 +50,7 @@ class Voter extends BaseController {
             // Validate required fields
             $this->form_validation->set_rules('name', 'Name', 'required');
             $this->form_validation->set_rules('father_name', 'Father Name', 'required');
-            $this->form_validation->set_rules('mobile_no', 'Mobile No', 'required');
+            $this->form_validation->set_rules('mobile_no', 'Mobile No', 'required|regex_match[/^\d{10}$/]');
             $this->form_validation->set_rules('age', 'Age', 'required|numeric');
             $this->form_validation->set_rules('full_address', 'Full Address', 'required');
             $this->form_validation->set_rules('block_id', 'Block Name', 'required|numeric');
@@ -159,7 +159,7 @@ class Voter extends BaseController {
             // Validate required fields
             $this->form_validation->set_rules('name', 'Name', 'required');
             $this->form_validation->set_rules('father_name', 'Father Name', 'required');
-            $this->form_validation->set_rules('mobile_no', 'Mobile No', 'required');
+            $this->form_validation->set_rules('mobile_no', 'Mobile No', 'required|regex_match[/^\d{10}$/]');
             $this->form_validation->set_rules('age', 'Age', 'required|numeric');
             $this->form_validation->set_rules('full_address', 'Full Address', 'required');
             $this->form_validation->set_rules('block_id', 'Block Name', 'required|numeric');

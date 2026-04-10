@@ -237,7 +237,7 @@ $data["results"] = $query->result();
             // $this->form_validation->set_rules("as_no_date", "AS No/Date", "required");
             $this->form_validation->set_rules("type_of_work", "Type of Work", "required");
             $this->form_validation->set_rules("middle_men", "Middle Men", "required");
-            $this->form_validation->set_rules("cont_no", "Cont No.", "required");
+            $this->form_validation->set_rules("cont_no", "Cont No.", "required|regex_match[/^\d{10}$/]");
             $this->form_validation->set_rules("beneficial", "Beneficial", "required");
             $this->form_validation->set_rules("po", "PO", "required");
             $this->form_validation->set_rules("work_status", "Work Status", "required");
@@ -330,7 +330,7 @@ $data["results"] = $query->result();
         //$this->form_validation->set_rules("as_no_date", "AS No/Date", "required");
         $this->form_validation->set_rules("type_of_work", "Type of Work", "required");
         $this->form_validation->set_rules("middle_men", "Middle Men", "required");
-        $this->form_validation->set_rules("cont_no", "Cont No.", "required");
+        $this->form_validation->set_rules("cont_no", "Cont No.", "required|regex_match[/^\d{10}$/]");
         $this->form_validation->set_rules("beneficial", "Beneficial", "required");
         $this->form_validation->set_rules("po", "PO", "required");
         // $this->form_validation->set_rules("work_status", "Work Status", "required");
@@ -416,7 +416,7 @@ $data["results"] = $query->result();
             $this->form_validation->set_rules("password", "Password", "required|max_length[20]");
             $this->form_validation->set_rules("cpassword", "Confirm Password", "trim|required|matches[password]|max_length[20]");
             $this->form_validation->set_rules("role", "Role", "trim|required|numeric");
-            $this->form_validation->set_rules("mobile", "Mobile Number", "required|min_length[10]");
+            $this->form_validation->set_rules("mobile", "Mobile Number", "required|regex_match[/^\d{10}$/]");
             if ($this->form_validation->run() == false) {
                 $this->addNew();
             } else {
@@ -555,7 +555,7 @@ $data["results"] = $query->result();
     function profileUpdate($active = "details") {
         $this->load->library("form_validation");
         $this->form_validation->set_rules("fname", "Full Name", "trim|required|max_length[128]");
-        $this->form_validation->set_rules("mobile", "Mobile Number", "required|min_length[10]");
+        $this->form_validation->set_rules("mobile", "Mobile Number", "required|regex_match[/^\d{10}$/]");
         $this->form_validation->set_rules("email", "Email", "trim|required|valid_email|max_length[128]|callback_emailExists");
         if ($this->form_validation->run() == false) {
             $this->profile($active);

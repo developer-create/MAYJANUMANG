@@ -64,7 +64,7 @@
                                     <div class="form-group">
                                         <label for="mobile">Mobile Number</label>
                                         <input type="text" class="form-control required digits" id="mobile"
-                                            value="<?php echo set_value('mobile'); ?>" name="mobile" maxlength="10">
+                                            value="<?php echo set_value('mobile'); ?>" name="mobile" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits only">
                                     </div>
                                 </div>
                                 <div class="col-md-6">

@@ -108,13 +108,13 @@ class ProjectSummary extends BaseController
             $this->form_validation->set_rules('proposal_estimate','Proposal Estimate','trim|required|numeric');
             $this->form_validation->set_rules('status','Status','trim|required|max_length[100]');
             $this->form_validation->set_rules('officer_name','Officer Name','trim|required|max_length[150]');
-            $this->form_validation->set_rules('contact_no','Contact Number','trim|required|max_length[20]');
+            $this->form_validation->set_rules('contact_no','Contact Number','trim|required|regex_match[/^\d{10}$/]');
             $this->form_validation->set_rules('technical_session','Technical Session','trim|max_length[255]');
             $this->form_validation->set_rules('administrative_session','Administrative Session','trim|max_length[255]');
             $this->form_validation->set_rules('tender_status','Tender Status','trim|max_length[50]');
             $this->form_validation->set_rules('company_name','Company Name','trim|max_length[255]');
             $this->form_validation->set_rules('contractor_name','Contractor Name','trim|max_length[255]');
-            $this->form_validation->set_rules('phone_no','Phone No','trim|max_length[20]');
+            $this->form_validation->set_rules('phone_no','Phone No','trim|regex_match[/^\d{10}$/]');
             $this->form_validation->set_rules('usd_remark','USD Remark','trim|max_length[500]');
             $this->form_validation->set_rules('remark','Remark','trim|max_length[500]');
             
@@ -263,7 +263,7 @@ class ProjectSummary extends BaseController
             $this->form_validation->set_rules('proposal_estimate','Proposal Estimate','trim|required|numeric');
             $this->form_validation->set_rules('status','Status','trim|required|max_length[100]');
             $this->form_validation->set_rules('officer_name','Officer Name','trim|required|max_length[150]');
-            $this->form_validation->set_rules('contact_no','Contact Number','trim|required|max_length[20]');
+            $this->form_validation->set_rules('contact_no','Contact Number','trim|required|regex_match[/^\d{10}$/]');
             $this->form_validation->set_rules('remark','Remark','trim|max_length[500]');
             
             if($this->form_validation->run() == FALSE)

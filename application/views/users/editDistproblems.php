@@ -243,7 +243,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="cont_no">Cont No</label>
-                                        <input type="text" class="form-control required" id="cont_no" name="cont_no" value="<?php echo set_value('cont_no', $jansunwai->cont_no); ?>">
+                                        <input type="text" class="form-control required" id="cont_no" name="cont_no" value="<?php echo set_value('cont_no', $jansunwai->cont_no); ?>" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits only">
                                         <?php echo form_error('cont_no', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -257,7 +257,7 @@
                                  <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="mobile">Cont No.</label>
-                                        <input type="text" class="form-control required" id="mobile" name="mobile" value="<?php echo set_value('mobile', $jansunwai->mobile); ?>">
+                                        <input type="text" class="form-control required" id="mobile" name="mobile" value="<?php echo set_value('mobile', $jansunwai->mobile); ?>" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits only">
                                         <?php echo form_error('mobile', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>

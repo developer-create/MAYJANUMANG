@@ -359,7 +359,7 @@ class MandirSamiti extends BaseController
         $groupId = $this->input->post('group_id');
         
         $this->form_validation->set_rules('member_name', 'Member Name', 'trim|required|max_length[200]');
-        $this->form_validation->set_rules('mobile_number', 'Mobile Number', 'trim|numeric|max_length[15]');
+        $this->form_validation->set_rules('mobile_number', 'Mobile Number', 'trim|regex_match[/^\d{10}$/]');
         
         if($this->form_validation->run() == FALSE)
         {
@@ -433,7 +433,7 @@ class MandirSamiti extends BaseController
         $groupId = $this->input->post('group_id');
         
         $this->form_validation->set_rules('member_name', 'Member Name', 'trim|required|max_length[200]');
-        $this->form_validation->set_rules('mobile_number', 'Mobile Number', 'trim|numeric|max_length[15]');
+        $this->form_validation->set_rules('mobile_number', 'Mobile Number', 'trim|regex_match[/^\d{10}$/]');
         
         if($this->form_validation->run() == FALSE)
         {
