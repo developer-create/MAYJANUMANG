@@ -36,9 +36,9 @@ $config['moduleList'] = array(
         'url' => $url . 'ServayListing'
     ),
     array(
-        'module' => 'MP-Vidhansabha-Member',
+        'module' => 'MP-Vidhan-Sabha-Member',
         'total_access' => 0, 'list' => 0, 'create_records' => 0, 'edit_records' => 0, 'delete_records' => 0,
-        'url' => '#'
+        'url' => $url . 'mp_vidhan_sabha_member'
     ),
     array(
         'module' => 'MP-publicproblem',

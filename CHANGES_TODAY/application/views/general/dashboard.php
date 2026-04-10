@@ -949,6 +949,164 @@
             </div>
             <!-- ./col -->
         </div>
+
+        <!-- Fund Summary Section -->
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                    <div class="box-body table-responsive no-padding">
+                        <h3 style="text-align:center;"><b>Fund Summary</b></h3>
+                        <table class="table table-hover" id="dashboardtable">
+                            <thead>
+                                <tr>
+                                    <th>Fund Name</th>
+                                    <th>Complete</th>
+                                    <th>Incomplete</th>
+                                    <th>In Progress</th>
+                                    <th>Total</th>
+                                    <th>Total Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!empty($fund_summary)): ?>
+                                <?php foreach ($fund_summary as $row): ?>
+                                <tr>
+                                    <td><?php echo $row->fund_name; ?></td>
+                                    <td><?php echo $row->complete_count; ?></td>
+                                    <td><?php echo $row->incomplete_count; ?></td>
+                                    <td><?php echo $row->inprogress_count; ?></td>
+                                    <td><?php echo $row->total_count; ?></td>
+                                    <td><?php echo number_format($row->total_amount, 2); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <?php else: ?>
+                                <tr>
+                                    <td colspan="6">No data available</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Summary Section -->
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                    <div class="box-body table-responsive no-padding">
+                        <h3 style="text-align:center;"><b>Project Summary</b></h3>
+                        <table class="table table-hover" id="dashboardtable">
+                            <thead>
+                                <tr>
+                                    <th>Work Name</th>
+                                    <th>Active</th>
+                                    <th>Completed</th>
+                                    <th>Pending</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!empty($project_summary)): ?>
+                                <?php foreach ($project_summary as $row): ?>
+                                <tr>
+                                    <td><?php echo $row->work_name; ?></td>
+                                    <td><?php echo $row->active_count; ?></td>
+                                    <td><?php echo $row->completed_count; ?></td>
+                                    <td><?php echo $row->pending_count; ?></td>
+                                    <td><?php echo $row->total_count; ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <?php else: ?>
+                                <tr>
+                                    <td colspan="5">No data available</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Summary Section -->
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                    <div class="box-body table-responsive no-padding">
+                        <h3 style="text-align:center;"><b>Event Summary</b></h3>
+                        <table class="table table-hover" id="dashboardtable">
+                            <thead>
+                                <tr>
+                                    <th>Event Name</th>
+                                    <th>Approved</th>
+                                    <th>Pending</th>
+                                    <th>Rejected</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!empty($event_summary)): ?>
+                                <?php foreach ($event_summary as $row): ?>
+                                <tr>
+                                    <td><?php echo $row->event_name; ?></td>
+                                    <td><?php echo $row->approved_count; ?></td>
+                                    <td><?php echo $row->pending_count; ?></td>
+                                    <td><?php echo $row->rejected_count; ?></td>
+                                    <td><?php echo $row->total_count; ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <?php else: ?>
+                                <tr>
+                                    <td colspan="5">No data available</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visitor Summary Section -->
+        <div class="row">
+            <div class="col-lg-12 col-xs-12">
+                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                    <div class="box-body table-responsive no-padding">
+                        <h3 style="text-align:center;"><b>Visitor Summary</b></h3>
+                        <table class="table table-hover" id="dashboardtable">
+                            <thead>
+                                <tr>
+                                    <th>District</th>
+                                    <th>Total Visitors</th>
+                                    <th>Today Visitors</th>
+                                    <th>This Month Visitors</th>
+                                    <th>This Year Visitors</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!empty($visitor_summary)): ?>
+                                <?php foreach ($visitor_summary as $row): ?>
+                                <tr>
+                                    <td><?php echo $row->district; ?></td>
+                                    <td><?php echo $row->total_visitors; ?></td>
+                                    <td><?php echo $row->today_visitors; ?></td>
+                                    <td><?php echo $row->month_visitors; ?></td>
+                                    <td><?php echo $row->year_visitors; ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <?php else: ?>
+                                <tr>
+                                    <td colspan="5">No data available</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 </div>
 <!-- DataTables and related plugins -->

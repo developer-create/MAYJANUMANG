@@ -230,6 +230,95 @@ $data["results"] = $query->result();
 
         
         $data["Allblocks"] = $this->user_model->getAllBlocks(); // Assuming 'your_model' is the name of your model
+        
+        // Load models for summary data
+        $this->load->model('FundSummary_model');
+        $this->load->model('ProjectSummary_model');
+        $this->load->model('Events_model');
+        $this->load->model('Visitors_model');
+        
+        // Fund Summary Data - detailed by fund type
+        $data["fund_summary"] = $this->db->query("
+            SELECT 
+                CASE 
+                    WHEN TRIM(approved_fund) LIKE 'MLA Swechanudan' THEN 'MLA Sweechanudan'
+                    WHEN TRIM(approved_fund) LIKE 'MLA Sweechanudan' THEN 'MLA Sweechanudan'
+                    WHEN TRIM(approved_fund) LIKE 'CLP %' THEN 'CLP Sweechanudan'
+                    WHEN TRIM(LOWER(approved_fund)) LIKE 'jan%sampark%fund' THEN 'Jansampark Fund'
+                    WHEN TRIM(approved_fund) LIKE 'जन%संपर्क%' THEN 'Jansampark Fund'
+                    WHEN TRIM(approved_fund) LIKE 'जन%सम्पर्क%' THEN 'Jansampark Fund'
+                    ELSE TRIM(approved_fund)
+                END as fund_name,
+                COUNT(*) as total_count,
+                SUM(CASE WHEN work_status = 'Complete' THEN 1 ELSE 0 END) as complete_count,
+                SUM(CASE WHEN work_status = 'Incomplete' THEN 1 ELSE 0 END) as incomplete_count,
+                SUM(CASE WHEN work_status = 'In progress' THEN 1 ELSE 0 END) as inprogress_count,
+                SUM(COALESCE(approximate_cost, 0)) as total_amount
+            FROM jansunwai
+            WHERE approved_fund IS NOT NULL AND approved_fund != ''
+            GROUP BY fund_name
+            UNION ALL
+            SELECT 
+                CASE 
+                    WHEN TRIM(approved_fund) LIKE 'MLA Swechanudan' THEN 'MLA Sweechanudan'
+                    WHEN TRIM(approved_fund) LIKE 'MLA Sweechanudan' THEN 'MLA Sweechanudan'
+                    WHEN TRIM(approved_fund) LIKE 'CLP %' THEN 'CLP Sweechanudan'
+                    WHEN TRIM(LOWER(approved_fund)) LIKE 'jan%sampark%fund' THEN 'Jansampark Fund'
+                    WHEN TRIM(approved_fund) LIKE 'जन%संपर्क%' THEN 'Jansampark Fund'
+                    WHEN TRIM(approved_fund) LIKE 'जन%सम्पर्क%' THEN 'Jansampark Fund'
+                    ELSE TRIM(approved_fund)
+                END as fund_name,
+                COUNT(*) as total_count,
+                SUM(CASE WHEN work_status = 'Complete' THEN 1 ELSE 0 END) as complete_count,
+                SUM(CASE WHEN work_status = 'Incomplete' THEN 1 ELSE 0 END) as incomplete_count,
+                SUM(CASE WHEN work_status = 'In progress' THEN 1 ELSE 0 END) as inprogress_count,
+                SUM(COALESCE(approximate_cost, 0)) as total_amount
+            FROM districtpublicproblem
+            WHERE approved_fund IS NOT NULL AND approved_fund != ''
+            GROUP BY fund_name
+            ORDER BY fund_name
+        ")->result();
+        
+        // Project Summary Data - detailed by project
+        $data["project_summary"] = $this->db->query("
+            SELECT 
+                work_name,
+                COUNT(*) as total_count,
+                SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) as active_count,
+                SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed_count,
+                SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending_count
+            FROM project_details
+            WHERE is_deleted = 0
+            GROUP BY work_name
+            ORDER BY work_name
+        ")->result();
+        
+        // Event Summary Data - detailed by event
+        $data["event_summary"] = $this->db->query("
+            SELECT 
+                event_detail as event_name,
+                COUNT(*) as total_count,
+                SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_count,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
+                SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected_count
+            FROM events
+            GROUP BY event_detail
+            ORDER BY event_detail
+        ")->result();
+        
+        // Visitor Summary Data - detailed by district
+        $data["visitor_summary"] = $this->db->query("
+            SELECT 
+                district,
+                COUNT(*) as total_visitors,
+                SUM(CASE WHEN DATE(date) = CURDATE() THEN 1 ELSE 0 END) as today_visitors,
+                SUM(CASE WHEN YEAR(date) = YEAR(CURDATE()) AND MONTH(date) = MONTH(CURDATE()) THEN 1 ELSE 0 END) as month_visitors,
+                SUM(CASE WHEN YEAR(date) = YEAR(CURDATE()) THEN 1 ELSE 0 END) as year_visitors
+            FROM visitors
+            GROUP BY district
+            ORDER BY district
+        ")->result();
+        
         $this->loadViews("general/dashboard", $this->global, $data, null);
     }
     public function blockdashboard() {
@@ -508,8 +597,9 @@ $insert_id = $this->db->insert_id();
         //$this->form_validation->set_rules("as_no_date", "AS No/Date", "required");
         $this->form_validation->set_rules("type_of_work", "Type of Work", "required");
         $this->form_validation->set_rules("middle_men", "Middle Men", "required");
-        $this->form_validation->set_rules("cont_no", "Cont No.", "required");
+        $this->form_validation->set_rules("cont_no", "Cont No.", "required|regex_match[/^\d{10}$/]");
         $this->form_validation->set_rules("beneficial", "Beneficial", "required");
+        $this->form_validation->set_rules("mobile", "Beneficial Cont No.", "required|regex_match[/^\d{10}$/]");
         $this->form_validation->set_rules("po", "PO", "required");
         $this->form_validation->set_rules("account_details", "Account Details", "required");
         $this->form_validation->set_rules("id_proof_number", "ID Proof Number", "required");
@@ -672,7 +762,7 @@ $insert_id = $this->db->insert_id();
             $this->form_validation->set_rules("password", "Password", "required|max_length[20]");
             $this->form_validation->set_rules("cpassword", "Confirm Password", "trim|required|matches[password]|max_length[20]");
             $this->form_validation->set_rules("role", "Role", "trim|required|numeric");
-            $this->form_validation->set_rules("mobile", "Mobile Number", "required|min_length[10]");
+            $this->form_validation->set_rules("mobile", "Mobile Number", "required|regex_match[/^\d{10}$/]");
             if ($this->form_validation->run() == false) {
                 $this->addNew();
             } else {
@@ -733,7 +823,7 @@ $insert_id = $this->db->insert_id();
             $this->form_validation->set_rules("password", "Password", "matches[cpassword]|max_length[20]");
             $this->form_validation->set_rules("cpassword", "Confirm Password", "matches[password]|max_length[20]");
             $this->form_validation->set_rules("role", "Role", "trim|required|numeric");
-            $this->form_validation->set_rules("mobile", "Mobile Number", "required|min_length[10]");
+            $this->form_validation->set_rules("mobile", "Mobile Number", "required|regex_match[/^\d{10}$/]");
             if ($this->form_validation->run() == false) {
                 $this->editOld($userId);
             } else {
@@ -825,7 +915,7 @@ $insert_id = $this->db->insert_id();
     function profileUpdate($active = "details") {
         $this->load->library("form_validation");
         $this->form_validation->set_rules("fname", "Full Name", "trim|required|max_length[128]");
-        $this->form_validation->set_rules("mobile", "Mobile Number", "required|min_length[10]");
+        $this->form_validation->set_rules("mobile", "Mobile Number", "required|regex_match[/^\d{10}$/]");
         $this->form_validation->set_rules("email", "Email", "trim|required|valid_email|max_length[128]|callback_emailExists");
         if ($this->form_validation->run() == false) {
             $this->profile($active);
@@ -1689,10 +1779,152 @@ $insert_id = $this->db->insert_id();
         if (!$this->hasListAccess()) {
             $this->loadThis();
         } else {
-            $data["userRecords"] = $this->user_model->jansunwailist24();
             $this->global["pageTitle"] = "Jansunwai";
-            $this->loadViews("users/jansunwailiststage2", $this->global, $data, null);
+            $this->loadViews("users/jansunwailiststage2ajax", $this->global, [], null);
         }
+    }
+
+    public function jansunwai2data()
+    {
+        $request = $_REQUEST;
+        
+        $this->db->reset_query();
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_session_scope();
+        $this->db->where("jansunwai.current_stage", 2);
+        $recordsTotal = $this->db->count_all_results();
+
+        $this->db->reset_query();
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_joins();
+        $this->jansunwai_datatable_apply_filters($request);
+        $this->jansunwai_datatable_apply_search($request);
+        $this->db->where("jansunwai.current_stage", 2);
+        $recordsFiltered = $this->db->count_all_results();
+
+        $this->db->reset_query();
+        $this->db->select(
+            "jansunwai.*, tbl_users.name as added_by, subtype_of_work.name as sub_work_type_name, " .
+            "block.name as block_join_name, booth.bnumber as booth_number_join, booth.name as booth_display_name, " .
+            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name"
+        );
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_joins();
+        $this->jansunwai_datatable_apply_filters($request);
+        $this->jansunwai_datatable_apply_search($request);
+        $this->db->where("jansunwai.current_stage", 2);
+        $this->db->order_by("jansunwai.id", "DESC");
+        $start = isset($request["start"]) ? (int) $request["start"] : 0;
+        $length = isset($request["length"]) ? (int) $request["length"] : 10;
+        if ($length > 0) {
+            $this->db->limit($length, $start);
+        }
+        $rows = $this->db->get()->result();
+
+        $monthNames = [
+            1 => "January", 2 => "February", 3 => "March",
+            4 => "April", 5 => "May", 6 => "June",
+            7 => "July", 8 => "August", 9 => "September",
+            10 => "October", 11 => "November", 12 => "December",
+        ];
+
+        $response = [];
+        $i = $start + 1;
+        $currentTime = new DateTime();
+
+        foreach ($rows as $row) {
+            $createdAt = new DateTime($row->createdAt);
+            $updatedAt = !empty($row->updatedAt) ? new DateTime($row->updatedAt) : null;
+            $createdAtTimestamp = $createdAt->getTimestamp() * 1000;
+
+            if ($row->work_status == "Complete" && $updatedAt) {
+                $timeDiff = $updatedAt->diff($createdAt);
+                $timer = "<b style=\"color: red;\">" . $timeDiff->format("%dd, %hh, %im, %ss") . "</b>";
+            } else {
+                $timer = '<span class="live-timer" data-created-at="' . $createdAtTimestamp . '"><b style="color: red;"></b></span>';
+            }
+
+            $timeDifferenceInSeconds = $currentTime->getTimestamp() - $createdAt->getTimestamp();
+            $isWithin72Hours = $timeDifferenceInSeconds < (72 * 60 * 60);
+
+            $monthKey = (int) $row->month;
+            $monthLabel = isset($monthNames[$monthKey]) ? $monthNames[$monthKey] : ($row->month ?: "N/A");
+
+            // Format year to financial year format
+            $year_display = $row->year;
+            if (!empty($year_display) && strpos($year_display, '-') === false) {
+                $year_num = (int)$year_display;
+                $next_year = substr($year_num + 1, -2);
+                $year_display = $year_num . '-' . $next_year;
+            }
+
+            $blockName = $row->block_join_name ?: "N/A";
+            $boothNo = $row->booth_number_join ?: "N/A";
+            $boothNameDisp = $row->booth_display_name ?: "N/A";
+            $panchayatName = $row->panchayat_join_name ?: "N/A";
+            $villageName = $row->village_join_name ?: "N/A";
+            $departmentName = $row->department_join_name ?: "N/A";
+
+            $actionButtons =
+                '<a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View Comment"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
+                '<a class="btn btn-sm btn-success ' . (!$isWithin72Hours ? "disabled" : "") . '" href="' . base_url("user/submit_form/" . $row->id . "/2") . '" data-userid="' . $row->id . '" title="Add Comment"><i class="fa fa-edit"></i></a> ' .
+                '<a class="btn btn-sm btn-warning" href="' . base_url("user/editJansunwai/" . $row->id) . '" title="Edit"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
+                '<a class="btn btn-sm btn-danger" href="' . base_url("user/delete_jansunwai/" . $row->id) . '" onclick="return confirm(\'Are you sure you want to delete this record?\');" title="Delete"><i class="fa fa-trash"></i></a>';
+
+            $response[] = [
+                $i++,
+                $row->registration_no,
+                $timer,
+                $row->sector_name,
+                $row->micro_sector_no,
+                $row->micro_sector_name,
+                $year_display,
+                $monthLabel,
+                $row->date,
+                $row->district,
+                $row->assembly,
+                $blockName,
+                $row->recommended_letter_no,
+                $boothNo,
+                $boothNameDisp,
+                $panchayatName,
+                $villageName,
+                $row->majra_faliya,
+                $row->work_problem,
+                $row->office,
+                $row->approximate_cost,
+                $departmentName,
+                $row->priority,
+                $row->ts_no_date,
+                $row->as_no_date,
+                $row->type_of_work,
+                isset($row->sub_work_type_name) ? $row->sub_work_type_name : "-",
+                $row->middle_men,
+                $row->cont_no,
+                $row->beneficial,
+                $row->po,
+                $this->getWorkStatusLabel($row->work_status),
+                $row->remark_goshana,
+                $row->remark,
+                $row->added_by,
+                $row->mobile,
+                $row->lat . "<br>" . $row->lng,
+                $row->createdAt,
+                !empty($row->uploaded_file)
+                    ? '<a class="btn btn-sm btn-info" href="' . base_url("uploads/" . $row->uploaded_file) . '" title="Image" target="_blank">View File</a>'
+                    : "<span>No File Uploaded</span>",
+                '<div class="text-center">' . $actionButtons . "</div>",
+            ];
+        }
+
+        $output = [
+            "draw" => intval($request["draw"] ?? 0),
+            "recordsTotal" => (int) $recordsTotal,
+            "recordsFiltered" => (int) $recordsFiltered,
+            "data" => $response,
+        ];
+
+        $this->output->set_content_type("application/json")->set_output(json_encode($output));
     }
     function jansunwai3() {
         
@@ -1700,11 +1932,152 @@ $insert_id = $this->db->insert_id();
         if (!$this->hasListAccess()) {
             $this->loadThis();
         } else {
-            $data["userRecords"] = $this->user_model->jansunwailist48();
-            $data["approvedRecords"] = $this->user_model->jansunwailist48_approved(); // Get approved records
             $this->global["pageTitle"] = "Jansunwai";
-            $this->loadViews("users/jansunwailiststage3", $this->global, $data, null);
+            $this->loadViews("users/jansunwailiststage3ajax", $this->global, [], null);
         }
+    }
+
+    public function jansunwai3data()
+    {
+        $request = $_REQUEST;
+        
+        $this->db->reset_query();
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_session_scope();
+        $this->db->where("jansunwai.current_stage", 3);
+        $recordsTotal = $this->db->count_all_results();
+
+        $this->db->reset_query();
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_joins();
+        $this->jansunwai_datatable_apply_filters($request);
+        $this->jansunwai_datatable_apply_search($request);
+        $this->db->where("jansunwai.current_stage", 3);
+        $recordsFiltered = $this->db->count_all_results();
+
+        $this->db->reset_query();
+        $this->db->select(
+            "jansunwai.*, tbl_users.name as added_by, subtype_of_work.name as sub_work_type_name, " .
+            "block.name as block_join_name, booth.bnumber as booth_number_join, booth.name as booth_display_name, " .
+            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name"
+        );
+        $this->db->from("jansunwai");
+        $this->jansunwai_datatable_joins();
+        $this->jansunwai_datatable_apply_filters($request);
+        $this->jansunwai_datatable_apply_search($request);
+        $this->db->where("jansunwai.current_stage", 3);
+        $this->db->order_by("jansunwai.id", "DESC");
+        $start = isset($request["start"]) ? (int) $request["start"] : 0;
+        $length = isset($request["length"]) ? (int) $request["length"] : 10;
+        if ($length > 0) {
+            $this->db->limit($length, $start);
+        }
+        $rows = $this->db->get()->result();
+
+        $monthNames = [
+            1 => "January", 2 => "February", 3 => "March",
+            4 => "April", 5 => "May", 6 => "June",
+            7 => "July", 8 => "August", 9 => "September",
+            10 => "October", 11 => "November", 12 => "December",
+        ];
+
+        $response = [];
+        $i = $start + 1;
+        $currentTime = new DateTime();
+
+        foreach ($rows as $row) {
+            $createdAt = new DateTime($row->createdAt);
+            $updatedAt = !empty($row->updatedAt) ? new DateTime($row->updatedAt) : null;
+            $createdAtTimestamp = $createdAt->getTimestamp() * 1000;
+
+            if ($row->work_status == "Complete" && $updatedAt) {
+                $timeDiff = $updatedAt->diff($createdAt);
+                $timer = "<b style=\"color: red;\">" . $timeDiff->format("%dd, %hh, %im, %ss") . "</b>";
+            } else {
+                $timer = '<span class="live-timer" data-created-at="' . $createdAtTimestamp . '"><b style="color: red;"></b></span>';
+            }
+
+            $timeDifferenceInSeconds = $currentTime->getTimestamp() - $createdAt->getTimestamp();
+            $isWithin72Hours = $timeDifferenceInSeconds < (72 * 60 * 60);
+
+            $monthKey = (int) $row->month;
+            $monthLabel = isset($monthNames[$monthKey]) ? $monthNames[$monthKey] : ($row->month ?: "N/A");
+
+            // Format year to financial year format
+            $year_display = $row->year;
+            if (!empty($year_display) && strpos($year_display, '-') === false) {
+                $year_num = (int)$year_display;
+                $next_year = substr($year_num + 1, -2);
+                $year_display = $year_num . '-' . $next_year;
+            }
+
+            $blockName = $row->block_join_name ?: "N/A";
+            $boothNo = $row->booth_number_join ?: "N/A";
+            $boothNameDisp = $row->booth_display_name ?: "N/A";
+            $panchayatName = $row->panchayat_join_name ?: "N/A";
+            $villageName = $row->village_join_name ?: "N/A";
+            $departmentName = $row->department_join_name ?: "N/A";
+
+            $actionButtons =
+                '<a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View Comment"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
+                '<a class="btn btn-sm btn-success ' . (!$isWithin72Hours ? "disabled" : "") . '" href="' . base_url("user/submit_form/" . $row->id . "/3") . '" data-userid="' . $row->id . '" title="Add Comment"><i class="fa fa-edit"></i></a> ' .
+                '<a class="btn btn-sm btn-warning" href="' . base_url("user/editJansunwai/" . $row->id) . '" title="Edit"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
+                '<a class="btn btn-sm btn-danger" href="' . base_url("user/delete_jansunwai/" . $row->id) . '" onclick="return confirm(\'Are you sure you want to delete this record?\');" title="Delete"><i class="fa fa-trash"></i></a>';
+
+            $response[] = [
+                $i++,
+                $row->registration_no,
+                $timer,
+                $row->sector_name,
+                $row->micro_sector_no,
+                $row->micro_sector_name,
+                $year_display,
+                $monthLabel,
+                $row->date,
+                $row->district,
+                $row->assembly,
+                $blockName,
+                $row->recommended_letter_no,
+                $boothNo,
+                $boothNameDisp,
+                $panchayatName,
+                $villageName,
+                $row->majra_faliya,
+                $row->work_problem,
+                $row->office,
+                $row->approximate_cost,
+                $departmentName,
+                $row->priority,
+                $row->ts_no_date,
+                $row->as_no_date,
+                $row->type_of_work,
+                isset($row->sub_work_type_name) ? $row->sub_work_type_name : "-",
+                $row->middle_men,
+                $row->cont_no,
+                $row->beneficial,
+                $row->po,
+                $this->getWorkStatusLabel($row->work_status),
+                $row->remark_goshana,
+                $row->remark,
+                $row->added_by,
+                $row->mobile,
+                $row->lat . "<br>" . $row->lng,
+                $row->createdAt,
+                !empty($row->uploaded_file)
+                    ? '<a class="btn btn-sm btn-info" href="' . base_url("uploads/" . $row->uploaded_file) . '" title="Image" target="_blank">View File</a>'
+                    : "<span>No File Uploaded</span>",
+                '<div class="text-center">' . $actionButtons . "</div>",
+            ];
+        }
+
+        $output = [
+            "draw" => intval($request["draw"] ?? 0),
+            "recordsTotal" => (int) $recordsTotal,
+            "recordsFiltered" => (int) $recordsFiltered,
+            "data" => $response,
+        ];
+
+        $this->output->set_content_type("application/json")->set_output(json_encode($output));
     }
     // function jansunwaicommentview($id) {
         
