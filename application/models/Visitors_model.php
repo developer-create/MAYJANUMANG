@@ -26,9 +26,48 @@ class Visitors_model extends CI_Model {
         $this->db->where('MONTH(visitors.date)', $filters['month']);
     }
 
+    if (!empty($filters['date'])) {
+        $this->db->where('DATE(visitors.date)', $filters['date']);
+    }
+
+    if (!empty($filters['district'])) {
+        $this->db->where('LOWER(visitors.district)', strtolower($filters['district']));
+    }
+
+    if (!empty($filters['vidhan_sabha'])) {
+        $this->db->where('LOWER(visitors.vidhan_sabha)', strtolower($filters['vidhan_sabha']));
+    }
+
+    if (!empty($filters['block'])) {
+        $this->db->where('LOWER(visitors.block)', strtolower($filters['block']));
+    }
+
+    $this->db->order_by('visitors.date', 'DESC');
     $query = $this->db->get('visitors');
     return $query->result_array();
 }
+
+    // Get all districts from district table
+    public function get_all_districts() {
+        $this->db->select('id, name');
+        $this->db->from('district');
+        $this->db->order_by('name', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get vidhan sabhas by district
+    public function get_vidhan_sabhas_by_district($district_id) {
+        if (empty($district_id)) {
+            return array();
+        }
+        $this->db->select('id, vidhan_sabha_name');
+        $this->db->from('vidhan_sabha');
+        $this->db->where('district_id', $district_id);
+        $this->db->order_by('vidhan_sabha_name', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 
    
 

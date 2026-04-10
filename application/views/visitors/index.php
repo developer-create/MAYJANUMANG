@@ -17,18 +17,32 @@
                     <form method="post" action="<?php echo site_url('visitors'); ?>" style="margin-top: 15px;">
                         <div class="row">
                             <div class="col-md-2">
-                                <select id="districtFilter" class="form-control">
+                                <select id="districtFilter" name="district" class="form-control">
                                     <option value="">All Districts</option>
                                     <?php foreach ($districts as $district): ?>
-                                        <option value="<?php echo $district; ?>"><?php echo $district; ?></option>
+                                        <option value="<?php echo $district['id']; ?>" <?php echo (isset($selected_district_id) && $selected_district_id == $district['id']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($district['name']); ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <select id="vidhanFilter" class="form-control">
+                                <select id="vidhanFilter" name="vidhan_sabha" class="form-control">
                                     <option value="">All Vidhan Sabha</option>
                                     <?php foreach ($vidhan_sabhas as $vidhan): ?>
-                                        <option value="<?php echo $vidhan; ?>"><?php echo $vidhan; ?></option>
+                                        <option value="<?php echo htmlspecialchars($vidhan['vidhan_sabha_name']); ?>" <?php echo (isset($filters['vidhan_sabha']) && strtolower($filters['vidhan_sabha']) == strtolower($vidhan['vidhan_sabha_name'])) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($vidhan['vidhan_sabha_name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="blockFilter" name="block" class="form-control">
+                                    <option value="">All Blocks</option>
+                                    <?php foreach ($blocks as $block): ?>
+                                        <option value="<?php echo htmlspecialchars($block); ?>" <?php echo (isset($filters['block']) && $filters['block'] == $block) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($block); ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -80,7 +94,13 @@
                                 </select>
                             </div>
                             <div class="col-md-2">
+                                <input type="date" name="date" id="dateFilter" class="form-control" value="<?php echo isset($filters['date']) ? $filters['date'] : ''; ?>">
+                            </div>
+                            <div class="col-md-2">
                                 <button type="submit" class="btn btn-primary form-control">Filter</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="<?php echo site_url('visitors'); ?>" class="btn btn-default form-control">Clear</a>
                             </div>
                         </div>
                     </form>
@@ -296,8 +316,33 @@ $(document).ready(function() {
     }
     // Filter bindings
     $('#districtFilter').on('change', function () {
+        var district_id = $(this).val();
+        
+        // Load vidhan sabhas for selected district
+        if (district_id) {
+            $.ajax({
+                url: '<?php echo site_url("visitors/get_vidhan_sabhas_by_district"); ?>',
+                type: 'POST',
+                data: { district_id: district_id },
+                dataType: 'json',
+                success: function(response) {
+                    var vidhanSelect = $('#vidhanFilter');
+                    vidhanSelect.html('<option value="">All Vidhan Sabha</option>');
+                    
+                    if (response.success && response.vidhan_sabhas.length > 0) {
+                        $.each(response.vidhan_sabhas, function(index, vidhan) {
+                            vidhanSelect.append('<option value="' + vidhan.id + '">' + vidhan.vidhan_sabha_name + '</option>');
+                        });
+                    }
+                }
+            });
+        } else {
+            $('#vidhanFilter').html('<option value="">All Vidhan Sabha</option>');
+        }
+        
         table.column(1).search(this.value).draw(); // District column index
     });
+    
     $('#vidhanFilter').on('change', function () {
         table.column(2).search(this.value).draw(); // Vidhan Sabha column index
     });

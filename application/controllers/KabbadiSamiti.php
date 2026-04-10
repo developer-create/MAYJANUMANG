@@ -40,6 +40,7 @@ class KabbadiSamiti extends BaseController
             $data['records'] = $this->KabbadiSamiti_model->get_groups($searchText, $filters);
             $data['blocks'] = $this->KabbadiSamiti_model->get_blocks();
             $data['samiti_types'] = $this->KabbadiSamiti_model->get_samiti_types();
+            $data['total_members'] = $this->KabbadiSamiti_model->get_total_members_count($filters);
             
             $this->global['pageTitle'] = 'Datacollector : Khel Samiti';
             $this->loadViews("kabbadisamiti/index", $this->global, $data, NULL);

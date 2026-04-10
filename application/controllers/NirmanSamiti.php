@@ -20,7 +20,38 @@ class NirmanSamiti extends BaseController {
         if (!$this->hasListAccess()) {
             $this->loadThis();
         } else {
-            $data['groups'] = $this->NirmanSamiti_model->get_all_groups();
+            $searchText = $this->input->get_post('searchText');
+            $filter_block = $this->input->get_post('filter_block');
+            $filter_year = $this->input->get_post('filter_year');
+            $filter_month = $this->input->get_post('filter_month');
+            $filter_day = $this->input->get_post('filter_day');
+            
+            $filters = array();
+            if ($filter_block !== null && $filter_block !== '') {
+                $filters['block'] = $filter_block;
+            }
+            if ($filter_year !== null && $filter_year !== '') {
+                $filters['year'] = $filter_year;
+            }
+            if ($filter_month !== null && $filter_month !== '') {
+                $filters['month'] = $filter_month;
+            }
+            if ($filter_day !== null && $filter_day !== '') {
+                $filters['day'] = $filter_day;
+            }
+            
+            $data['searchText'] = $searchText;
+            $data['filter_block'] = $filter_block;
+            $data['filter_year'] = $filter_year;
+            $data['filter_month'] = $filter_month;
+            $data['filter_day'] = $filter_day;
+            $data['groups'] = $this->NirmanSamiti_model->get_groups($searchText, $filters);
+            $data['blocks'] = $this->NirmanSamiti_model->get_blocks_with_data();
+            $data['years'] = $this->NirmanSamiti_model->get_years();
+            $data['months'] = $this->NirmanSamiti_model->get_months();
+            $data['days'] = $this->NirmanSamiti_model->get_days();
+            $data['total_members'] = $this->NirmanSamiti_model->get_total_members_count($filters);
+            
             $this->global['pageTitle'] = 'Datacollector : Nirman Samiti';
             $this->loadViews("nirmansamiti/index", $this->global, $data, NULL);
         }

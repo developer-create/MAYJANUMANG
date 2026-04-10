@@ -209,4 +209,24 @@ class KabbadiSamiti_model extends CI_Model
         $this->db->where('panchayatid', $panchayat_id);
         return $this->db->get('village')->result();
     }
+
+    public function get_total_members_count($filters = array()) {
+        $this->db->select('SUM((SELECT COUNT(*) FROM kabbadi_samiti WHERE kabbadi_samiti.group_id = kabbadi_samiti_groups.id)) as total_members');
+        $this->db->from('kabbadi_samiti_groups');
+        $this->db->join('block', 'block.id = kabbadi_samiti_groups.block', 'left');
+        
+        if (!empty($filters['block'])) {
+            $this->db->where('kabbadi_samiti_groups.block', (int)$filters['block']);
+        }
+        if (!empty($filters['year'])) {
+            $this->db->where('kabbadi_samiti_groups.year', $filters['year']);
+        }
+        if (isset($filters['samiti_type_id']) && $filters['samiti_type_id'] !== '' && $filters['samiti_type_id'] !== null) {
+            $this->db->where('kabbadi_samiti_groups.samiti_type_id', (int)$filters['samiti_type_id']);
+        }
+        
+        $query = $this->db->get();
+        $result = $query->row_array();
+        return $result['total_members'] ?? 0;
+    }
 }

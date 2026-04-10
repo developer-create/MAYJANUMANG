@@ -31,41 +31,53 @@ class Visitors extends BaseController {
     } else {
         // Get filters from POST request
         $filters = array();
+        $selected_district_id = null;
+        
         if ($this->input->post('year')) {
             $filters['year'] = $this->input->post('year');
         }
         if ($this->input->post('month')) {
             $filters['month'] = $this->input->post('month');
         }
+        if ($this->input->post('date')) {
+            $filters['date'] = $this->input->post('date');
+        }
+        if ($this->input->post('district')) {
+            $selected_district_id = $this->input->post('district');
+            // Get district name from ID
+            $district_data = $this->db->get_where('district', array('id' => $selected_district_id))->row_array();
+            if ($district_data) {
+                $filters['district'] = $district_data['name'];
+            }
+        }
+        if ($this->input->post('vidhan_sabha')) {
+            $filters['vidhan_sabha'] = $this->input->post('vidhan_sabha');
+        }
+        if ($this->input->post('block')) {
+            $filters['block'] = $this->input->post('block');
+        }
         
         $data['visitors'] = $this->Visitors_model->get_visitors($filters);
         $data['filters'] = $filters;
+        $data['selected_district_id'] = $selected_district_id;
 
-        // Helper function to clean and normalize values
-        $clean = function($value) {
-            return strtolower(trim($value));
-        };
+        // Get all districts from database
+        $data['districts'] = $this->Visitors_model->get_all_districts();
 
-        // Extract unique, cleaned values for dropdowns
-        $districts = array_map($clean, array_column($data['visitors'], 'district'));
-        $districts = array_filter($districts, function($v) { return $v !== '' && $v !== null; });
-        $districts = array_unique($districts);
-        sort($districts);
-        $data['districts'] = $districts;
+        // Get vidhan sabhas for selected district or all if no district selected
+        if (!empty($selected_district_id)) {
+            $data['vidhan_sabhas'] = $this->Visitors_model->get_vidhan_sabhas_by_district($selected_district_id);
+        } else {
+            $data['vidhan_sabhas'] = array();
+        }
 
-        $vidhan_sabhas = array_map($clean, array_column($data['visitors'], 'vidhan_sabha'));
-        $vidhan_sabhas = array_filter($vidhan_sabhas, function($v) { return $v !== '' && $v !== null; });
-        $vidhan_sabhas = array_unique($vidhan_sabhas);
-        sort($vidhan_sabhas);
-        $data['vidhan_sabhas'] = $vidhan_sabhas;
-
-        // Get blocks as array of block names, cleaned and unique
+        // Get blocks as array of block names, with first letter capitalized
         $query = $this->db->get('block');
         $blocks = $query->result_array();
         // Check for both 'block_name' and 'name' field variations
-        $block_names = array_map(function($b) use ($clean) {
+        $block_names = array_map(function($b) {
             $name = isset($b['block_name']) ? $b['block_name'] : (isset($b['name']) ? $b['name'] : '');
-            return $clean($name);
+            return ucfirst(strtolower(trim($name)));
         }, $blocks);
         $block_names = array_filter($block_names, function($v) { return $v !== '' && $v !== null; });
         $block_names = array_unique($block_names);
@@ -231,6 +243,19 @@ class Visitors extends BaseController {
             
             redirect('visitors');
         }
+    }
+
+    // Get vidhan sabhas by district (AJAX)
+    public function get_vidhan_sabhas_by_district() {
+        $district_id = $this->input->post('district_id');
+        
+        if (empty($district_id)) {
+            echo json_encode(['success' => false, 'vidhan_sabhas' => []]);
+            return;
+        }
+
+        $vidhan_sabhas = $this->Visitors_model->get_vidhan_sabhas_by_district($district_id);
+        echo json_encode(['success' => true, 'vidhan_sabhas' => $vidhan_sabhas]);
     }
 
     // Get visitor details for modal view (AJAX)

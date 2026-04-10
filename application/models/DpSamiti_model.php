@@ -30,6 +30,48 @@ class DpSamiti_model extends CI_Model
     }
     
     /**
+     * Get groups with filters (Block, Year, Month, Day)
+     */
+    public function get_groups($search = null, $filters = array()) {
+        $this->db->select('g.*, 
+            bl.name as block_name, 
+            b.name as booth_name,
+            COUNT(m.id) as total_members');
+        $this->db->from('dp_samiti_groups as g');
+        $this->db->join('block as bl', 'bl.id = g.block', 'left');
+        $this->db->join('booth as b', 'b.id = g.booth_name', 'left');
+        $this->db->join('dp_samiti as m', 'm.group_id = g.id', 'left');
+        
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('g.unique_id', $search);
+            $this->db->or_like('b.name', $search);
+            $this->db->or_like('g.gram_panchayat', $search);
+            $this->db->or_like('g.village', $search);
+            $this->db->group_end();
+        }
+        
+        if (!empty($filters['block'])) {
+            $this->db->where('g.block', (int)$filters['block']);
+        }
+        if (!empty($filters['year'])) {
+            $this->db->where('g.year', $filters['year']);
+        }
+        if (!empty($filters['month'])) {
+            $this->db->where('MONTH(g.created_at)', (int)$filters['month']);
+        }
+        if (!empty($filters['day'])) {
+            $this->db->where('DAY(g.created_at)', (int)$filters['day']);
+        }
+        
+        $this->db->group_by('g.id');
+        $this->db->order_by('g.id', 'DESC');
+        $query = $this->db->get();
+        
+        return $query->result_array();
+    }
+    
+    /**
      * Get all groups with member count (alternative method for consistency)
      */
     public function get_all_groups() {
@@ -178,6 +220,47 @@ class DpSamiti_model extends CI_Model
         
         return $query->result();
     }
+
+    // Get distinct years from dp_samiti_groups
+    public function get_years() {
+        $this->db->select('DISTINCT(year) as year');
+        $this->db->from('dp_samiti_groups');
+        $this->db->where('year IS NOT NULL');
+        $this->db->where('year !=', '');
+        $this->db->order_by('year', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get distinct months from dp_samiti_groups
+    public function get_months() {
+        $this->db->select('DISTINCT(MONTH(created_at)) as month');
+        $this->db->from('dp_samiti_groups');
+        $this->db->where('created_at IS NOT NULL');
+        $this->db->order_by('MONTH(created_at)', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get distinct days from dp_samiti_groups
+    public function get_days() {
+        $this->db->select('DISTINCT(DAY(created_at)) as day');
+        $this->db->from('dp_samiti_groups');
+        $this->db->where('created_at IS NOT NULL');
+        $this->db->order_by('DAY(created_at)', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get blocks that have data in dp_samiti_groups
+    public function get_blocks_with_data() {
+        $this->db->select('DISTINCT(bl.id), bl.name');
+        $this->db->from('dp_samiti_groups as g');
+        $this->db->join('block as bl', 'bl.id = g.block', 'inner');
+        $this->db->order_by('bl.name', 'ASC');
+        $query = $this->db->get();
+        return $query->result();
+    }
     
     /**
      * This function is used to get booths by block
@@ -225,6 +308,29 @@ class DpSamiti_model extends CI_Model
         $this->db->order_by('name', 'ASC');
         $query = $this->db->get();
         return $query->result_array();
+    }
+
+    public function get_total_members_count($filters = array()) {
+        $this->db->select('SUM((SELECT COUNT(*) FROM dp_samiti WHERE dp_samiti.group_id = dp_samiti_groups.id)) as total_members');
+        $this->db->from('dp_samiti_groups');
+        $this->db->join('block', 'block.id = dp_samiti_groups.block', 'left');
+        
+        if (!empty($filters['block'])) {
+            $this->db->where('dp_samiti_groups.block', (int)$filters['block']);
+        }
+        if (!empty($filters['year'])) {
+            $this->db->where('dp_samiti_groups.year', $filters['year']);
+        }
+        if (!empty($filters['month'])) {
+            $this->db->where('MONTH(dp_samiti_groups.created_at)', (int)$filters['month']);
+        }
+        if (!empty($filters['day'])) {
+            $this->db->where('DAY(dp_samiti_groups.created_at)', (int)$filters['day']);
+        }
+        
+        $query = $this->db->get();
+        $result = $query->row_array();
+        return $result['total_members'] ?? 0;
     }
     
 }

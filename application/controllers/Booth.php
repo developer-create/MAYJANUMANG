@@ -33,6 +33,9 @@ class Booth extends BaseController {
                 $data['booths'] = $this->booth_model->get_booths();
             }
             
+            // Get unique years from booth table
+            $data['years'] = $this->booth_model->get_unique_years();
+            
             // Pass filter values to view
             $data['filter_block'] = $filter_block;
             $data['filter_year'] = $filter_year;

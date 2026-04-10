@@ -74,4 +74,81 @@ if (!function_exists('get_financial_year_from_date')) {
     }
 }
 
+/**
+ * Format amount in Indian numbering system
+ * Converts amounts to readable format: Thousand, Ten Thousand, Lakh, Ten Lakh, Crore, Ten Crore
+ * @param float $amount - Amount to format
+ * @param int $decimals - Number of decimal places (default 2)
+ * @return string - Formatted amount with unit
+ */
+if (!function_exists('format_amount_indian')) {
+    function format_amount_indian($amount, $decimals = 2) {
+        $amount = (float)$amount;
+        
+        if ($amount == 0) {
+            return '₹0.00';
+        }
+        
+        $abs_amount = abs($amount);
+        
+        // Define units in Indian numbering system
+        $units = array(
+            1000000000 => 'Crore',      // 10 Crore = 100 Million
+            10000000 => 'Crore',        // 1 Crore = 10 Million
+            100000 => 'Lakh',           // 10 Lakh = 1 Million
+            10000 => 'Lakh',            // 1 Lakh = 100,000
+            1000 => 'Thousand',         // 10 Thousand
+            1 => ''
+        );
+        
+        foreach ($units as $divisor => $unit) {
+            if ($abs_amount >= $divisor) {
+                $formatted = $amount / $divisor;
+                $formatted = round($formatted, $decimals);
+                
+                if ($unit) {
+                    return '₹' . number_format($formatted, $decimals) . ' ' . $unit;
+                } else {
+                    return '₹' . number_format($formatted, $decimals);
+                }
+            }
+        }
+        
+        return '₹' . number_format($amount, $decimals);
+    }
+}
+
+/**
+ * Format amount in short Indian format
+ * Converts amounts to short readable format: K, L, Cr
+ * @param float $amount - Amount to format
+ * @param int $decimals - Number of decimal places (default 1)
+ * @return string - Formatted amount with short unit
+ */
+if (!function_exists('format_amount_short')) {
+    function format_amount_short($amount, $decimals = 1) {
+        $amount = (float)$amount;
+        
+        if ($amount == 0) {
+            return '₹0';
+        }
+        
+        $abs_amount = abs($amount);
+        
+        // Define short units
+        if ($abs_amount >= 10000000) {
+            $formatted = $amount / 10000000;
+            return '₹' . round($formatted, $decimals) . 'Cr';
+        } elseif ($abs_amount >= 100000) {
+            $formatted = $amount / 100000;
+            return '₹' . round($formatted, $decimals) . 'L';
+        } elseif ($abs_amount >= 1000) {
+            $formatted = $amount / 1000;
+            return '₹' . round($formatted, $decimals) . 'K';
+        }
+        
+        return '₹' . number_format($amount, 0);
+    }
+}
+
 ?>

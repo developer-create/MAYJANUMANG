@@ -279,16 +279,15 @@
                            <th>AS No/ date</th>
                            <th>Type of work</th>
                            <th>Sub Work Type</th>
-                           <th>Middle Men</th>
+                           <th>Middle Man</th>
                            <th>Contact No</th>
-                           <th>Beneficial</th>
-                           <th>PO</th>
+                           <th>Beneficial Name</th>
+                           <th>Beneficial Post</th>
+                           <th>Beneficially Mobile</th>
                            <th>Status</th>
                            <th>Remark/ GOSHANA <br> ( भईया द्वारा दिए गए निर्देश )</th>
                            <th>REMARK / TIP/ USD</th>
                            <th>Added By</th>
-                           
-                           <th>Beneficially Mobile</th>
                            <th>lat-lng</th>
                            <th>Registration Date</th>
                            <th>Avedan</th>
@@ -386,6 +385,7 @@
                            <td><?php echo $record->cont_no; ?></td>
                            <td><?php echo $record->beneficial; ?></td>
                            <td><?php echo $record->po; ?></td>
+                           <td><?php echo @$record->mobile; ?></td>
                            <td>
                               <?php if ($record->work_status == "Complete") {
                                  echo '<span class="label label-success">' .
@@ -410,8 +410,6 @@
                            <td><?php echo @$record->remark_goshana; ?></td>
                            <td><?php echo @$record->remark; ?></td>
                            <td><?php echo @$record->added_by_name; ?></td>
-                           
-                           <td><?php echo @$record->mobile; ?></td>
                            <td>
                               <?php echo @$record->lat; ?> <br>
                               <?php echo @$record->lng; ?>

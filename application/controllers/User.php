@@ -230,6 +230,95 @@ $data["results"] = $query->result();
 
         
         $data["Allblocks"] = $this->user_model->getAllBlocks(); // Assuming 'your_model' is the name of your model
+        
+        // Load models for summary data
+        $this->load->model('FundSummary_model');
+        $this->load->model('ProjectSummary_model');
+        $this->load->model('Events_model');
+        $this->load->model('Visitors_model');
+        
+        // Fund Summary Data - detailed by fund type
+        $data["fund_summary"] = $this->db->query("
+            SELECT 
+                CASE 
+                    WHEN TRIM(approved_fund) LIKE 'MLA Swechanudan' THEN 'MLA Sweechanudan'
+                    WHEN TRIM(approved_fund) LIKE 'MLA Sweechanudan' THEN 'MLA Sweechanudan'
+                    WHEN TRIM(approved_fund) LIKE 'CLP %' THEN 'CLP Sweechanudan'
+                    WHEN TRIM(LOWER(approved_fund)) LIKE 'jan%sampark%fund' THEN 'Jansampark Fund'
+                    WHEN TRIM(approved_fund) LIKE 'जन%संपर्क%' THEN 'Jansampark Fund'
+                    WHEN TRIM(approved_fund) LIKE 'जन%सम्पर्क%' THEN 'Jansampark Fund'
+                    ELSE TRIM(approved_fund)
+                END as fund_name,
+                COUNT(*) as total_count,
+                SUM(CASE WHEN work_status = 'Complete' THEN 1 ELSE 0 END) as complete_count,
+                SUM(CASE WHEN work_status = 'Incomplete' THEN 1 ELSE 0 END) as incomplete_count,
+                SUM(CASE WHEN work_status = 'In progress' THEN 1 ELSE 0 END) as inprogress_count,
+                SUM(COALESCE(approximate_cost, 0)) as total_amount
+            FROM jansunwai
+            WHERE approved_fund IS NOT NULL AND approved_fund != ''
+            GROUP BY fund_name
+            UNION ALL
+            SELECT 
+                CASE 
+                    WHEN TRIM(approved_fund) LIKE 'MLA Swechanudan' THEN 'MLA Sweechanudan'
+                    WHEN TRIM(approved_fund) LIKE 'MLA Sweechanudan' THEN 'MLA Sweechanudan'
+                    WHEN TRIM(approved_fund) LIKE 'CLP %' THEN 'CLP Sweechanudan'
+                    WHEN TRIM(LOWER(approved_fund)) LIKE 'jan%sampark%fund' THEN 'Jansampark Fund'
+                    WHEN TRIM(approved_fund) LIKE 'जन%संपर्क%' THEN 'Jansampark Fund'
+                    WHEN TRIM(approved_fund) LIKE 'जन%सम्पर्क%' THEN 'Jansampark Fund'
+                    ELSE TRIM(approved_fund)
+                END as fund_name,
+                COUNT(*) as total_count,
+                SUM(CASE WHEN work_status = 'Complete' THEN 1 ELSE 0 END) as complete_count,
+                SUM(CASE WHEN work_status = 'Incomplete' THEN 1 ELSE 0 END) as incomplete_count,
+                SUM(CASE WHEN work_status = 'In progress' THEN 1 ELSE 0 END) as inprogress_count,
+                SUM(COALESCE(approximate_cost, 0)) as total_amount
+            FROM districtpublicproblem
+            WHERE approved_fund IS NOT NULL AND approved_fund != ''
+            GROUP BY fund_name
+            ORDER BY fund_name
+        ")->result();
+        
+        // Project Summary Data - detailed by project
+        $data["project_summary"] = $this->db->query("
+            SELECT 
+                work_name,
+                COUNT(*) as total_count,
+                SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) as active_count,
+                SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed_count,
+                SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending_count
+            FROM project_details
+            WHERE is_deleted = 0
+            GROUP BY work_name
+            ORDER BY work_name
+        ")->result();
+        
+        // Event Summary Data - detailed by event
+        $data["event_summary"] = $this->db->query("
+            SELECT 
+                event_detail as event_name,
+                COUNT(*) as total_count,
+                SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_count,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
+                SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected_count
+            FROM events
+            GROUP BY event_detail
+            ORDER BY event_detail
+        ")->result();
+        
+        // Visitor Summary Data - detailed by district
+        $data["visitor_summary"] = $this->db->query("
+            SELECT 
+                district,
+                COUNT(*) as total_visitors,
+                SUM(CASE WHEN DATE(date) = CURDATE() THEN 1 ELSE 0 END) as today_visitors,
+                SUM(CASE WHEN YEAR(date) = YEAR(CURDATE()) AND MONTH(date) = MONTH(CURDATE()) THEN 1 ELSE 0 END) as month_visitors,
+                SUM(CASE WHEN YEAR(date) = YEAR(CURDATE()) THEN 1 ELSE 0 END) as year_visitors
+            FROM visitors
+            GROUP BY district
+            ORDER BY district
+        ")->result();
+        
         $this->loadViews("general/dashboard", $this->global, $data, null);
     }
     public function blockdashboard() {

@@ -19,6 +19,41 @@ class NirmanSamiti_model extends CI_Model {
         return $query->result_array();
     }
 
+    // Get groups with filters (Block, Year, Month, Day)
+    public function get_groups($search = null, $filters = array()) {
+        $this->db->select('nirman_samiti_groups.*, block.name as block_name, booth.name as booth_name, booth.bnumber as booth_no,
+                          (SELECT COUNT(*) FROM nirman_samiti WHERE nirman_samiti.group_id = nirman_samiti_groups.id) as total_members');
+        $this->db->from('nirman_samiti_groups');
+        $this->db->join('block', 'block.id = nirman_samiti_groups.block', 'left');
+        $this->db->join('booth', 'booth.id = nirman_samiti_groups.booth_name', 'left');
+        
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('nirman_samiti_groups.unique_id', $search);
+            $this->db->or_like('booth.name', $search);
+            $this->db->or_like('nirman_samiti_groups.gram_panchayat', $search);
+            $this->db->or_like('nirman_samiti_groups.village', $search);
+            $this->db->group_end();
+        }
+        
+        if (!empty($filters['block'])) {
+            $this->db->where('nirman_samiti_groups.block', (int)$filters['block']);
+        }
+        if (!empty($filters['year'])) {
+            $this->db->where('nirman_samiti_groups.year', $filters['year']);
+        }
+        if (!empty($filters['month'])) {
+            $this->db->where('MONTH(nirman_samiti_groups.created_at)', (int)$filters['month']);
+        }
+        if (!empty($filters['day'])) {
+            $this->db->where('DAY(nirman_samiti_groups.created_at)', (int)$filters['day']);
+        }
+        
+        $this->db->order_by('nirman_samiti_groups.id', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     // Get single group by ID
     public function get_group_by_id($id) {
         // Keep original booth_name as booth_id for form selection
@@ -107,6 +142,47 @@ class NirmanSamiti_model extends CI_Model {
         return $query->result();
     }
 
+    // Get distinct years from nirman_samiti_groups
+    public function get_years() {
+        $this->db->select('DISTINCT(year) as year');
+        $this->db->from('nirman_samiti_groups');
+        $this->db->where('year IS NOT NULL');
+        $this->db->where('year !=', '');
+        $this->db->order_by('year', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get distinct months from nirman_samiti_groups
+    public function get_months() {
+        $this->db->select('DISTINCT(MONTH(created_at)) as month');
+        $this->db->from('nirman_samiti_groups');
+        $this->db->where('created_at IS NOT NULL');
+        $this->db->order_by('MONTH(created_at)', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get distinct days from nirman_samiti_groups
+    public function get_days() {
+        $this->db->select('DISTINCT(DAY(created_at)) as day');
+        $this->db->from('nirman_samiti_groups');
+        $this->db->where('created_at IS NOT NULL');
+        $this->db->order_by('DAY(created_at)', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get blocks that have data in nirman_samiti_groups
+    public function get_blocks_with_data() {
+        $this->db->select('DISTINCT(b.id), b.name');
+        $this->db->from('nirman_samiti_groups as g');
+        $this->db->join('block as b', 'b.id = g.block', 'inner');
+        $this->db->order_by('b.name', 'ASC');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     // Get booths by block ID
     public function get_booths_by_block($block_id) {
         $this->db->select('id, name, bnumber');
@@ -140,6 +216,29 @@ class NirmanSamiti_model extends CI_Model {
         $this->db->order_by('name', 'ASC');
         $query = $this->db->get();
         return $query->result_array();
+    }
+
+    public function get_total_members_count($filters = array()) {
+        $this->db->select('SUM((SELECT COUNT(*) FROM nirman_samiti WHERE nirman_samiti.group_id = nirman_samiti_groups.id)) as total_members');
+        $this->db->from('nirman_samiti_groups');
+        $this->db->join('block', 'block.id = nirman_samiti_groups.block', 'left');
+        
+        if (!empty($filters['block'])) {
+            $this->db->where('nirman_samiti_groups.block', (int)$filters['block']);
+        }
+        if (!empty($filters['year'])) {
+            $this->db->where('nirman_samiti_groups.year', $filters['year']);
+        }
+        if (!empty($filters['month'])) {
+            $this->db->where('MONTH(nirman_samiti_groups.created_at)', (int)$filters['month']);
+        }
+        if (!empty($filters['day'])) {
+            $this->db->where('DAY(nirman_samiti_groups.created_at)', (int)$filters['day']);
+        }
+        
+        $query = $this->db->get();
+        $result = $query->row_array();
+        return $result['total_members'] ?? 0;
     }
 }
 ?>

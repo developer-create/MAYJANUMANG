@@ -9,6 +9,7 @@
             opacity: 60 !important;
         }
     </style>
+    <link rel="stylesheet" href="<?php echo base_url('assets/css/samiti-filters.css'); ?>">
     <section class="content-header"> 
         <h1>
             <i class="fa fa-users" aria-hidden="true"></i> Tenkar Samiti Locations
@@ -18,12 +19,80 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
-                    <div class="box-header">
-                        <h3 class="box-title"> टैंकर समिति स्थान (Tenkar Samiti Locations) List</h3>
+                    <div class="box-header with-border">
+                        <h3 class="box-title">टैंकर समिति स्थान (Tenkar Samiti Locations) List</h3>
                         <div style="float: right;">
-                            <a href="<?php echo site_url('tenkarsamiti/create'); ?>" class="btn btn-success">Add New Location</a>
+                            <a href="<?php echo site_url('tenkarsamiti/create'); ?>" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Add New Location</a>
                         </div>
                     </div><!-- /.box-header -->
+                    <!-- Total Members Card -->
+                    <div style="margin: 10px 0; padding: 10px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 5px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <span style="font-size: 12px; opacity: 0.9;">कुल सदस्य:</span>
+                        <span style="font-size: 18px; font-weight: bold; margin-left: 8px;">
+                            <?php echo isset($total_members) ? $total_members : 0; ?>
+                        </span>
+                    </div>
+                    
+                    <!-- Filters Section -->
+                    <div class="filter-section">
+                        <form method="get" action="<?php echo site_url('tenkarsamiti'); ?>" id="filterForm">
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label for="filter_block">ब्लॉक (Block)</label>
+                                    <select name="filter_block" id="filter_block">
+                                        <option value="">-- All Blocks --</option>
+                                        <?php if (!empty($blocks)): foreach ($blocks as $blk): ?>
+                                        <option value="<?php echo $blk->id; ?>" <?php echo (isset($filter_block) && $filter_block == $blk->id) ? 'selected' : ''; ?>><?php echo htmlspecialchars($blk->name); ?></option>
+                                        <?php endforeach; endif; ?>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-group">
+                                    <label for="filter_year">वर्ष (Year)</label>
+                                    <select name="filter_year" id="filter_year">
+                                        <option value="">-- All Years --</option>
+                                        <?php for ($y = 2020; $y <= 2030; $y++): ?>
+                                        <option value="<?php echo $y; ?>" <?php echo (isset($filter_year) && $filter_year == $y) ? 'selected' : ''; ?>><?php echo $y; ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-group">
+                                    <label for="filter_month">महीना (Month)</label>
+                                    <select name="filter_month" id="filter_month">
+                                        <option value="">-- All Months --</option>
+                                        <option value="1" <?php echo (isset($filter_month) && $filter_month == '1') ? 'selected' : ''; ?>>January</option>
+                                        <option value="2" <?php echo (isset($filter_month) && $filter_month == '2') ? 'selected' : ''; ?>>February</option>
+                                        <option value="3" <?php echo (isset($filter_month) && $filter_month == '3') ? 'selected' : ''; ?>>March</option>
+                                        <option value="4" <?php echo (isset($filter_month) && $filter_month == '4') ? 'selected' : ''; ?>>April</option>
+                                        <option value="5" <?php echo (isset($filter_month) && $filter_month == '5') ? 'selected' : ''; ?>>May</option>
+                                        <option value="6" <?php echo (isset($filter_month) && $filter_month == '6') ? 'selected' : ''; ?>>June</option>
+                                        <option value="7" <?php echo (isset($filter_month) && $filter_month == '7') ? 'selected' : ''; ?>>July</option>
+                                        <option value="8" <?php echo (isset($filter_month) && $filter_month == '8') ? 'selected' : ''; ?>>August</option>
+                                        <option value="9" <?php echo (isset($filter_month) && $filter_month == '9') ? 'selected' : ''; ?>>September</option>
+                                        <option value="10" <?php echo (isset($filter_month) && $filter_month == '10') ? 'selected' : ''; ?>>October</option>
+                                        <option value="11" <?php echo (isset($filter_month) && $filter_month == '11') ? 'selected' : ''; ?>>November</option>
+                                        <option value="12" <?php echo (isset($filter_month) && $filter_month == '12') ? 'selected' : ''; ?>>December</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-group">
+                                    <label for="filter_day">दिन (Day)</label>
+                                    <select name="filter_day" id="filter_day">
+                                        <option value="">-- All Days --</option>
+                                        <?php for ($d = 1; $d <= 31; $d++): ?>
+                                        <option value="<?php echo $d; ?>" <?php echo (isset($filter_day) && $filter_day == $d) ? 'selected' : ''; ?>><?php echo $d; ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-buttons">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i> Filter</button>
+                                    <a href="<?php echo site_url('tenkarsamiti'); ?>" class="btn btn-default"><i class="fa fa-refresh"></i> Reset</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-hover" id="tenkarTable">
                             <thead>

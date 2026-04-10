@@ -21,6 +21,43 @@ class BoothSamiti_model extends CI_Model {
         return $query->result_array();
     }
 
+    // Get groups with filters (Block, Year, Month, Day)
+    public function get_groups($search = null, $filters = array()) {
+        $this->db->select('booth_samiti_groups.*, block.name as block_name, booth.name as booth_name, booth.bnumber as booth_no,
+                          (SELECT COUNT(*) FROM booth_samiti WHERE booth_samiti.group_id = booth_samiti_groups.id) as total_members,
+                          tbl_users.name as created_by_name');
+        $this->db->from('booth_samiti_groups');
+        $this->db->join('block', 'block.id = booth_samiti_groups.block', 'left');
+        $this->db->join('booth', 'booth.id = booth_samiti_groups.booth_name', 'left');
+        $this->db->join('tbl_users', 'tbl_users.userId = booth_samiti_groups.created_by', 'left');
+        
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('booth_samiti_groups.unique_id', $search);
+            $this->db->or_like('booth.name', $search);
+            $this->db->or_like('booth_samiti_groups.gram_panchayat', $search);
+            $this->db->or_like('booth_samiti_groups.village', $search);
+            $this->db->group_end();
+        }
+        
+        if (!empty($filters['block'])) {
+            $this->db->where('booth_samiti_groups.block', (int)$filters['block']);
+        }
+        if (!empty($filters['year'])) {
+            $this->db->where('booth_samiti_groups.year', $filters['year']);
+        }
+        if (!empty($filters['month'])) {
+            $this->db->where('MONTH(booth_samiti_groups.created_at)', (int)$filters['month']);
+        }
+        if (!empty($filters['day'])) {
+            $this->db->where('DAY(booth_samiti_groups.created_at)', (int)$filters['day']);
+        }
+        
+        $this->db->order_by('booth_samiti_groups.id', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     // Get single group by ID
     public function get_group_by_id($id) {
         // Keep original booth_name as booth_id for form selection
@@ -109,6 +146,47 @@ class BoothSamiti_model extends CI_Model {
         return $query->result();
     }
 
+    // Get distinct years from booth_samiti_groups
+    public function get_years() {
+        $this->db->select('DISTINCT(year) as year');
+        $this->db->from('booth_samiti_groups');
+        $this->db->where('year IS NOT NULL');
+        $this->db->where('year !=', '');
+        $this->db->order_by('year', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get distinct months from booth_samiti_groups
+    public function get_months() {
+        $this->db->select('DISTINCT(MONTH(created_at)) as month');
+        $this->db->from('booth_samiti_groups');
+        $this->db->where('created_at IS NOT NULL');
+        $this->db->order_by('MONTH(created_at)', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get distinct days from booth_samiti_groups
+    public function get_days() {
+        $this->db->select('DISTINCT(DAY(created_at)) as day');
+        $this->db->from('booth_samiti_groups');
+        $this->db->where('created_at IS NOT NULL');
+        $this->db->order_by('DAY(created_at)', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get blocks that have data in booth_samiti_groups
+    public function get_blocks_with_data() {
+        $this->db->select('DISTINCT(b.id), b.name');
+        $this->db->from('booth_samiti_groups as g');
+        $this->db->join('block as b', 'b.id = g.block', 'inner');
+        $this->db->order_by('b.name', 'ASC');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     // Get booths by block ID
     public function get_booths_by_block($block_id) {
         $this->db->select('id, name, bnumber');
@@ -142,6 +220,29 @@ class BoothSamiti_model extends CI_Model {
         $this->db->order_by('name', 'ASC');
         $query = $this->db->get();
         return $query->result_array();
+    }
+
+    public function get_total_members_count($filters = array()) {
+        $this->db->select('SUM((SELECT COUNT(*) FROM booth_samiti WHERE booth_samiti.group_id = booth_samiti_groups.id)) as total_members');
+        $this->db->from('booth_samiti_groups');
+        $this->db->join('block', 'block.id = booth_samiti_groups.block', 'left');
+        
+        if (!empty($filters['block'])) {
+            $this->db->where('booth_samiti_groups.block', (int)$filters['block']);
+        }
+        if (!empty($filters['year'])) {
+            $this->db->where('booth_samiti_groups.year', $filters['year']);
+        }
+        if (!empty($filters['month'])) {
+            $this->db->where('MONTH(booth_samiti_groups.created_at)', (int)$filters['month']);
+        }
+        if (!empty($filters['day'])) {
+            $this->db->where('DAY(booth_samiti_groups.created_at)', (int)$filters['day']);
+        }
+        
+        $query = $this->db->get();
+        $result = $query->row_array();
+        return $result['total_members'] ?? 0;
     }
 }
 ?>

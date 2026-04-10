@@ -130,7 +130,7 @@ class ProjectSummary_model extends CI_Model
      * This function is used to get all projects (for DataTables pagination)
      * @return array $result : This is result
      */
-    function getAllProjects()
+    function getAllProjects($filters = array())
     {
         $this->db->select('BaseTbl.id, BaseTbl.unique_id, BaseTbl.work_name, BaseTbl.amount_project_cost, BaseTbl.proposal_estimate, 
                           BaseTbl.status, BaseTbl.officer_name, BaseTbl.contact_no, BaseTbl.technical_session, BaseTbl.administrative_session,
@@ -156,6 +156,15 @@ class ProjectSummary_model extends CI_Model
                         'LastComment.project_id = BaseTbl.id', 'left');
         
         $this->db->where('BaseTbl.is_deleted', 0);
+        
+        // Apply filters
+        if(!empty($filters['department'])) {
+            $this->db->where('LOWER(Dept.name)', strtolower($filters['department']));
+        }
+        if(!empty($filters['tender_status'])) {
+            $this->db->where('LOWER(BaseTbl.tender_status)', strtolower($filters['tender_status']));
+        }
+        
         $this->db->order_by('BaseTbl.id', 'DESC');
         $query = $this->db->get();
         

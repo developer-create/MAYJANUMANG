@@ -25,6 +25,64 @@
                             <a href="<?php echo site_url('boothsamiti/create'); ?>" class="btn btn-success">Add New Location</a>
                         </div>
                     </div><!-- /.box-header -->
+                    <!-- Total Members Card -->
+                    <div style="margin: 10px 0; padding: 10px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 5px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <span style="font-size: 12px; opacity: 0.9;">कुल सदस्य:</span>
+                        <span style="font-size: 18px; font-weight: bold; margin-left: 8px;">
+                            <?php echo isset($total_members) ? $total_members : 0; ?>
+                        </span>
+                    </div>
+                    <!-- Filters -->
+                    <div class="box-body">
+                        <form method="get" action="<?php echo site_url('boothsamiti'); ?>" class="form-inline" id="filterForm">
+                            <div class="form-group">
+                                <label for="filter_block" class="control-label">ब्लॉक (Block):</label>
+                                <select name="filter_block" id="filter_block" class="form-control input-sm">
+                                    <option value="">All</option>
+                                    <?php if (!empty($blocks)): foreach ($blocks as $blk): ?>
+                                    <option value="<?php echo $blk->id; ?>" <?php echo (isset($filter_block) && $filter_block == $blk->id) ? 'selected' : ''; ?>><?php echo htmlspecialchars($blk->name); ?></option>
+                                    <?php endforeach; endif; ?>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-left: 15px;">
+                                <label for="filter_year" class="control-label">वर्ष (Year):</label>
+                                <select name="filter_year" id="filter_year" class="form-control input-sm">
+                                    <option value="">All</option>
+                                    <?php if (!empty($years)): foreach ($years as $yr): ?>
+                                    <option value="<?php echo $yr['year']; ?>" <?php echo (isset($filter_year) && $filter_year == $yr['year']) ? 'selected' : ''; ?>><?php echo $yr['year']; ?></option>
+                                    <?php endforeach; endif; ?>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-left: 15px;">
+                                <label for="filter_month" class="control-label">महीना (Month):</label>
+                                <select name="filter_month" id="filter_month" class="form-control input-sm">
+                                    <option value="">All</option>
+                                    <?php 
+                                    $months_names = array(1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June', 
+                                                          7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December');
+                                    if (!empty($months)): 
+                                        foreach ($months as $m): 
+                                            $month_num = (int)$m['month'];
+                                    ?>
+                                    <option value="<?php echo $month_num; ?>" <?php echo (isset($filter_month) && $filter_month == $month_num) ? 'selected' : ''; ?>><?php echo $months_names[$month_num]; ?></option>
+                                    <?php endforeach; endif; ?>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-left: 15px;">
+                                <label for="filter_day" class="control-label">दिन (Day):</label>
+                                <select name="filter_day" id="filter_day" class="form-control input-sm">
+                                    <option value="">All</option>
+                                    <?php if (!empty($days)): foreach ($days as $d): ?>
+                                    <option value="<?php echo $d['day']; ?>" <?php echo (isset($filter_day) && $filter_day == $d['day']) ? 'selected' : ''; ?>><?php echo $d['day']; ?></option>
+                                    <?php endforeach; endif; ?>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-left: 15px;">
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter"></i> Filter</button>
+                                <a href="<?php echo site_url('boothsamiti'); ?>" class="btn btn-default btn-sm">Reset</a>
+                            </div>
+                        </form>
+                    </div>
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-hover" id="boothsamitiTable">
                             <thead>

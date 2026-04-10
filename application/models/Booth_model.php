@@ -70,5 +70,16 @@ public function getBoothsByBlock($blockId = null, $year = null) {
     public function delete_booth($id) {
         return $this->db->delete('booth', array('id' => $id));
     }
+
+    // Get unique years from booth table
+    public function get_unique_years() {
+        $this->db->select('DISTINCT(year) as year');
+        $this->db->from('booth');
+        $this->db->where('year IS NOT NULL');
+        $this->db->where('year !=', '');
+        $this->db->order_by('year', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }
 ?>

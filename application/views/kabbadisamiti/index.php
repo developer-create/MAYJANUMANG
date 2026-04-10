@@ -14,6 +14,13 @@
                             <a href="<?php echo site_url('kabbadisamiti/add'); ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add New Location</a>
                         </div>
                     </div><!-- /.box-header -->
+                    <!-- Total Members Card -->
+                    <div style="margin: 10px 0; padding: 10px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 5px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <span style="font-size: 12px; opacity: 0.9;">कुल सदस्य:</span>
+                        <span style="font-size: 18px; font-weight: bold; margin-left: 8px;">
+                            <?php echo isset($total_members) ? $total_members : 0; ?>
+                        </span>
+                    </div>
                     <!-- Filters -->
                     <div class="box-body">
                         <form method="get" action="<?php echo site_url('kabbadisamiti'); ?>" class="form-inline" id="filterForm">

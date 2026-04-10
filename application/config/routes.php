@@ -128,6 +128,14 @@ $route['vidhan_sabha/edit/(:num)'] = "vidhan_sabha/edit/$1";
 $route['vidhan_sabha/update/(:num)'] = "vidhan_sabha/update/$1";
 $route['vidhan_sabha/delete/(:num)'] = "vidhan_sabha/delete/$1";
 
+// MP Vidhan Sabha Member routes
+$route['mp_vidhan_sabha_member'] = "mp_vidhan_sabha_member/index";
+$route['mp_vidhan_sabha_member/create'] = "mp_vidhan_sabha_member/create";
+$route['mp_vidhan_sabha_member/store'] = "mp_vidhan_sabha_member/store";
+$route['mp_vidhan_sabha_member/edit/(:num)'] = "mp_vidhan_sabha_member/edit/$1";
+$route['mp_vidhan_sabha_member/update/(:num)'] = "mp_vidhan_sabha_member/update/$1";
+$route['mp_vidhan_sabha_member/delete/(:num)'] = "mp_vidhan_sabha_member/delete/$1";
+
 // Fix access matrix route
 $route['fix_access'] = "fix_access/fix_vidhan_sabha";
 // Disable regenerate access matrix to enforce using Roles CRUD only

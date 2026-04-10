@@ -42,12 +42,22 @@ class ProjectSummary extends BaseController
         }
         else
         {
-            // Load all records - pagination handled by DataTables
-            $data['records'] = $this->psm->getAllProjects();
+            // Get filter values from POST
+            $filters = array();
+            if($this->input->post()) {
+                $filters['department'] = $this->input->post('department');
+                $filters['tender_status'] = $this->input->post('tender_status');
+            }
+            
+            // Load records with filters
+            $data['records'] = $this->psm->getAllProjects($filters);
             
             // Load filter options
             $data['departments'] = $this->psm->getUniqueDepartments();
             $data['tender_statuses'] = $this->psm->getUniqueTenderStatuses();
+            
+            // Pass filters to view for persistence
+            $data['filters'] = $filters;
             
             $this->global['pageTitle'] = 'Gandhwani : Project Summary';
             

@@ -536,7 +536,7 @@ table tbody td:last-child {
                     
                     // Check for Member modules
                     $isMemberModule = (strcasecmp($moduleName, 'Vidhansabha-Member') == 0 ||
-                                      strcasecmp($moduleName, 'MP-Vidhansabha-Member') == 0);
+                                      strcasecmp($moduleName, 'MP-Vidhan-Sabha-Member') == 0);
                     
                     // Collect modules (excluding Assembly Level modules, ActivityLog, and MemberList)
                     $isAssemblyLevelModule = (strcasecmp($moduleName, 'Block-Level') == 0 || 

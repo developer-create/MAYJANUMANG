@@ -38,11 +38,11 @@
                             <label for="filter_year" class="control-label">Year:</label>
                             <select name="filter_year" id="filter_year" class="form-control input-sm" style="width: 150px;">
                                 <option value="">All Years</option>
-                                <?php for ($y = 2024; $y <= 2030; $y++): ?>
-                                <option value="<?php echo $y; ?>" <?php echo (isset($filter_year) && $filter_year == $y) ? 'selected' : ''; ?>>
-                                    <?php echo $y; ?>
+                                <?php if (!empty($years)): foreach ($years as $year): ?>
+                                <option value="<?php echo $year['year']; ?>" <?php echo (isset($filter_year) && $filter_year == $year['year']) ? 'selected' : ''; ?>>
+                                    <?php echo $year['year']; ?>
                                 </option>
-                                <?php endfor; ?>
+                                <?php endforeach; endif; ?>
                             </select>
                         </div>
                         

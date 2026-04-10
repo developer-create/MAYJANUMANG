@@ -49,47 +49,41 @@
                     </div><!-- /.box-header -->
                     
                     <!-- Filter Section -->
-                    <div class="box-body" style="padding-bottom: 0; border-bottom: 1px solid #ddd;">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="filterDepartment">Department:</label>
-                                    <select id="filterDepartment" class="form-control">
-                                        <option value="">-- All Departments --</option>
+                    <div class="box-body" style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        <form method="post" action="<?php echo site_url('projectSummary/projectListing'); ?>" style="margin: 0;">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <select name="department" id="filterDepartment" class="form-control" style="font-size: 12px; padding: 5px;">
+                                        <option value="">All Departments</option>
                                         <?php if(!empty($departments)): ?>
                                             <?php foreach($departments as $dept): ?>
-                                                <option value="<?php echo htmlspecialchars($dept->department_name); ?>">
+                                                <option value="<?php echo htmlspecialchars($dept->department_name); ?>" <?php echo (isset($filters['department']) && $filters['department'] == $dept->department_name) ? 'selected' : ''; ?>>
                                                     <?php echo htmlspecialchars($dept->department_name); ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         <?php endif; ?>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="filterTenderStatus">Tender Status:</label>
-                                    <select id="filterTenderStatus" class="form-control">
-                                        <option value="">-- All Statuse --</option>
+                                <div class="col-md-2">
+                                    <select name="tender_status" id="filterTenderStatus" class="form-control" style="font-size: 12px; padding: 5px;">
+                                        <option value="">All Statuses</option>
                                         <?php if(!empty($tender_statuses)): ?>
                                             <?php foreach($tender_statuses as $status): ?>
-                                                <option value="<?php echo htmlspecialchars($status->tender_status); ?>">
+                                                <option value="<?php echo htmlspecialchars($status->tender_status); ?>" <?php echo (isset($filters['tender_status']) && $filters['tender_status'] == $status->tender_status) ? 'selected' : ''; ?>>
                                                     <?php echo htmlspecialchars($status->tender_status); ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         <?php endif; ?>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>&nbsp;</label>
-                                    <button id="clearFilters" class="btn btn-default form-control" style="border-radius: 4px;">
-                                        <i class="fa fa-times"></i> Clear Filters
-                                    </button>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary form-control" style="font-size: 12px; padding: 5px;">Filter</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <a href="<?php echo site_url('projectSummary/projectListing'); ?>" class="btn btn-default form-control" style="font-size: 12px; padding: 5px;">Clear</a>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div><!-- /.filter-section -->
                     
                     <div class="box-body table-responsive no-padding">
@@ -135,8 +129,8 @@
                                     <td><?php echo $record->block_name ?></td>
                                     <td><?php echo $record->department_name ?></td>
                                     <td><?php echo $record->work_name ?></td>
-                                    <td>₹<?php echo number_format($record->amount_project_cost, 2) ?></td>
-                                    <td>₹<?php echo number_format($record->proposal_estimate, 2) ?></td>
+                                    <td><?php echo format_amount_indian($record->amount_project_cost) ?></td>
+                                    <td><?php echo format_amount_indian($record->proposal_estimate) ?></td>
                                     <td>
                                         <span
                                             class="label <?php echo ($record->status == 'Completed') ? 'label-success' : (($record->status == 'In Progress') ? 'label-warning' : 'label-info') ?>">
@@ -462,22 +456,6 @@ $(document).ready(function() {
             [10, 20, 50, 100, 500, -1],
             [10, 20, 50, 100, 500, "All"]
         ]
-    });
-
-    // Add custom filter for Department (Column 4) and Tender Status (Column 13)
-    $('#filterDepartment').on('change', function() {
-        table.column(4).search(this.value).draw();
-    });
-
-    $('#filterTenderStatus').on('change', function() {
-        table.column(13).search(this.value).draw();
-    });
-
-    // Clear filters button
-    $('#clearFilters').on('click', function() {
-        $('#filterDepartment').val('').trigger('change');
-        $('#filterTenderStatus').val('').trigger('change');
-        table.search('').columns().search('').draw();
     });
 });
 </script>
