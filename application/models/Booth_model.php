@@ -10,6 +10,7 @@ class Booth_model extends CI_Model {
     $this->db->select('booth.*, block.name as block_name'); // Select columns from both tables
     $this->db->from('booth');
     $this->db->join('block', 'block.id = booth.blockid', 'left'); // Join block table on blockid
+    $this->db->order_by('booth.year DESC, booth.blockid ASC');
     $query = $this->db->get();
     return $query->result_array();
 }
@@ -30,14 +31,20 @@ class Booth_model extends CI_Model {
 
 
 
-public function getBoothsByBlock($blockId, $year = null) {
+public function getBoothsByBlock($blockId = null, $year = null) {
+    $this->db->select('booth.*, block.name as block_name');
+    $this->db->from('booth');
+    $this->db->join('block', 'block.id = booth.blockid', 'left');
+    
     if ($blockId) {
-        $this->db->where('blockid', $blockId);
+        $this->db->where('booth.blockid', $blockId);
     }
     if ($year) {
-        $this->db->where('year', $year);
+        $this->db->where('booth.year', $year);
     }
-    $query = $this->db->get('booth');
+    
+    $this->db->order_by('booth.year DESC, booth.blockid ASC');
+    $query = $this->db->get();
     return $query->result_array();
 }
 

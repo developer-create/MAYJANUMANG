@@ -17,8 +17,40 @@
                 <div class="box-header">
                     <h3 class="box-title">Booth List</h3>  
                     <a href="<?php echo site_url('booth/create'); ?>"  class="btn btn-success"  style="float: right;">Add New booth</a>
-
                 </div><!-- /.box-header -->
+                
+                <!-- Filter Section -->
+                <div class="box-body" style="background-color: #f5f5f5; padding: 15px; margin-bottom: 15px;">
+                    <form method="get" action="<?php echo site_url('booth'); ?>" class="form-inline" id="filterForm">
+                        <div class="form-group" style="margin-right: 15px;">
+                            <label for="filter_block" class="control-label">Block:</label>
+                            <select name="filter_block" id="filter_block" class="form-control input-sm" style="width: 200px;">
+                                <option value="">All Blocks</option>
+                                <?php if (!empty($blocks)): foreach ($blocks as $block): ?>
+                                <option value="<?php echo $block['id']; ?>" <?php echo (isset($filter_block) && $filter_block == $block['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($block['name']); ?>
+                                </option>
+                                <?php endforeach; endif; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-right: 15px;">
+                            <label for="filter_year" class="control-label">Year:</label>
+                            <select name="filter_year" id="filter_year" class="form-control input-sm" style="width: 150px;">
+                                <option value="">All Years</option>
+                                <?php for ($y = 2024; $y <= 2030; $y++): ?>
+                                <option value="<?php echo $y; ?>" <?php echo (isset($filter_year) && $filter_year == $y) ? 'selected' : ''; ?>>
+                                    <?php echo $y; ?>
+                                </option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter"></i> Filter</button>
+                        <a href="<?php echo site_url('booth'); ?>" class="btn btn-default btn-sm" style="margin-left: 10px;">Reset</a>
+                    </form>
+                </div>
+                
                 <div class="box-body table-responsive no-padding">
                   <table class="table table-hover" id="feedbackTa">
                     <thead>

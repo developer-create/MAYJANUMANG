@@ -14,34 +14,76 @@
                     <h3 class="box-title">Visitors List</h3>  
                     <a href="<?php echo site_url('visitors/create'); ?>"  class="btn btn-success"  style="float: right;">Add New Visitor</a>
 
-                    <div class="row" style="margin-top: 15px;">
-                        <div class="col-md-2">
-                            <select id="districtFilter" class="form-control">
-                                <option value="">All Districts</option>
-                                <?php foreach ($districts as $district): ?>
-                                    <option value="<?php echo $district; ?>"><?php echo $district; ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                    <form method="post" action="<?php echo site_url('visitors'); ?>" style="margin-top: 15px;">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <select id="districtFilter" class="form-control">
+                                    <option value="">All Districts</option>
+                                    <?php foreach ($districts as $district): ?>
+                                        <option value="<?php echo $district; ?>"><?php echo $district; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="vidhanFilter" class="form-control">
+                                    <option value="">All Vidhan Sabha</option>
+                                    <?php foreach ($vidhan_sabhas as $vidhan): ?>
+                                        <option value="<?php echo $vidhan; ?>"><?php echo $vidhan; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="blockFilter" class="form-control">
+                                    <option value="">All Blocks</option>
+                                    <?php foreach ($blocks as $block): ?>
+                                        <option value="<?php echo htmlspecialchars($block); ?>">
+                                            <?php echo htmlspecialchars($block); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="year" id="yearFilter" class="form-control">
+                                    <option value="">Select Year</option>
+                                    <?php
+                                    $current_year = date('Y');
+                                    for ($i = $current_year; $i >= $current_year - 5; $i--) {
+                                        $selected = (isset($filters['year']) && $filters['year'] == $i) ? 'selected' : '';
+                                        echo "<option value='{$i}' {$selected}>{$i}</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="month" id="monthFilter" class="form-control">
+                                    <option value="">Select Month</option>
+                                    <?php
+                                    $months = [
+                                        '01' => 'January',
+                                        '02' => 'February',
+                                        '03' => 'March',
+                                        '04' => 'April',
+                                        '05' => 'May',
+                                        '06' => 'June',
+                                        '07' => 'July',
+                                        '08' => 'August',
+                                        '09' => 'September',
+                                        '10' => 'October',
+                                        '11' => 'November',
+                                        '12' => 'December'
+                                    ];
+                                    foreach ($months as $key => $value) {
+                                        $selected = (isset($filters['month']) && $filters['month'] == $key) ? 'selected' : '';
+                                        echo "<option value='{$key}' {$selected}>{$value}</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary form-control">Filter</button>
+                            </div>
                         </div>
-                        <div class="col-md-2">
-                            <select id="vidhanFilter" class="form-control">
-                                <option value="">All Vidhan Sabha</option>
-                                <?php foreach ($vidhan_sabhas as $vidhan): ?>
-                                    <option value="<?php echo $vidhan; ?>"><?php echo $vidhan; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-  <select id="blockFilter" class="form-control">
-    <option value="">All Blocks</option>
-    <?php foreach ($blocks as $block): ?>
-      <option value="<?php echo htmlspecialchars($block); ?>">
-        <?php echo htmlspecialchars($block); ?>
-      </option>
-    <?php endforeach; ?>
-  </select>
-</div>
-                    </div>
+                    </form>
                 </div><!-- /.box-header -->
 
                 <div class="box-body table-responsive no-padding">

@@ -20,7 +20,22 @@ class Samiti extends BaseController {
         if (!$this->hasListAccess()) {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
-            $data['samitis'] = $this->Samiti_model->get_samitis();
+            // Get filter values from POST
+            $block_id = $this->input->post('block_id');
+            $year = $this->input->post('year');
+            $month = $this->input->post('month');
+            
+            // Get filtered samitis
+            $data['samitis'] = $this->Samiti_model->get_samitis($block_id, $year, $month);
+            
+            // Get blocks for filter dropdown
+            $data['blocks'] = $this->Samiti_model->get_blocks();
+            
+            // Pass filter values to view
+            $data['filter_block_id'] = $block_id;
+            $data['filter_year'] = $year;
+            $data['filter_month'] = $month;
+            
             $this->global['pageTitle'] = 'Datacollector : Samiti';
             $this->loadViews("samiti/index", $this->global, $data, NULL);
         }
@@ -31,8 +46,9 @@ class Samiti extends BaseController {
         if (!$this->hasCreateAccess()) {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
+            $data['blocks'] = $this->Samiti_model->get_blocks();
             $this->global['pageTitle'] = 'Datacollector : Create Samiti';
-            $this->loadViews("samiti/create", $this->global, [], NULL);
+            $this->loadViews("samiti/create", $this->global, $data, NULL);
         }
     }
 
@@ -42,7 +58,17 @@ class Samiti extends BaseController {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
             $name = $this->input->post('name');
-            $data = array('name' => $name);
+            $block_id = $this->input->post('block_id');
+            $year = $this->input->post('year');
+            $month = $this->input->post('month');
+            
+            $data = array(
+                'name' => $name,
+                'block_id' => !empty($block_id) ? $block_id : null,
+                'year' => !empty($year) ? $year : null,
+                'month' => !empty($month) ? $month : null
+            );
+            
             $id = $this->Samiti_model->create_samiti($data);
             if ($id) {
                 $this->logActivity('add', 'samiti', $id, $data, null, 'Samiti created with ID: ' . $id . ' (Name: ' . $name . ')');
@@ -57,6 +83,7 @@ class Samiti extends BaseController {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
             $data['samiti'] = $this->Samiti_model->get_samiti($id);
+            $data['blocks'] = $this->Samiti_model->get_blocks();
             $this->global['pageTitle'] = 'Datacollector : Edit Samiti';
             $this->loadViews("samiti/edit", $this->global, $data, NULL);
         }
@@ -68,7 +95,17 @@ class Samiti extends BaseController {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
             $name = $this->input->post('name');
-            $data = array('name' => $name);
+            $block_id = $this->input->post('block_id');
+            $year = $this->input->post('year');
+            $month = $this->input->post('month');
+            
+            $data = array(
+                'name' => $name,
+                'block_id' => !empty($block_id) ? $block_id : null,
+                'year' => !empty($year) ? $year : null,
+                'month' => !empty($month) ? $month : null
+            );
+            
             // Get old data before update for logging
             $oldData = $this->Samiti_model->get_samiti($id);
             

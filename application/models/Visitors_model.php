@@ -5,8 +5,8 @@ class Visitors_model extends CI_Model {
         $this->load->database();
     }
 
-    // Get all visitors
-    public function get_visitors() {
+    // Get all visitors with optional filters
+    public function get_visitors($filters = array()) {
     // $blockid = $this->session->userdata('blockId');
 
     // if ($blockid != 0) {
@@ -16,6 +16,15 @@ class Visitors_model extends CI_Model {
     //     // Apply the where_in condition before executing the query
     //     $this->db->where_in('visitors.block', $blockid_array);
     // }
+
+    // Apply filters if provided
+    if (!empty($filters['year'])) {
+        $this->db->where('YEAR(visitors.date)', $filters['year']);
+    }
+    
+    if (!empty($filters['month'])) {
+        $this->db->where('MONTH(visitors.date)', $filters['month']);
+    }
 
     $query = $this->db->get('visitors');
     return $query->result_array();

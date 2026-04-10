@@ -20,7 +20,23 @@ class Booth extends BaseController {
         if(!$this->hasListAccess()) {
             $this->loadThis();
         } else {
-            $data['booths'] = $this->booth_model->get_booths();
+            $filter_block = $this->input->get('filter_block');
+            $filter_year = $this->input->get('filter_year');
+            
+            // Get all blocks for filter dropdown
+            $data['blocks'] = $this->Block_model->get_blocks();
+            
+            // Get filtered booths
+            if ($filter_block || $filter_year) {
+                $data['booths'] = $this->booth_model->getBoothsByBlock($filter_block, $filter_year);
+            } else {
+                $data['booths'] = $this->booth_model->get_booths();
+            }
+            
+            // Pass filter values to view
+            $data['filter_block'] = $filter_block;
+            $data['filter_year'] = $filter_year;
+            
             $this->global['pageTitle'] = 'Datacollector :booth';
             $this->loadViews("booth/index", $this->global, $data, NULL);
         }

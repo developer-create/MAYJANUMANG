@@ -29,41 +29,51 @@ class Visitors extends BaseController {
     if (!$this->hasListAccess()) {
         $this->loadThis(); // Redirect to the unauthorized access page
     } else {
-    $data['visitors'] = $this->Visitors_model->get_visitors();
+        // Get filters from POST request
+        $filters = array();
+        if ($this->input->post('year')) {
+            $filters['year'] = $this->input->post('year');
+        }
+        if ($this->input->post('month')) {
+            $filters['month'] = $this->input->post('month');
+        }
+        
+        $data['visitors'] = $this->Visitors_model->get_visitors($filters);
+        $data['filters'] = $filters;
 
-    // Helper function to clean and normalize values
-    $clean = function($value) {
-        return strtolower(trim($value));
-    };
+        // Helper function to clean and normalize values
+        $clean = function($value) {
+            return strtolower(trim($value));
+        };
 
-    // Extract unique, cleaned values for dropdowns
-    $districts = array_map($clean, array_column($data['visitors'], 'district'));
-    $districts = array_filter($districts, function($v) { return $v !== '' && $v !== null; });
-    $districts = array_unique($districts);
-    sort($districts);
-    $data['districts'] = $districts;
+        // Extract unique, cleaned values for dropdowns
+        $districts = array_map($clean, array_column($data['visitors'], 'district'));
+        $districts = array_filter($districts, function($v) { return $v !== '' && $v !== null; });
+        $districts = array_unique($districts);
+        sort($districts);
+        $data['districts'] = $districts;
 
-    $vidhan_sabhas = array_map($clean, array_column($data['visitors'], 'vidhan_sabha'));
-    $vidhan_sabhas = array_filter($vidhan_sabhas, function($v) { return $v !== '' && $v !== null; });
-    $vidhan_sabhas = array_unique($vidhan_sabhas);
-    sort($vidhan_sabhas);
-    $data['vidhan_sabhas'] = $vidhan_sabhas;
+        $vidhan_sabhas = array_map($clean, array_column($data['visitors'], 'vidhan_sabha'));
+        $vidhan_sabhas = array_filter($vidhan_sabhas, function($v) { return $v !== '' && $v !== null; });
+        $vidhan_sabhas = array_unique($vidhan_sabhas);
+        sort($vidhan_sabhas);
+        $data['vidhan_sabhas'] = $vidhan_sabhas;
 
-    // Get blocks as array of block names, cleaned and unique
-    $query = $this->db->get('block');
-    $blocks = $query->result_array();
-    // Check for both 'block_name' and 'name' field variations
-    $block_names = array_map(function($b) use ($clean) {
-        $name = isset($b['block_name']) ? $b['block_name'] : (isset($b['name']) ? $b['name'] : '');
-        return $clean($name);
-    }, $blocks);
-    $block_names = array_filter($block_names, function($v) { return $v !== '' && $v !== null; });
-    $block_names = array_unique($block_names);
-    sort($block_names);
-    $data['blocks'] = $block_names;
+        // Get blocks as array of block names, cleaned and unique
+        $query = $this->db->get('block');
+        $blocks = $query->result_array();
+        // Check for both 'block_name' and 'name' field variations
+        $block_names = array_map(function($b) use ($clean) {
+            $name = isset($b['block_name']) ? $b['block_name'] : (isset($b['name']) ? $b['name'] : '');
+            return $clean($name);
+        }, $blocks);
+        $block_names = array_filter($block_names, function($v) { return $v !== '' && $v !== null; });
+        $block_names = array_unique($block_names);
+        sort($block_names);
+        $data['blocks'] = $block_names;
 
-    $this->global['pageTitle'] = 'Datacollector : Visitors';
-    $this->loadViews("visitors/index", $this->global, $data, NULL);
+        $this->global['pageTitle'] = 'Datacollector : Visitors';
+        $this->loadViews("visitors/index", $this->global, $data, NULL);
     }
 }
 

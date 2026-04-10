@@ -16,6 +16,7 @@
              <div class="col-md-12">
                  <?php
                     $this->load->helper('form');
+                    $this->load->helper('financial_year');
                     $error = $this->session->flashdata('error');
                     if($error)
                     {
@@ -254,7 +255,17 @@ if (!empty($userRecords)) {
                                      <td><?php echo $record->sector_name; ?></td>
                                      <td><?php echo $record->micro_sector_no; ?></td>
                                      <td><?php echo $record->micro_sector_name; ?></td>
-                                     <td><?php echo $record->year; ?></td>
+                                     <td><?php 
+                                        // Format year to financial year format (YYYY-YY)
+                                        $year_display = $record->year;
+                                        if (!empty($year_display) && strpos($year_display, '-') === false) {
+                                            // If year is just a number, convert to financial year format
+                                            $year_num = (int)$year_display;
+                                            $next_year = substr($year_num + 1, -2);
+                                            $year_display = $year_num . '-' . $next_year;
+                                        }
+                                        echo $year_display;
+                                     ?></td>
                                      <?php
                               $months = [
                                   1 => 'January',

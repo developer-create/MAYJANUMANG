@@ -10,10 +10,12 @@ class BoothSamiti_model extends CI_Model {
     // Get all groups with member count
     public function get_all_groups() {
         $this->db->select('booth_samiti_groups.*, block.name as block_name, booth.name as booth_name, booth.bnumber as booth_no,
-                          (SELECT COUNT(*) FROM booth_samiti WHERE booth_samiti.group_id = booth_samiti_groups.id) as total_members');
+                          (SELECT COUNT(*) FROM booth_samiti WHERE booth_samiti.group_id = booth_samiti_groups.id) as total_members,
+                          tbl_users.name as created_by_name');
         $this->db->from('booth_samiti_groups');
         $this->db->join('block', 'block.id = booth_samiti_groups.block', 'left');
         $this->db->join('booth', 'booth.id = booth_samiti_groups.booth_name', 'left');
+        $this->db->join('tbl_users', 'tbl_users.userId = booth_samiti_groups.created_by', 'left');
         $this->db->order_by('booth_samiti_groups.id', 'DESC');
         $query = $this->db->get();
         return $query->result_array();

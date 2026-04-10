@@ -42,6 +42,8 @@
                                     <th>गांव का नाम (Village)</th>
                                     <th>फलिया (Faliya)</th>
                                     <th>कुल सदस्य (Total Members)</th>
+                                    <th>Reference (Created By)</th>
+                                    <th>Created Date</th>
                                     <th>File</th>
                                     <th>Actions</th>
                                 </tr>
@@ -62,6 +64,18 @@
                                     <td><?php echo $group['village']; ?></td>
                                     <td><?php echo $group['faliya']; ?></td>
                                     <td><span class="badge bg-blue"><?php echo $group['total_members']; ?></span></td>
+                                    <td>
+                                        <strong><?php echo !empty($group['created_by_name']) ? htmlspecialchars($group['created_by_name']) : 'N/A'; ?></strong>
+                                    </td>
+                                    <td>
+                                        <?php 
+                                            if (!empty($group['created_at'])) {
+                                                echo date('d-m-Y H:i', strtotime($group['created_at']));
+                                            } else {
+                                                echo 'N/A';
+                                            }
+                                        ?>
+                                    </td>
                                     <td>
                                         <?php if (!empty($group['file_upload'])): ?>
                                             <a href="<?php echo base_url('uploads/samiti_files/'.$group['file_upload']); ?>" target="_blank" class="btn btn-info btn-xs" title="View File">

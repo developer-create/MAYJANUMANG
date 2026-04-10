@@ -17,14 +17,70 @@
                 <div class="box-header">
                     <h3 class="box-title">Samiti List</h3>  
                     <a href="<?php echo site_url('samiti/create'); ?>"  class="btn btn-success"  style="float: right;">Add New Samiti</a>
-
                 </div><!-- /.box-header -->
+                
+                <!-- Filter Form -->
+                <div class="box-body">
+                    <form method="post" action="<?php echo site_url('samiti'); ?>" class="form-inline">
+                        <div class="form-group" style="margin-right: 15px;">
+                            <label for="block_id">Block:</label>
+                            <select name="block_id" id="block_id" class="form-control" style="width: 200px;">
+                                <option value="">All Blocks</option>
+                                <?php if (!empty($blocks)): ?>
+                                    <?php foreach ($blocks as $block): ?>
+                                        <option value="<?php echo $block['id']; ?>" <?php echo ($filter_block_id == $block['id']) ? 'selected' : ''; ?>>
+                                            <?php echo $block['name']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-right: 15px;">
+                            <label for="year">Year:</label>
+                            <select name="year" id="year" class="form-control" style="width: 150px;">
+                                <option value="">All Years</option>
+                                <?php for ($y = date('Y'); $y >= 2020; $y--): ?>
+                                    <option value="<?php echo $y; ?>" <?php echo ($filter_year == $y) ? 'selected' : ''; ?>>
+                                        <?php echo $y; ?>
+                                    </option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-right: 15px;">
+                            <label for="month">Month:</label>
+                            <select name="month" id="month" class="form-control" style="width: 150px;">
+                                <option value="">All Months</option>
+                                <option value="1" <?php echo ($filter_month == 1) ? 'selected' : ''; ?>>January</option>
+                                <option value="2" <?php echo ($filter_month == 2) ? 'selected' : ''; ?>>February</option>
+                                <option value="3" <?php echo ($filter_month == 3) ? 'selected' : ''; ?>>March</option>
+                                <option value="4" <?php echo ($filter_month == 4) ? 'selected' : ''; ?>>April</option>
+                                <option value="5" <?php echo ($filter_month == 5) ? 'selected' : ''; ?>>May</option>
+                                <option value="6" <?php echo ($filter_month == 6) ? 'selected' : ''; ?>>June</option>
+                                <option value="7" <?php echo ($filter_month == 7) ? 'selected' : ''; ?>>July</option>
+                                <option value="8" <?php echo ($filter_month == 8) ? 'selected' : ''; ?>>August</option>
+                                <option value="9" <?php echo ($filter_month == 9) ? 'selected' : ''; ?>>September</option>
+                                <option value="10" <?php echo ($filter_month == 10) ? 'selected' : ''; ?>>October</option>
+                                <option value="11" <?php echo ($filter_month == 11) ? 'selected' : ''; ?>>November</option>
+                                <option value="12" <?php echo ($filter_month == 12) ? 'selected' : ''; ?>>December</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="<?php echo site_url('samiti'); ?>" class="btn btn-default">Reset</a>
+                    </form>
+                </div>
+                
                 <div class="box-body table-responsive no-padding">
                   <table class="table table-hover" id="feedbackTa">
                     <thead>
                       <tr style="color:white;font-size:15px;background-color:#020254;"> 
             <th>ID</th>
             <th>Name</th>
+            <th>Block</th>
+            <th>Year</th>
+            <th>Month</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -33,6 +89,9 @@
         <tr>
             <td><?php echo $samiti['id']; ?></td>
             <td><?php echo $samiti['name']; ?></td>
+            <td><?php echo isset($samiti['block_name']) ? $samiti['block_name'] : 'N/A'; ?></td>
+            <td><?php echo isset($samiti['year']) && !empty($samiti['year']) ? $samiti['year'] : 'N/A'; ?></td>
+            <td><?php echo isset($samiti['month']) && !empty($samiti['month']) ? $samiti['month'] : 'N/A'; ?></td>
             <td>
                 <a href="<?php echo site_url('samiti/edit/'.$samiti['id']); ?>"  class="btn btn-info"><i class="fa fa-pencil"></i></a>
                 <a href="<?php echo site_url('samiti/delete/'.$samiti['id']); ?>"  class="btn btn-danger" onclick="return confirm('Are you sure?');"><i class="fa fa-trash"></i></a>
@@ -63,44 +122,23 @@
 $(document).ready(function() {
     var qt_id = "<?php echo $this->uri->segment(3)?>";
     $('#feedbackTa').DataTable({
-        "processing": true, // Show processing indicator 
-        "serverSide": false, // Enable server-side processing
-        // "ajax": {
-        //     "url": "<?php echo base_url('question/serveydatanew') ?>", // Update with your controller function URL
-        //     "type": "GET",
-        //     "data": function(d) {
-        //         d.qt_id = qt_id; // Add qt_id to the request
-        //     }
-        // },
-        // "columns": [
-        //     { "data": "id" },
-        //     { "data": "name" },
-        //     { "data": "mobile" },
-        //     { "data": "qc_id" },
-        //     { "data": "zc_id" },
-        //     { "data": "qt_id" },
-        //     // Generate columns for all 40 answers dynamically
- 
-        //     { "data": "created_at" },
-        //     { "data": "action", "orderable": false, "searchable": false }
-        // ],
-                // dom: 'Bfrtip',
-
-        "dom": '<"top"lfB>rt<"bottom"ip>', // Control layout: l=lengthMenu, f=filter, B=buttons, t=table, i=info, p=pagination
+        "processing": true,
+        "serverSide": false,
+        "dom": '<"top"lfB>rt<"bottom"ip>',
         "buttons": [
             {
                 extend: 'excelHtml5',
                 text: 'Export Excel',
-                title: 'Feedback List'
+                title: 'Samiti List'
             }
         ],
-        "paging": true, // Enable pagination
-        "searching": true, // Enable searching
-        "ordering": false, // Disable ordering
-        "info": true, // Display info about table
-        "lengthMenu": [ // Add lengthMenu to allow user to select number of entries to display
-            [10, 25, 50, 75, -1], // Page length options
-            [10, 25, 50, 75, "All"] // Text for the options
+        "paging": true,
+        "searching": true,
+        "ordering": false,
+        "info": true,
+        "lengthMenu": [
+            [10, 25, 50, 75, -1],
+            [10, 25, 50, 75, "All"]
         ]
     });
 });
