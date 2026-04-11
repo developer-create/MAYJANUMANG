@@ -21,7 +21,7 @@ class KabbadiSamiti_model extends CI_Model
     /**
      * This function is used to get all kabbadi samiti groups (locations)
      * @param string $search optional search text
-     * @param array $filters optional ['year' => ?, 'samiti_type_id' => ?, 'block' => ?]
+     * @param array $filters optional ['year' => ?, 'month' => ?, 'date' => ?, 'samiti_type_id' => ?, 'block' => ?]
      */
     function get_groups($search = null, $filters = array())
     {
@@ -41,7 +41,13 @@ class KabbadiSamiti_model extends CI_Model
         }
         
         if (!empty($filters['year'])) {
-            $this->db->where('BaseTbl.year', $filters['year']);
+            $this->db->where('YEAR(BaseTbl.created_at)', $filters['year']);
+        }
+        if (!empty($filters['month'])) {
+            $this->db->where('MONTH(BaseTbl.created_at)', (int)$filters['month']);
+        }
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(BaseTbl.created_at)', $filters['date']);
         }
         if (isset($filters['samiti_type_id']) && $filters['samiti_type_id'] !== '' && $filters['samiti_type_id'] !== null) {
             $this->db->where('BaseTbl.samiti_type_id', (int)$filters['samiti_type_id']);
@@ -215,11 +221,17 @@ class KabbadiSamiti_model extends CI_Model
         $this->db->from('kabbadi_samiti_groups');
         $this->db->join('block', 'block.id = kabbadi_samiti_groups.block', 'left');
         
+        if (!empty($filters['year'])) {
+            $this->db->where('YEAR(kabbadi_samiti_groups.created_at)', $filters['year']);
+        }
+        if (!empty($filters['month'])) {
+            $this->db->where('MONTH(kabbadi_samiti_groups.created_at)', (int)$filters['month']);
+        }
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(kabbadi_samiti_groups.created_at)', $filters['date']);
+        }
         if (!empty($filters['block'])) {
             $this->db->where('kabbadi_samiti_groups.block', (int)$filters['block']);
-        }
-        if (!empty($filters['year'])) {
-            $this->db->where('kabbadi_samiti_groups.year', $filters['year']);
         }
         if (isset($filters['samiti_type_id']) && $filters['samiti_type_id'] !== '' && $filters['samiti_type_id'] !== null) {
             $this->db->where('kabbadi_samiti_groups.samiti_type_id', (int)$filters['samiti_type_id']);
@@ -228,5 +240,29 @@ class KabbadiSamiti_model extends CI_Model
         $query = $this->db->get();
         $result = $query->row_array();
         return $result['total_members'] ?? 0;
+    }
+
+    /**
+     * Get distinct years from kabbadi_samiti_groups
+     */
+    public function get_years() {
+        $this->db->select('DISTINCT(YEAR(created_at)) as year');
+        $this->db->from('kabbadi_samiti_groups');
+        $this->db->where('created_at IS NOT NULL');
+        $this->db->order_by('YEAR(created_at)', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    /**
+     * Get distinct months from kabbadi_samiti_groups
+     */
+    public function get_months() {
+        $this->db->select('DISTINCT(MONTH(created_at)) as month');
+        $this->db->from('kabbadi_samiti_groups');
+        $this->db->where('created_at IS NOT NULL');
+        $this->db->order_by('MONTH(created_at)', 'ASC');
+        $query = $this->db->get();
+        return $query->result_array();
     }
 }

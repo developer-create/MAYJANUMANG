@@ -28,10 +28,29 @@
                                 <label for="filter_year" class="control-label">वर्ष (Year):</label>
                                 <select name="filter_year" id="filter_year" class="form-control input-sm">
                                     <option value="">All</option>
-                                    <?php for ($y = 2024; $y <= 2030; $y++): ?>
-                                    <option value="<?php echo $y; ?>" <?php echo (isset($filter_year) && $filter_year == $y) ? 'selected' : ''; ?>><?php echo $y; ?></option>
-                                    <?php endfor; ?>
+                                    <?php if (!empty($years)): foreach ($years as $yr): ?>
+                                    <option value="<?php echo $yr['year']; ?>" <?php echo (isset($filter_year) && $filter_year == $yr['year']) ? 'selected' : ''; ?>><?php echo $yr['year']; ?></option>
+                                    <?php endforeach; endif; ?>
                                 </select>
+                            </div>
+                            <div class="form-group" style="margin-left: 15px;">
+                                <label for="filter_month" class="control-label">महीना (Month):</label>
+                                <select name="filter_month" id="filter_month" class="form-control input-sm">
+                                    <option value="">All</option>
+                                    <?php 
+                                    $months_names = array(1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June', 
+                                                          7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December');
+                                    if (!empty($months)): 
+                                        foreach ($months as $m): 
+                                            $month_num = (int)$m['month'];
+                                    ?>
+                                    <option value="<?php echo $month_num; ?>" <?php echo (isset($filter_month) && $filter_month == $month_num) ? 'selected' : ''; ?>><?php echo $months_names[$month_num]; ?></option>
+                                    <?php endforeach; endif; ?>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-left: 15px;">
+                                <label for="filter_date" class="control-label">तारीख (Date):</label>
+                                <input type="date" name="filter_date" id="filter_date" class="form-control input-sm" value="<?php echo isset($filter_date) ? $filter_date : ''; ?>">
                             </div>
                             <div class="form-group" style="margin-left: 15px;">
                                 <label for="filter_samiti_type" class="control-label">समिति प्रकार (Samiti Type):</label>

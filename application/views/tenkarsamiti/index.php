@@ -77,13 +77,8 @@
                                 </div>
                                 
                                 <div class="filter-group">
-                                    <label for="filter_day">दिन (Day)</label>
-                                    <select name="filter_day" id="filter_day">
-                                        <option value="">-- All Days --</option>
-                                        <?php for ($d = 1; $d <= 31; $d++): ?>
-                                        <option value="<?php echo $d; ?>" <?php echo (isset($filter_day) && $filter_day == $d) ? 'selected' : ''; ?>><?php echo $d; ?></option>
-                                        <?php endfor; ?>
-                                    </select>
+                                    <label for="filter_date">तारीख (Date)</label>
+                                    <input type="date" name="filter_date" id="filter_date" class="form-control" value="<?php echo isset($filter_date) ? $filter_date : ''; ?>">
                                 </div>
                                 
                                 <div class="filter-buttons">

@@ -46,8 +46,8 @@ class TenkarSamiti_model extends CI_Model
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(tenkar_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(tenkar_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(tenkar_samiti_groups.created_at)', $filters['date']);
         }
         
         $this->db->order_by('tenkar_samiti_groups.id', 'DESC');
@@ -233,8 +233,8 @@ class TenkarSamiti_model extends CI_Model
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(tenkar_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(tenkar_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(tenkar_samiti_groups.created_at)', $filters['date']);
         }
         
         $query = $this->db->get();

@@ -47,8 +47,8 @@ class BhagoriaSamiti_model extends CI_Model {
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(bhagoria_samiti.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(bhagoria_samiti.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(bhagoria_samiti.created_at)', $filters['date']);
         }
 
         $this->db->order_by('bhagoria_samiti.id', 'DESC');
@@ -176,8 +176,8 @@ class BhagoriaSamiti_model extends CI_Model {
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(bhagoria_samiti.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(bhagoria_samiti.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(bhagoria_samiti.created_at)', $filters['date']);
         }
         
         $query = $this->db->get();

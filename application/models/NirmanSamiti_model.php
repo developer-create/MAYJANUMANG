@@ -45,8 +45,8 @@ class NirmanSamiti_model extends CI_Model {
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(nirman_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(nirman_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(nirman_samiti_groups.created_at)', $filters['date']);
         }
         
         $this->db->order_by('nirman_samiti_groups.id', 'DESC');
@@ -232,8 +232,8 @@ class NirmanSamiti_model extends CI_Model {
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(nirman_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(nirman_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(nirman_samiti_groups.created_at)', $filters['date']);
         }
         
         $query = $this->db->get();
