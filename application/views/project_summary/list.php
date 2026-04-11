@@ -97,7 +97,9 @@
                                     <th>Department</th>
                                     <th>Work Name</th>
                                     <th>Project Cost</th>
+                                    <th>Word Amount (Cost)</th>
                                     <th>Proposal Estimate</th>
+                                    <th>Word Amount (Estimate)</th>
                                     <th>Status</th>
                                     <th>Officer Name</th>
                                     <th>Contact No</th>
@@ -129,8 +131,10 @@
                                     <td><?php echo $record->block_name ?></td>
                                     <td><?php echo $record->department_name ?></td>
                                     <td><?php echo $record->work_name ?></td>
-                                    <td><?php echo format_amount_indian($record->amount_project_cost) ?></td>
-                                    <td><?php echo format_amount_indian($record->proposal_estimate) ?></td>
+                                    <td><?php echo number_format($record->amount_project_cost, 2) ?></td>
+                                    <td><?php echo format_amount_word($record->amount_project_cost) ?></td>
+                                    <td><?php echo number_format($record->proposal_estimate, 2) ?></td>
+                                    <td><?php echo format_amount_word($record->proposal_estimate) ?></td>
                                     <td>
                                         <span
                                             class="label <?php echo ($record->status == 'Completed') ? 'label-success' : (($record->status == 'In Progress') ? 'label-warning' : 'label-info') ?>">
@@ -281,26 +285,29 @@ table.table td {
 
 /* Specific column widths */
 table thead tr th:nth-child(1) { min-width: 50px; }  /* Sr No */
-table thead tr th:nth-child(2) { min-width: 120px; } /* District */
-table thead tr th:nth-child(3) { min-width: 120px; } /* Block */
-table thead tr th:nth-child(4) { min-width: 150px; } /* Department */
-table thead tr th:nth-child(5) { min-width: 150px; } /* Work Name */
-table thead tr th:nth-child(6) { min-width: 120px; } /* Project Cost */
-table thead tr th:nth-child(7) { min-width: 140px; } /* Proposal Estimate */
-table thead tr th:nth-child(8) { min-width: 100px; } /* Status */
-table thead tr th:nth-child(9) { min-width: 130px; } /* Officer Name */
-table thead tr th:nth-child(10) { min-width: 120px; } /* Contact No */
-table thead tr th:nth-child(11) { min-width: 140px; } /* Technical Session */
-table thead tr th:nth-child(12) { min-width: 150px; } /* Administrative Session */
-table thead tr th:nth-child(13) { min-width: 120px; } /* Tender Status */
-table thead tr th:nth-child(14) { min-width: 140px; } /* Company Name */
-table thead tr th:nth-child(15) { min-width: 140px; } /* Contractor Name */
-table thead tr th:nth-child(16) { min-width: 120px; } /* Phone No */
-table thead tr th:nth-child(17) { min-width: 300px; } /* USD Remark */
-table thead tr th:nth-child(18) { min-width: 600px; } /* Remark */
-table thead tr th:nth-child(19) { min-width: 130px; } /* Current Progress */
-table thead tr th:nth-child(20) { min-width: 120px; } /* Created Date */
-table thead tr th:nth-child(21) { min-width: 100px; } /* Actions */
+table thead tr th:nth-child(2) { min-width: 120px; } /* Unique ID */
+table thead tr th:nth-child(3) { min-width: 120px; } /* District */
+table thead tr th:nth-child(4) { min-width: 120px; } /* Block */
+table thead tr th:nth-child(5) { min-width: 150px; } /* Department */
+table thead tr th:nth-child(6) { min-width: 150px; } /* Work Name */
+table thead tr th:nth-child(7) { min-width: 120px; } /* Project Cost */
+table thead tr th:nth-child(8) { min-width: 120px; } /* Word Amount (Cost) */
+table thead tr th:nth-child(9) { min-width: 140px; } /* Proposal Estimate */
+table thead tr th:nth-child(10) { min-width: 120px; } /* Word Amount (Estimate) */
+table thead tr th:nth-child(11) { min-width: 100px; } /* Status */
+table thead tr th:nth-child(12) { min-width: 130px; } /* Officer Name */
+table thead tr th:nth-child(13) { min-width: 120px; } /* Contact No */
+table thead tr th:nth-child(14) { min-width: 140px; } /* Technical Session */
+table thead tr th:nth-child(15) { min-width: 150px; } /* Administrative Session */
+table thead tr th:nth-child(16) { min-width: 120px; } /* Tender Status */
+table thead tr th:nth-child(17) { min-width: 140px; } /* Company Name */
+table thead tr th:nth-child(18) { min-width: 140px; } /* Contractor Name */
+table thead tr th:nth-child(19) { min-width: 120px; } /* Phone No */
+table thead tr th:nth-child(20) { min-width: 300px; } /* USD Remark */
+table thead tr th:nth-child(21) { min-width: 600px; } /* Remark */
+table thead tr th:nth-child(22) { min-width: 130px; } /* Current Progress */
+table thead tr th:nth-child(23) { min-width: 120px; } /* Created Date */
+table thead tr th:nth-child(24) { min-width: 100px; } /* Actions */
 
 /* Remark column styling */
 .remark-col {
@@ -438,7 +445,7 @@ $(document).ready(function() {
                 text: 'Export Excel',
                 title: 'Project Summary List',
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] // Exclude Actions column (21)
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22] // Exclude Actions column (23)
                 }
             },
             {

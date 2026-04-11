@@ -193,12 +193,11 @@
                            <th>Contact No</th>
                            <th>Beneficial</th>
                            <th>PO</th>
+                           <th>Beneficially Mobile</th>
                            <th>Status</th>
                            <th>Remark/ GOSHANA <br> ( भईया द्वारा दिए गए निर्देश )</th>
                            <th>REMARK / TIP/ USD</th>
                            <th>Added By</th>
-                           
-                           <th>Beneficially Mobile</th>
                            <th>lat-lng</th>
                            <th>Registration Date</th>
                            <th>Avedan</th>
