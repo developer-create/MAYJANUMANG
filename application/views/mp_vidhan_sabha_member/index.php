@@ -101,6 +101,57 @@
                           <th>District</th>
                           <th>Block</th>
                           <th>Vidhan Sabha</th>
+                          <th>BG</th>
+                          <th>BC</th>
+                          <th>ER</th>
+                          <th>BR</th>
+                          <th>IP</th>
+                          <th>SC</th>
+                          <th>SA</th>
+                          <th>YC</th>
+                          <th>AP</th>
+                          <th>FP</th>
+                          <th>PP</th>
+                          <th>WC</th>
+                          <th>PA</th>
+                          <th>PC</th>
+                          <th>AK</th>
+                          <th>FM</th>
+                          <th>ZP</th>
+                          <th>VP</th>
+                          <th>SR</th>
+                          <th>IN</th>
+                          <th>EO</th>
+                          <th>GS</th>
+                          <th>US</th>
+                          <th>PW</th>
+                          <th>NL</th>
+                          <th>FR</th>
+                          <th>SO</th>
+                          <th>ST</th>
+                          <th>OB</th>
+                          <th>SMW</th>
+                          <th>SMTW</th>
+                          <th>IT</th>
+                          <th>TEST</th>
+                          <th>DYC</th>
+                          <th>DCC</th>
+                          <th>OBC</th>
+                          <th>CELL</th>
+                          <th>MP</th>
+                          <th>DT</th>
+                          <th>DP</th>
+                          <th>AVP</th>
+                          <th>MEET</th>
+                          <th>MEDIA</th>
+                          <th>MLA,X MLA</th>
+                          <th>VECH</th>
+                          <th>IT CELL EXP</th>
+                          <th>INFO</th>
+                          <th>NSUI</th>
+                          <th>IMP</th>
+                          <th>ADVISE</th>
+                          <th>REF</th>
                           <th>Created By</th>
                           <th>Created Time</th>
                           <th>Actions</th>
@@ -116,6 +167,57 @@
                         <td><?php echo isset($member['district_name']) && $member['district_name'] ? htmlspecialchars($member['district_name']) : '-'; ?></td>
                         <td><?php echo isset($member['block_name']) && $member['block_name'] ? htmlspecialchars($member['block_name']) : '-'; ?></td>
                         <td><?php echo isset($member['vidhan_sabha_name']) && $member['vidhan_sabha_name'] ? htmlspecialchars($member['vidhan_sabha_name']) : '-'; ?></td>
+                        <td><?php echo isset($member['bg']) && $member['bg'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['bc']) && $member['bc'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['er']) && $member['er'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['br']) && $member['br'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['ip']) && $member['ip'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['sc']) && $member['sc'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['sa']) && $member['sa'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['yc']) && $member['yc'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['ap']) && $member['ap'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['fp']) && $member['fp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['pp']) && $member['pp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['wc']) && $member['wc'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['pa']) && $member['pa'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['pc']) && $member['pc'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['ak']) && $member['ak'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['fm']) && $member['fm'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['zp']) && $member['zp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['vp']) && $member['vp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['sr']) && $member['sr'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['in_field']) && $member['in_field'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['eo']) && $member['eo'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['gs']) && $member['gs'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['us']) && $member['us'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['pw']) && $member['pw'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['nl']) && $member['nl'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['fr']) && $member['fr'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['so']) && $member['so'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['st']) && $member['st'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['ob']) && $member['ob'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['smw']) && $member['smw'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['smtw']) && $member['smtw'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['it']) && $member['it'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['test']) && $member['test'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['dyc']) && $member['dyc'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['dcc']) && $member['dcc'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['obc']) && $member['obc'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['cell']) && $member['cell'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['mp']) && $member['mp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['dt']) && $member['dt'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['dp']) && $member['dp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['avp']) && $member['avp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['meet']) && $member['meet'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['media']) && $member['media'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['mla_x_mla']) && $member['mla_x_mla'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['vech']) && $member['vech'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['it_cell_exp']) && $member['it_cell_exp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['info']) && $member['info'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['nsui']) && $member['nsui'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['imp']) && $member['imp'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['advise']) && $member['advise'] ? '✓' : ''; ?></td>
+                        <td><?php echo isset($member['ref']) && $member['ref'] ? '✓' : ''; ?></td>
                         <td><?php echo $member['created_by_name']; ?></td>
                         <td><?php echo date('d-m-Y H:i:s', strtotime($member['created_time'])); ?></td>
                         <td>
@@ -166,8 +268,9 @@ $(document).ready(function() {
             [10, 25, 50, 75, "All"]
         ],
         "columnDefs": [
-            { "orderable": false, "targets": 9 }
-        ]
+            { "orderable": false, "targets": 62 }
+        ],
+        "scrollX": true
     });
 });
 </script>

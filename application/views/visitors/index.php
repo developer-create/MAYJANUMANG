@@ -14,7 +14,7 @@
                     <h3 class="box-title">Visitors List</h3>  
                     <a href="<?php echo site_url('visitors/create'); ?>"  class="btn btn-success"  style="float: right;">Add New Visitor</a>
 
-                    <form method="post" action="<?php echo site_url('visitors'); ?>" style="margin-top: 15px;">
+                    <form method="post" action="<?php echo site_url('visitors'); ?>" style="margin-top: 15px;" id="filterForm">
                         <div class="row">
                             <div class="col-md-2">
                                 <select id="districtFilter" name="district" class="form-control">
@@ -41,16 +41,6 @@
                                     <option value="">All Blocks</option>
                                     <?php foreach ($blocks as $block): ?>
                                         <option value="<?php echo htmlspecialchars($block); ?>" <?php echo (isset($filters['block']) && $filters['block'] == $block) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($block); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select id="blockFilter" class="form-control">
-                                    <option value="">All Blocks</option>
-                                    <?php foreach ($blocks as $block): ?>
-                                        <option value="<?php echo htmlspecialchars($block); ?>">
                                             <?php echo htmlspecialchars($block); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -97,10 +87,7 @@
                                 <input type="date" name="date" id="dateFilter" class="form-control" value="<?php echo isset($filters['date']) ? $filters['date'] : ''; ?>">
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary form-control">Filter</button>
-                            </div>
-                            <div class="col-md-2">
-                                <a href="<?php echo site_url('visitors'); ?>" class="btn btn-default form-control">Clear</a>
+                                <a href="<?php echo site_url('visitors'); ?>" class="btn btn-default form-control">Clear Filters</a>
                             </div>
                         </div>
                     </form>
@@ -125,7 +112,6 @@
                         <th>Message</th>
                         <th>Visitor Type</th>
                         <th>Attend by</th>
-                        
                         <th>REMARK (क्या कारवाही की गई)</th>
                         <th>USD Coding</th>
                         <th>भईया के निर्देश </th>
@@ -138,7 +124,6 @@
                     <tr class="clickable-row" data-visitor-id="<?php echo htmlspecialchars($visitor['id']); ?>" style="cursor: pointer;">
                         <td><?php echo $key+1; ?></td>
                         <td><?php 
-                        // Get district name if ID is stored
                         $district_val = $visitor['district'];
                         if(is_numeric($district_val)) {
                             $this->db->where('id', $district_val);
@@ -149,7 +134,6 @@
                         }
                         ?></td>
                         <td><?php 
-                        // Get vidhan_sabha name if ID is stored
                         $vidhan_val = $visitor['vidhan_sabha'];
                         if(is_numeric($vidhan_val)) {
                             $this->db->where('id', $vidhan_val);
@@ -262,9 +246,9 @@ $(document).ready(function() {
             [10, 25, 50, 75, "All"]
         ]
     });
+    
     // Click to view modal
     $(document).on('click', '.clickable-row', function(e) {
-        // Don't trigger if clicking on action buttons or links
         if ($(e.target).closest('a, button').length) {
             return;
         }
@@ -273,7 +257,6 @@ $(document).ready(function() {
         $('#recordData').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i> Loading...</div>');
         $('#recordModal').modal('show');
         
-        // Load record details
         $.ajax({
             url: '<?php echo site_url("visitors/get_visitor_details/"); ?>' + recordId,
             type: 'GET',
@@ -314,48 +297,15 @@ $(document).ready(function() {
         
         $('#recordData').html(html);
     }
-    // Filter bindings
-    $('#districtFilter').on('change', function () {
-        var district_id = $(this).val();
-        
-        // Load vidhan sabhas for selected district
-        if (district_id) {
-            $.ajax({
-                url: '<?php echo site_url("visitors/get_vidhan_sabhas_by_district"); ?>',
-                type: 'POST',
-                data: { district_id: district_id },
-                dataType: 'json',
-                success: function(response) {
-                    var vidhanSelect = $('#vidhanFilter');
-                    vidhanSelect.html('<option value="">All Vidhan Sabha</option>');
-                    
-                    if (response.success && response.vidhan_sabhas.length > 0) {
-                        $.each(response.vidhan_sabhas, function(index, vidhan) {
-                            vidhanSelect.append('<option value="' + vidhan.id + '">' + vidhan.vidhan_sabha_name + '</option>');
-                        });
-                    }
-                }
-            });
-        } else {
-            $('#vidhanFilter').html('<option value="">All Vidhan Sabha</option>');
-        }
-        
-        table.column(1).search(this.value).draw(); // District column index
-    });
     
-    $('#vidhanFilter').on('change', function () {
-        table.column(2).search(this.value).draw(); // Vidhan Sabha column index
+    // Automatic filter on change
+    function applyFilters() {
+        $('#filterForm').submit();
+    }
+    
+    // Trigger filter on any select/input change
+    $('#districtFilter, #vidhanFilter, #blockFilter, #yearFilter, #monthFilter, #dateFilter').on('change', function() {
+        applyFilters();
     });
-   // in your $(document).ready, after you init DataTables:
-$('#blockFilter').on('change', function () {
-  // we escape the value so special chars don’t break the regex,
-  // then use ^…$ to force an exact match on the block name
-  var val = $.fn.dataTable.util.escapeRegex(this.value);
-  table
-    .column(3)            // 0-based index of your “Block” column
-    .search(val ? '^'+val+'$' : '', true, false)
-    .draw();
-});
-
 });
 </script>
