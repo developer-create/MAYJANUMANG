@@ -82,7 +82,7 @@
                                 </div>
                                 
                                 <div class="filter-buttons">
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i> Filter</button>
+                                    <button type="submit" class="btn btn-primary" style="display:none;"><i class="fa fa-filter"></i> Filter</button>
                                     <a href="<?php echo site_url('tenkarsamiti'); ?>" class="btn btn-default"><i class="fa fa-refresh"></i> Reset</a>
                                 </div>
                             </div>
@@ -199,3 +199,5 @@
     </section>
 </div>
 
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/auto-filter.js" charset="utf-8"></script>

@@ -13,7 +13,7 @@
                     <form action="<?php echo site_url('events/store'); ?>" method="post">
                         <div class="box-body">
                             <!-- Display Validation Errors -->
-                            <?php if ($this->form_validation->run() == FALSE): ?>
+                            <?php if ($this->form_validation->run() == FALSE && $this->input->post()): ?>
                                 <div class="alert alert-danger alert-dismissible">
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                     <h4><i class="icon fa fa-ban"></i> Alert!</h4>

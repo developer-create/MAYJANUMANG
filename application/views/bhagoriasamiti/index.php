@@ -72,7 +72,7 @@
                                 <input type="date" name="filter_date" id="filter_date" class="form-control input-sm" value="<?php echo isset($filter_date) ? $filter_date : ''; ?>">
                             </div>
                             <div class="form-group" style="margin-left: 15px;">
-                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter"></i> Filter</button>
+                                <button type="submit" class="btn btn-primary btn-sm" style="display:none;"><i class="fa fa-filter"></i> Filter</button>
                                 <a href="<?php echo site_url('bhagoriasamiti'); ?>" class="btn btn-default btn-sm">Reset</a>
                             </div>
                         </form>
@@ -189,3 +189,5 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/auto-filter.js" charset="utf-8"></script>
