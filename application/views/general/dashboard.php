@@ -1,232 +1,99 @@
 <div class="content-wrapper">
     <style>
-    <style>
-    /* Premium Dashboard Styles */
-    #pieChart { height: 400px !important; width: 100%; }
-    #barChart { height: 400px !important; width: 100%; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 8px; text-align: center; }
-
-    /* Modern Table headers */
-    .table thead th {
-        background-color: var(--sidebar-bg, #111827) !important;
-        color: white !important;
-        font-weight: 600 !important;
-        font-family: 'Outfit', sans-serif !important;
-        text-transform: uppercase;
+    .stat-card {
+        border: none;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        background: white;
+        transition: all 0.3s ease;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .stat-card:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
+    .stat-card.aqua { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; }
+    .stat-card.purple { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; }
+    .stat-card.blue { background: linear-gradient(135deg, #2980b9 0%, #1f618d 100%); color: white; }
+    .stat-card.green { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); color: white; }
+    .stat-card.orange { background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; }
+    .stat-card.yellow { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; }
+    .stat-card.red { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; }
+    
+    .stat-card-title {
         font-size: 11px;
-        letter-spacing: 0.5px;
-        border: none !important;
-        padding: 15px 10px !important;
-    }
-    #dashboardtable thead th { background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important; color: white !important; }
-    #dashboardtable1 thead th { background: linear-gradient(135deg, #064e3b, #10b981) !important; color: white !important; }
-    #dashboardtable2 thead th { background: linear-gradient(135deg, #78350f, #f59e0b) !important; color: white !important; }
-    .table tbody tr { transition: all 0.3s ease; }
-    .table tbody tr td { border-bottom: 1px solid #f1f5f9 !important; border-top: none !important; vertical-align: middle !important; }
-    
-    .gray { background-color: #64748b !important; color: white !important; }
-    .light-gray { background-color: #94a3b8 !important; color: white !important; }
-    .dark-gray { background-color: #475569 !important; color: white !important; }
-
-    .table thead th a { color: white !important; text-decoration: none; }
-    .table thead th a:hover { color: #f8fafc !important; text-decoration: underline; }
-
-    /* New Card Gradients & Styling */
-    .small-box {
-        position: relative;
-        border-radius: 16px !important;
-        overflow: hidden;
-        color: #ffffff !important;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
-        padding: 5px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .small-box .inner {
-        position: relative;
-        z-index: 2;
-        padding: 15px !important;
-        text-align: left !important;
-    }
-    .small-box h3 {
-        font-size: 32px !important;
-        font-weight: 800 !important;
-        font-family: 'Outfit', sans-serif !important;
-        margin: 0 0 5px 0 !important;
-        letter-spacing: -1px;
-    }
-    .small-box h4 {
-        font-size: 15px !important;
-        font-weight: 600 !important;
+        font-weight: 600;
+        color: inherit;
         text-transform: uppercase;
-        margin: 0 0 5px 0 !important;
-        letter-spacing: 0.5px;
-        opacity: 0.9;
+        letter-spacing: 0.3px;
+        margin-bottom: 6px;
+        opacity: 0.95;
     }
-    .small-box p {
-        font-size: 13px !important;
-        font-weight: 400 !important;
-        opacity: 0.8;
-        margin: 0 !important;
+    .stat-card-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: inherit;
+        margin-bottom: 8px;
     }
-    
-    /* Background Icon using Pseudo-element */
-    .small-box::after {
-        font-family: "FontAwesome";
-        content: "\f200"; /* Pie chart icon */
-        position: absolute;
-        top: 15px;
-        right: -10px;
-        font-size: 70px;
-        color: rgba(255,255,255,0.15);
-        z-index: 1;
-        transition: transform 0.4s ease;
-    }
-    .small-box:hover::after { transform: scale(1.1) rotate(-15deg); }
-    .small-box:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important; }
-
-    /* Gradients */
-    .bg-aqua { background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%) !important; }
-    .bg-aqua::after { content: "\f0c0"; } /* users */
-    
-    .bg-purple { background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%) !important; }
-    .bg-purple::after { content: "\f19c"; } /* building */
-    
-    .bg-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important; }
-    .bg-blue::after { content: "\f0e8"; } /* sitemap */
-    
-    .bg-green { background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important; }
-    .bg-green::after { content: "\f058"; } /* check-circle */
-    
-    .bg-orange { background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%) !important; }
-    .bg-orange::after { content: "\f071"; } /* warning */
-    
-    .bg-yellow { background: linear-gradient(135deg, #eab308 0%, #a16207 100%) !important; }
-    .bg-yellow::after { content: "\f110"; } /* spinner */
-    
-    .reject-card { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important; }
-    .reject-card::after { content: "\f057"; } /* times-circle */
-
-    .reject-card .inner h3, .reject-card .inner h4, .reject-card .inner p { color: white !important; }
-    
-    /* Box Wrappers */
-    .box.box-primary {
-        border-top: none !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;
-        border-radius: 16px !important;
-        padding: 20px !important;
-        margin-bottom: 30px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        height: 100% !important;
-    }
-
-    .box-body {
-        flex: 1 !important;
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    .box-body canvas {
-        flex: 1 !important;
-    }
-    
-    /* Form Enhancements */
-    form label { font-weight: 500 !important; color: #475569; }
-    .btn-primary { border-radius: 8px !important; padding: 10px 20px !important; font-weight: 600 !important; }
-
-    /* Section Headings */
-    h3 {
-        font-family: 'Outfit', sans-serif !important;
-        font-weight: 700 !important;
-        color: var(--sidebar-bg, #1e293b);
-        margin-bottom: 20px;
-        border-bottom: 2px solid #e2e8f0;
-        padding-bottom: 10px;
+    .stat-card-btn {
         display: inline-block;
+        padding: 4px 8px;
+        font-size: 10px;
+        border-radius: 3px;
+        text-decoration: none;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        transition: all 0.2s;
+        align-self: flex-start;
     }
-
-    /* 8-column layout for cards (12.5% each) */
-    .row {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        margin-left: -5px !important;
-        margin-right: -5px !important;
+    .stat-card-btn:hover {
+        background: rgba(255,255,255,0.3);
+        color: white;
     }
-
-    .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
-        flex: 0 0 12.5% !important;
-        max-width: 12.5% !important;
-        padding-left: 5px !important;
-        padding-right: 5px !important;
-        box-sizing: border-box !important;
+    
+    /* Chart styling */
+    #barChart, #pieChart {
+        max-height: 300px !important;
     }
-
-    .col-xs-12:first-child {
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
+    
+    /* 7 columns layout */
+    .col-7 {
+        flex: 0 0 calc(100% / 7);
+        max-width: calc(100% / 7);
+        padding: 5px;
+        box-sizing: border-box;
     }
-
+    
     @media (max-width: 1200px) {
-        .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
-            flex: 0 0 16.666% !important;
-            max-width: 16.666% !important;
-        }
-        .col-xs-12:first-child {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
+        .col-7 {
+            flex: 0 0 calc(100% / 6);
+            max-width: calc(100% / 6);
         }
     }
-
     @media (max-width: 992px) {
-        .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
-            flex: 0 0 20% !important;
-            max-width: 20% !important;
-        }
-        .col-xs-12:first-child {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
+        .col-7 {
+            flex: 0 0 calc(100% / 4);
+            max-width: calc(100% / 4);
         }
     }
-
     @media (max-width: 768px) {
-        .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
-            flex: 0 0 25% !important;
-            max-width: 25% !important;
-        }
-        .col-xs-12:first-child {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
+        .col-7 {
+            flex: 0 0 50%;
+            max-width: 50%;
         }
     }
-
     @media (max-width: 480px) {
-        .col-lg-1-5, .col-md-1-5, .col-sm-1-5, .col-xs-12 {
-            flex: 0 0 50% !important;
-            max-width: 50% !important;
-        }
-        .col-xs-12:first-child {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
+        .col-7 {
+            flex: 0 0 100%;
+            max-width: 100%;
         }
     }
-
-    /* Chart row alignment */
-    .row > [class*='col-'] {
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    .col-lg-6, .col-xs-6 {
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    .col-lg-6 .box-primary, .col-xs-6 .box-primary {
-        height: 100% !important;
-    }
-    </style>
     </style>
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -235,254 +102,168 @@
             <small>Control panel</small>
         </h1>
     </section>
-    <section class="content" style="padding-left: 10px; padding-right: 10px;">
-        <!-- First Row: My Assembly Cards (8 cards total in one row) -->
-        <div class="row" style="padding-left: 30px; padding-right: 30px;">
-            <div class="col-xs-12">
-                <h3>My Assembly</h3>
-            </div>
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-aqua" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php $date=date('Y-m-d');
+    <section class="content" style="padding: 10px;">
+        <!-- First Row: My Assembly Cards - 7 per row -->
+        <div class="row" style="display: flex; flex-wrap: wrap; margin: 0; padding: 0;">
+            <div class="col-7">
+                <div class="stat-card aqua">
+                    <div class="stat-card-title">Today Vidhan Sabha</div>
+                    <div class="stat-card-value"><?php $date=date('Y-m-d');
                      $cc=  $this->db->query("SELECT count(*) as todaytotal FROM `servayapp` s 
                                             JOIN `block` b ON s.block_name_number = b.id 
                                             WHERE s.create_date LIKE '%$date%' AND b.name != 'Other'");
                        $ca=$cc->row();
                        echo $ca->todaytotal;
-                       ?></h3>
-                        <h4>Today Vidhan Sabha</h4>
-                        <p>Total Member</p>
-                    </div>
+                       ?></div>
+                    <a href="<?php echo base_url('ServayListing'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-purple" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php 
+            <div class="col-7">
+                <div class="stat-card purple">
+                    <div class="stat-card-title">Vidhan Sabha</div>
+                    <div class="stat-card-value"><?php 
                      $cc=  $this->db->query("SELECT count(*) as vidhansabha_total FROM `servayapp` s 
                                             JOIN `block` b ON s.block_name_number = b.id 
                                             WHERE b.name != 'Other'");
                        $ca=$cc->row();
                        echo $ca->vidhansabha_total;
-                       ?></h3>
-                        <h4>Vidhan Sabha</h4>
-                        <p>Total Member</p>
-                    </div>
+                       ?></div>
+                    <a href="<?php echo base_url('ServayListing'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('user/jansunwai'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-blue" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php $date=date('Y-m-d');
+            <div class="col-7">
+                <div class="stat-card blue">
+                    <div class="stat-card-title">Total Public Problems</div>
+                    <div class="stat-card-value"><?php $date=date('Y-m-d');
                      $cc1=  $this->db->query("SELECT count(*) as userstoday FROM `jansunwai` ");
                      $ca2=$cc1->row();
                      echo $ca2->userstoday;
-                     ?></h3>
-                        <h4>Total</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     ?></div>
+                    <a href="<?php echo base_url('user/jansunwai'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('user/jansunwai?status=Complete'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-green" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php
+            <div class="col-7">
+                <div class="stat-card green">
+                    <div class="stat-card-title">Complete Public Problems</div>
+                    <div class="stat-card-value"><?php
                      $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `jansunwai` WHERE `work_status`='Complete'");
                      $cc122=$cc12->row();
-                     echo $cc122->totalusers; ?></h3>
-                        <h4>Complete</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     echo $cc122->totalusers; ?></div>
+                    <a href="<?php echo base_url('user/jansunwai?status=Complete'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('user/jansunwai?status=Incomplete'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-orange" style="cursor: pointer; background-color: #9f9d15ff !important;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php $date=date('Y-m-d');
+            <div class="col-7">
+                <div class="stat-card orange">
+                    <div class="stat-card-title">Incomplete Public Problems</div>
+                    <div class="stat-card-value"><?php $date=date('Y-m-d');
                      $cc1=  $this->db->query("SELECT count(*) as userstoday FROM `jansunwai` WHERE  `work_status`='Incomplete' ");
                      $ca2=$cc1->row();
                      echo $ca2->userstoday;
-                     ?></h3>
-                        <h4>Incomplete</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     ?></div>
+                    <a href="<?php echo base_url('user/jansunwai?status=Incomplete'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('user/jansunwai?status=In progress'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-yellow" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php
+            <div class="col-7">
+                <div class="stat-card yellow">
+                    <div class="stat-card-title">In-Progress Public Problems</div>
+                    <div class="stat-card-value"><?php
                      $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `jansunwai` WHERE    `work_status`='In progress' ");
                      $cc122=$cc12->row();
-                     echo $cc122->totalusers; ?></h3>
-                        <h4>In-Progress</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     echo $cc122->totalusers; ?></div>
+                    <a href="<?php echo base_url('user/jansunwai?status=In progress'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <div class="small-box reject-card">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php
+            <div class="col-7">
+                <div class="stat-card red">
+                    <div class="stat-card-title">Rejected Public Problems</div>
+                    <div class="stat-card-value"><?php
                      $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `jansunwai` WHERE `work_status`='Reject' ");
                      $cc122=$cc12->row();
-                     echo $cc122->totalusers; ?></h3>
-                        <h4>Rejected</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     echo $cc122->totalusers; ?></div>
                 </div>
             </div>
         </div>
-        <!-- Second Row: All MP Cards (8 cards total in one row) -->
-        <div class="row" style="padding-left: 30px; padding-right: 30px; margin-top: -20px;">
-            <div class="col-xs-12">
-                <h3>All MP</h3>
-            </div>
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-aqua" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php $date=date('Y-m-d');
+        <!-- Second Row: All MP Cards - 7 per row -->
+        <div class="row" style="display: flex; flex-wrap: wrap; margin: 0; padding: 0;">
+            <div class="col-7">
+                <div class="stat-card aqua">
+                    <div class="stat-card-title">Today MP</div>
+                    <div class="stat-card-value"><?php $date=date('Y-m-d');
                      $cc=  $this->db->query("SELECT count(*) as todaytotal FROM `servayapp` s 
                                             JOIN `block` b ON s.block_name_number = b.id 
                                             WHERE s.create_date LIKE '%$date%' AND b.name = 'Other'");
                        $ca=$cc->row();
                        echo $ca->todaytotal;
-                       ?><sup style="font-size: 20px"></sup></h3>
-                        <h4>Today MP</h4>
-                        <p>Total Member</p>
-                    </div>
+                       ?></div>
+                    <a href="<?php echo base_url('ServayListing'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('ServayListing'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-purple" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php 
+            <div class="col-7">
+                <div class="stat-card purple">
+                    <div class="stat-card-title">All MP</div>
+                    <div class="stat-card-value"><?php 
                      $cc=  $this->db->query("SELECT count(*) as mp_total FROM `servayapp`");
                        $ca=$cc->row();
                        echo $ca->mp_total;
-                       ?></h3>
-                        <h4>All MP</h4>
-                        <p>Total Member</p>
-                    </div>
+                       ?></div>
+                    <a href="<?php echo base_url('ServayListing'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-blue" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php $date=date('Y-m-d');
+            <div class="col-7">
+                <div class="stat-card blue">
+                    <div class="stat-card-title">MP Total Public Problems</div>
+                    <div class="stat-card-value"><?php $date=date('Y-m-d');
                      $cc1=  $this->db->query("SELECT count(*) as userstoday FROM `districtpublicproblem` ");
                      $ca2=$cc1->row();
                      echo $ca2->userstoday;
-                     ?></h3>
-                        <h4>MP Total</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     ?></div>
+                    <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Complete'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-green" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php
+            <div class="col-7">
+                <div class="stat-card green">
+                    <div class="stat-card-title">MP Complete Public Problems</div>
+                    <div class="stat-card-value"><?php
                      $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `districtpublicproblem` WHERE `work_status`='Complete'");
                      $cc122=$cc12->row();
-                     echo $cc122->totalusers; ?></h3>
-                        <h4>MP Complete</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     echo $cc122->totalusers; ?></div>
+                    <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Complete'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Incomplete'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-orange" style="cursor: pointer; background-color: #9f9d15ff !important;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php $date=date('Y-m-d');
+            <div class="col-7">
+                <div class="stat-card orange">
+                    <div class="stat-card-title">MP Incomplete Public Problems</div>
+                    <div class="stat-card-value"><?php $date=date('Y-m-d');
                      $cc1=  $this->db->query("SELECT count(*) as userstoday FROM `districtpublicproblem` WHERE  `work_status`='Incomplete' ");
                      $ca2=$cc1->row();
                      echo $ca2->userstoday;
-                     ?></h3>
-                        <h4>MP Incompl.</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     ?></div>
+                    <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Incomplete'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=In progress'); ?>" style="text-decoration: none;">
-                <div class="small-box bg-yellow" style="cursor: pointer;">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php
+            <div class="col-7">
+                <div class="stat-card yellow">
+                    <div class="stat-card-title">MP In-Progress Public Problems</div>
+                    <div class="stat-card-value"><?php
                      $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `districtpublicproblem` WHERE    `work_status`='In progress' ");
                      $cc122=$cc12->row();
-                     echo $cc122->totalusers; ?></h3>
-                        <h4>MP InProg.</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     echo $cc122->totalusers; ?></div>
+                    <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=In progress'); ?>" class="stat-card-btn">View</a>
                 </div>
-                </a>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-1-5 col-md-1-5 col-sm-1-5 col-xs-12">
-                <!-- small box -->
-                <div class="small-box reject-card">
-                    <div class="inner" style="text-align: center;">
-                        <h3><?php
+            <div class="col-7">
+                <div class="stat-card red">
+                    <div class="stat-card-title">MP Rejected Public Problems</div>
+                    <div class="stat-card-value"><?php
                      $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `districtpublicproblem` WHERE `work_status`='Reject' ");
                      $cc122=$cc12->row();
-                     echo $cc122->totalusers; ?></h3>
-                        <h4>MP Rejected</h4>
-                        <p>Public Problems</p>
-                    </div>
+                     echo $cc122->totalusers; ?></div>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <form method="post" action="<?php echo base_url('user/index'); ?>">
                         <div class="row">
                             <!-- Start Date -->
@@ -513,23 +294,23 @@
                 </div>
             </div>
             <div class="col-lg-6 col-xs-6">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
-                    <h4 style="margin-left: 20px;">Status By Block</h4>
+                <div class="box box-primary" >
+                    <h4 >Status By Block</h4>
                     <button onclick="printChart('barChart')" class="btn btn-primary">Print Bar Chart</button>
-                    <canvas id="barChart"></canvas>
+                    <canvas id="barChart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
             <div class="col-lg-6 col-xs-6">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
-                    <h4 style="margin-left: 20px;">Over-All Status</h4>
+                <div class="box box-primary" >
+                    <h4 >Over-All Status</h4>
                     <button onclick="printChart('pieChart')" class="btn btn-primary">Print Pie Chart</button>
-                    <canvas id="pieChart"></canvas>
+                    <canvas id="pieChart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <form method="post" action="<?php echo base_url('user/index'); ?>">
                         <div class="row">
                             <!-- Start Block -->
@@ -634,7 +415,7 @@
         </div>
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>MP Public Problems Department - Summary Report</b></h3>
                         <table class="table table-hover" id="dashboardtable">
@@ -693,7 +474,7 @@
 
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>MP Public Problems - Summary Report</b></h3>
                         <table class="table table-hover" id="dashboardtable2">
@@ -731,7 +512,7 @@
         </div>
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>Public Problems - Summary Report</b></h3>
                         <table class="table table-hover" id="dashboardtable">
@@ -856,7 +637,7 @@
         </div>
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>Vidhan Sabha Party Worker Core Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable1">
@@ -904,7 +685,7 @@
         </div>
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>MP Party Worker Core Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable1">
@@ -953,7 +734,7 @@
         <!-- Fund Summary Section -->
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>Fund Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable">
@@ -994,7 +775,7 @@
         <!-- Project Summary Section -->
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>Project Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable">
@@ -1033,7 +814,7 @@
         <!-- Event Summary Section -->
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>Event Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable">
@@ -1072,7 +853,7 @@
         <!-- Visitor Summary Section -->
         <div class="row">
             <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
+                <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>Visitor Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable">
