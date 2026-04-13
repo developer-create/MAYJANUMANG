@@ -429,3 +429,48 @@
         </div>
     </section>
 </div>
+
+<script>
+$(document).ready(function() {
+    // Load Vidhan Sabha when district is selected
+    $('#district_id').change(function() {
+        var district_id = $(this).val();
+        
+        if (district_id) {
+            $.ajax({
+                url: '<?php echo site_url('mp_vidhan_sabha_member/get_vidhan_sabhas_by_district'); ?>',
+                type: 'POST',
+                data: { district_id: district_id },
+                dataType: 'json',
+                success: function(response) {
+                    var vidhan_sabha_select = $('#vidhan_sabha_id');
+                    var current_value = vidhan_sabha_select.val();
+                    vidhan_sabha_select.html('<option value="">Select Vidhan Sabha</option>');
+                    
+                    if (response.length > 0) {
+                        $.each(response, function(index, vs) {
+                            vidhan_sabha_select.append(
+                                '<option value="' + vs.id + '">' + vs.vidhan_sabha_name + '</option>'
+                            );
+                        });
+                        // Restore previous selection if it exists in new list
+                        if (current_value) {
+                            vidhan_sabha_select.val(current_value);
+                        }
+                    }
+                },
+                error: function() {
+                    alert('Error loading Vidhan Sabha');
+                }
+            });
+        } else {
+            $('#vidhan_sabha_id').html('<option value="">Select Vidhan Sabha</option>');
+        }
+    });
+    
+    // Trigger change on page load if district is already selected
+    if ($('#district_id').val()) {
+        $('#district_id').trigger('change');
+    }
+});
+</script>

@@ -336,5 +336,15 @@ class Mp_vidhan_sabha_member extends BaseController {
             redirect('mp_vidhan_sabha_member');
         }
     }
+
+    // Get Vidhan Sabha by District (AJAX endpoint)
+    public function get_vidhan_sabhas_by_district() {
+        $this->load->model('Vidhan_sabha_model');
+        
+        $district_id = $this->input->post('district_id');
+        $vidhan_sabhas = $this->Vidhan_sabha_model->get_vidhan_sabhas_by_district($district_id);
+        
+        header('Content-Type: application/json');
+        echo json_encode($vidhan_sabhas);
+    }
 }
-?>
