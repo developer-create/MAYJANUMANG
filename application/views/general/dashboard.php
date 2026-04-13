@@ -858,16 +858,16 @@
             <div class="col-lg-12 col-xs-12">
                 <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
                     <div class="box-body table-responsive no-padding">
-                        <h3 style="text-align:center;"><b>New Member Summary</b></h3>
+                        <h3 style="text-align:center;"><b>Vidhan Sabha Party Worker Core Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable1">
                             <thead>
                                 <tr>
                                     <th>Block Name</th>
+                                    <th>Total Count</th>
+                                    <th>Today Count</th>
                                     <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
                                     <th><?php echo htmlspecialchars($ct['label']); ?></th>
                                     <?php endforeach; } ?>
-                                    <th>Total Count</th>
-                                    <th>Today Count</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -879,6 +879,8 @@
                                 ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($block->BlockName); ?></td>
+                                    <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
+                                    <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
                                     <?php foreach ($coding_types as $ct) :
                                         $col = $ct['col'];
                                         $count = isset($block->$col) ? (int)$block->$col : 0;
@@ -886,8 +888,6 @@
                                     ?>
                                     <td><a href="<?php echo $url; ?>"><?php echo $count; ?></a></td>
                                     <?php endforeach; ?>
-                                    <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
-                                    <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                                 <?php else : ?>
@@ -906,16 +906,16 @@
             <div class="col-lg-12 col-xs-12">
                 <div class="box box-primary" style="padding-left: 10px; padding-right: 10px;">
                     <div class="box-body table-responsive no-padding">
-                        <h3 style="text-align:center;"><b>New Member Summary District</b></h3>
+                        <h3 style="text-align:center;"><b>MP Party Worker Core Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable1">
                             <thead>
                                 <tr>
                                     <th>Block Name</th>
+                                    <th>Total Count</th>
+                                    <th>Today Count</th>
                                     <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
                                     <th><?php echo htmlspecialchars($ct['label']); ?></th>
                                     <?php endforeach; } ?>
-                                    <th>Total Count</th>
-                                    <th>Today Count</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -926,6 +926,8 @@
                                 ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($block->DistrictName); ?></td>
+                                    <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
+                                    <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
                                     <?php foreach ($coding_types as $ct) :
                                         $col = $ct['col'];
                                         $count = isset($block->$col) ? (int)$block->$col : 0;
@@ -933,8 +935,6 @@
                                     ?>
                                     <td><a href="<?php echo $url; ?>"><?php echo $count; ?></a></td>
                                     <?php endforeach; ?>
-                                    <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
-                                    <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                                 <?php else : ?>
