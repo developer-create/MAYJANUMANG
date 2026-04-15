@@ -126,7 +126,15 @@ class Districtpublicproblem extends BaseController {
                 $approved_fund = $this->input->post("approved_fund");
                 $approved_fund_other = $this->input->post("approved_fund_other");
 
-                $data = ["createdAt" => date('Y-m-d H:i:s'),"sector_name" => $this->input->post("sector_name"), "micro_sector_no" => $this->input->post("micro_sector_no"), "micro_sector_name" => $this->input->post("micro_sector_name"), "year" => $financial_year, "month" => $month, "date" => date("Y-m-d", strtotime($this->input->post("date"))), "district" => $this->input->post("district"), "assembly" => $this->input->post("assembly"), "block" => $this->input->post("block"), "recommended_letter_no" => $this->input->post("recommended_letter_no"), "booth_no" => $this->input->post("booth_no"), "booth_name" => $this->input->post("booth_name"), "panchayat_name" => $this->input->post("panchayat_name"), "village" => $this->input->post("village"), "majra_faliya" => $this->input->post("majra_faliya"), "work_problem" => $this->input->post("work_problem"), "office" => $this->input->post("office"), "approximate_cost" => $this->input->post("approximate_cost"), "department" => $this->input->post("department"), "priority" => $this->input->post("priority"),
+                // Get district name from district ID
+                $district_id = $this->input->post("district");
+                $district_name = '';
+                if (!empty($district_id)) {
+                    $district = $this->db->get_where('district', array('id' => $district_id))->row_array();
+                    $district_name = isset($district['name']) ? $district['name'] : '';
+                }
+
+                $data = ["createdAt" => date('Y-m-d H:i:s'),"sector_name" => $this->input->post("sector_name"), "micro_sector_no" => $this->input->post("micro_sector_no"), "micro_sector_name" => $this->input->post("micro_sector_name"), "year" => $financial_year, "month" => $month, "date" => date("Y-m-d", strtotime($this->input->post("date"))), "district" => $district_name, "assembly" => $this->input->post("assembly"), "block" => $this->input->post("block"), "recommended_letter_no" => $this->input->post("recommended_letter_no"), "booth_no" => $this->input->post("booth_no"), "booth_name" => $this->input->post("booth_name"), "panchayat_name" => $this->input->post("panchayat_name"), "village" => $this->input->post("village"), "majra_faliya" => $this->input->post("majra_faliya"), "work_problem" => $this->input->post("work_problem"), "office" => $this->input->post("office"), "approximate_cost" => $this->input->post("approximate_cost"), "department" => $this->input->post("department"), "priority" => $this->input->post("priority"),
                 "ts_no_date" => $this->input->post("ts_no_date"), 
                 "as_no_date" =>$this->input->post("as_no_date"),
                 "approved_fund" => $approved_fund,
@@ -299,9 +307,17 @@ $lastRegQuery = $this->db->select("registration_no")
         $approved_fund = $this->input->post("approved_fund");
         $approved_fund_other = $this->input->post("approved_fund_other");
         
+        // Get district name from district ID
+        $district_id = $this->input->post("district");
+        $district_name = '';
+        if (!empty($district_id)) {
+            $district = $this->db->get_where('district', array('id' => $district_id))->row_array();
+            $district_name = isset($district['name']) ? $district['name'] : '';
+        }
+        
         // Gather post data
         $id = $this->input->post("id");
-        $data = ["sector_name" => $this->input->post("sector_name"), "micro_sector_no" => $this->input->post("micro_sector_no"), "micro_sector_name" => $this->input->post("micro_sector_name"), "year" => $financial_year, "month" => $month, "date" => $this->input->post("date"), "district" => $this->input->post("district"), "assembly" => $this->input->post("assembly"), "block" => $this->input->post("block"), "recommended_letter_no" => $this->input->post("recommended_letter_no"), "booth_no" => $this->input->post("booth_no"), "booth_name" => $this->input->post("booth_name"), "panchayat_name" => $this->input->post("panchayat_name"), "village" => $this->input->post("village"), "majra_faliya" => $this->input->post("majra_faliya"), "work_problem" => $this->input->post("work_problem"), "office" => $this->input->post("office"), "approximate_cost" => $this->input->post("approximate_cost"), "department" => $this->input->post("department"), "priority" => $this->input->post("priority"),
+        $data = ["sector_name" => $this->input->post("sector_name"), "micro_sector_no" => $this->input->post("micro_sector_no"), "micro_sector_name" => $this->input->post("micro_sector_name"), "year" => $financial_year, "month" => $month, "date" => $this->input->post("date"), "district" => $district_name, "assembly" => $this->input->post("assembly"), "block" => $this->input->post("block"), "recommended_letter_no" => $this->input->post("recommended_letter_no"), "booth_no" => $this->input->post("booth_no"), "booth_name" => $this->input->post("booth_name"), "panchayat_name" => $this->input->post("panchayat_name"), "village" => $this->input->post("village"), "majra_faliya" => $this->input->post("majra_faliya"), "work_problem" => $this->input->post("work_problem"), "office" => $this->input->post("office"), "approximate_cost" => $this->input->post("approximate_cost"), "department" => $this->input->post("department"), "priority" => $this->input->post("priority"),
         "ts_no_date" => $this->input->post("ts_no_date"), "as_no_date" => $this->input->post("as_no_date"), "approved_fund" => $approved_fund, "approved_fund_other" => $approved_fund_other, "work_agency" => $this->input->post("work_agency"), "type_of_work" => $this->input->post("type_of_work"), "middle_men" => $this->input->post("middle_men"), "cont_no" => $this->input->post("cont_no"), "beneficial" => $this->input->post("beneficial"), "uname" => $this->input->post("beneficial"), "mobile" => $this->input->post("mobile"), "po" => $this->input->post("po"), 
         // "work_status" => $this->input->post("work_status"), 
         "remark_goshana" => $this->input->post("remark_goshana"), "updatedBy" => $this->vendorId, ];
@@ -547,6 +563,20 @@ $lastRegQuery = $this->db->select("registration_no")
             }
             redirect("Districtpublicproblem/Disctrictproblem");
         }
+    }
+
+    // Get vidhan sabhas by district (AJAX)
+    public function get_vidhan_sabhas_by_district() {
+        $district_id = $this->input->post('district_id');
+        
+        if (empty($district_id)) {
+            echo json_encode(['success' => false, 'vidhan_sabhas' => []]);
+            return;
+        }
+
+        $this->load->model('Vidhan_sabha_model');
+        $vidhan_sabhas = $this->Vidhan_sabha_model->get_vidhan_sabhas_by_district($district_id);
+        echo json_encode(['success' => true, 'vidhan_sabhas' => $vidhan_sabhas]);
     }
 
 }

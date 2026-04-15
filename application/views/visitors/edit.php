@@ -19,7 +19,7 @@
                                         <select class="form-control required" id="district" name="district">
                                             <option value="">Select District</option>
                                             <?php foreach ($districts as $district): ?>
-                                                <option value="<?php echo $district['name']; ?>" <?php echo $district['is_selected'] ? 'selected' : ''; ?>>
+                                                <option value="<?php echo $district['id']; ?>" <?php echo $district['is_selected'] ? 'selected' : ''; ?>>
                                                     <?php echo $district['name']; ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -207,3 +207,39 @@
         </div>
     </section>
 </div>
+<script>
+$(document).ready(function() {
+    // Handle district change event
+    $('#district').on('change', function() {
+        var district_id = $(this).val();
+        
+        if (district_id === '') {
+            // Clear vidhan sabha dropdown if no district selected
+            $('#vidhan_sabha').html('<option value="">Select Vidhan Sabha</option>');
+            return;
+        }
+        
+        // Make AJAX request to get vidhan sabhas for selected district
+        $.ajax({
+            url: '<?php echo site_url("visitors/get_vidhan_sabhas_by_district"); ?>',
+            type: 'POST',
+            data: { district_id: district_id },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success && response.vidhan_sabhas.length > 0) {
+                    var options = '<option value="">Select Vidhan Sabha</option>';
+                    $.each(response.vidhan_sabhas, function(index, vs) {
+                        options += '<option value="' + vs.vidhan_sabha_name + '">' + vs.vidhan_sabha_name + '</option>';
+                    });
+                    $('#vidhan_sabha').html(options);
+                } else {
+                    $('#vidhan_sabha').html('<option value="">No Vidhan Sabha available for this district</option>');
+                }
+            },
+            error: function() {
+                $('#vidhan_sabha').html('<option value="">Error loading Vidhan Sabha</option>');
+            }
+        });
+    });
+});
+</script>

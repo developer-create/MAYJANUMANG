@@ -40,17 +40,16 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="block_id">Block</label>
-                                        <select class="form-control" id="block_id" name="block_id">
-                                            <option value="">Select Block</option>
-                                            <?php foreach ($blocks as $block): ?>
-                                                <option value="<?php echo $block['id']; ?>"><?php echo htmlspecialchars($block['name']); ?></option>
-                                            <?php endforeach; ?>
+                                        <label for="vidhan_sabha_id">Vidhan Sabha</label>
+                                        <select class="form-control" id="vidhan_sabha_id" name="vidhan_sabha_id">
+                                            <option value="">Select Vidhan Sabha</option>
                                         </select>
                                     </div>
                                 </div>
+                               
                             </div>
 
                             <div class="row">
@@ -65,14 +64,22 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="vidhan_sabha_id">Vidhan Sabha</label>
-                                        <select class="form-control" id="vidhan_sabha_id" name="vidhan_sabha_id">
-                                            <option value="">Select Vidhan Sabha</option>
+                                        <label for="block_id">Block</label>
+                                        <select class="form-control" id="block_id" name="block_id">
+                                            <option value="">Select Block</option>
+                                            <?php foreach ($blocks as $block): ?>
+                                                <option value="<?php echo $block['id']; ?>"><?php echo htmlspecialchars($block['name']); ?></option>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
+                                
+
+
+
                             </div>
 
                             <div class="row">
