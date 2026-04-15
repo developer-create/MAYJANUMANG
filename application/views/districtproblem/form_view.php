@@ -45,6 +45,7 @@
                                              <option value="Incomplete" >Incomplete</option>
                                              <option value="In progress" >In progress</option>
                                              <option value="Complete" >Complete</option>
+                                             <option value="Reject" >Reject</option>
                                               
                                             </select>
                                     </div>
