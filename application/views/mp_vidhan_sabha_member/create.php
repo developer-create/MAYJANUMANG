@@ -125,7 +125,7 @@
                             </div>
 
                             <hr>
-                            <h4>Additional Fields</h4>
+                            <h4>Additional Code</h4>
 
                             <div class="row">
                                 <div class="col-md-3">

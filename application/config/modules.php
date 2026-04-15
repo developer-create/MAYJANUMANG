@@ -212,6 +212,11 @@ $config['moduleList'] = array(
         'module' => 'Call-Management',
         'total_access' => 0, 'list' => 0, 'create_records' => 0, 'edit_records' => 0, 'delete_records' => 0,
         'url' => $url . 'callmanagement'
+    ),
+    array(
+        'module' => 'US-Code',
+        'total_access' => 0, 'list' => 0, 'create_records' => 0, 'edit_records' => 0, 'delete_records' => 0,
+        'url' => $url . 'us_code'
     )
 
 );

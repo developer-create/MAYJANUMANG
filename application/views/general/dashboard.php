@@ -639,7 +639,7 @@
             <div class="col-lg-12 col-xs-12">
                 <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
-                        <h3 style="text-align:center;"><b>Vidhan Sabha Party Worker Core Summary</b></h3>
+                        <h3 style="text-align:center;"><b>Vidhan Sabha Party Worker Code Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable1">
                             <thead>
                                 <tr>
@@ -687,7 +687,7 @@
             <div class="col-lg-12 col-xs-12">
                 <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
-                        <h3 style="text-align:center;"><b>MP Party Worker Core Summary</b></h3>
+                        <h3 style="text-align:center;"><b>MP Party Worker Code Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable1">
                             <thead>
                                 <tr>
