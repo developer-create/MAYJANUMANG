@@ -131,8 +131,8 @@
                             <div class="row">
                             <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="type">Visitor Type</label>
-                                        <select class="form-control required" id="type" name="type">
+                                        <label for="type">Visitor Type <span style="color: red;">*</span></label>
+                                        <select class="form-control required" id="type" name="type" required>
             <option value="">-- Visitor Type --</option>
             <option value="General Visitor" <?php echo set_select('type', 'General Visitor'); ?>>General Visitor</option>
             <option value="Problem" <?php echo set_select('type', 'Problem'); ?>>Problem</option>

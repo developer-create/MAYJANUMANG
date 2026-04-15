@@ -112,6 +112,16 @@ class Visitors extends BaseController {
         if (!$this->hasCreateAccess()) {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
+            // Set validation rules
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('type', 'Visitor Type', 'required');
+            
+            if ($this->form_validation->run() == FALSE) {
+                // Validation failed, reload the form with errors
+                $this->create();
+                return;
+            }
+            
             // Get district name from district ID
             $district_id = $this->input->post('district');
             $district_name = '';

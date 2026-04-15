@@ -149,20 +149,20 @@
                         $block = $this->db->get('block')->row_array();
                         echo isset($block['block_name']) ? htmlspecialchars($block['block_name']) : htmlspecialchars($block['name'] ?? '-');
 ?></td>
-                        <td><?php echo $visitor['date']; ?></td>
-                        <td><?php echo $visitor['time']; ?></td>
-                        <td><?php echo $visitor['name']; ?></td>
-                        <td><?php echo $visitor['category']; ?></td>
-                        <td><?php echo $visitor['post']; ?></td>
-                        <td><?php echo $visitor['place']; ?></td>
-                        <td><?php echo $visitor['mobile_no']; ?></td>
-                        <td><?php echo $visitor['in_coming_visitor']; ?></td>
-                        <td><?php echo $visitor['message']; ?></td>
-                        <td><?php echo $visitor['type']; ?></td>
-                        <td><?php echo $visitor['attend']; ?></td>
-                        <td><?php echo $visitor['remark']; ?></td>
+                        <td><?php echo !empty($visitor['date']) ? $visitor['date'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['time']) ? $visitor['time'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['name']) ? $visitor['name'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['category']) ? $visitor['category'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['post']) ? $visitor['post'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['place']) ? $visitor['place'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['mobile_no']) ? $visitor['mobile_no'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['in_coming_visitor']) ? $visitor['in_coming_visitor'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['message']) ? $visitor['message'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['type']) ? $visitor['type'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['attend']) ? $visitor['attend'] : 'N/A'; ?></td>
+                        <td><?php echo !empty($visitor['remark']) ? $visitor['remark'] : 'N/A'; ?></td>
                         <td><?php echo !empty($visitor['uss_coding']) ? $visitor['uss_coding'] : '-'; ?></td>
-                        <td><?php echo $visitor['bhaiya_ke_nirdesh']; ?></td>
+                        <td><?php echo !empty($visitor['bhaiya_ke_nirdesh']) ? $visitor['bhaiya_ke_nirdesh'] : 'N/A'; ?></td>
                         <td><?php $createdBy = $visitor['createdBy'];
                         $query = $this->db->query("SELECT name FROM tbl_users WHERE userId = ?", array($createdBy));
 $row = $query->row();
