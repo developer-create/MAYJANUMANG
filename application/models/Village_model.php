@@ -37,5 +37,14 @@ class Village_model extends CI_Model {
     public function delete_village($id) {
         return $this->db->delete('village', array('id' => $id));
     }
+
+    // Get villages by panchayat ID
+    public function get_villages_by_panchayat($panchayat_id) {
+        $this->db->select('*');
+        $this->db->from('village');
+        $this->db->where('panchayatid', $panchayat_id);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }
 ?>

@@ -17,7 +17,21 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="month">Month</label>
-                                        <input type="text" class="form-control" id="month" name="month" placeholder="Enter Month">
+                                        <select class="form-control" id="month" name="month">
+                                            <option value="">Select Month</option>
+                                            <option value="January">January</option>
+                                            <option value="February">February</option>
+                                            <option value="March">March</option>
+                                            <option value="April">April</option>
+                                            <option value="May">May</option>
+                                            <option value="June">June</option>
+                                            <option value="July">July</option>
+                                            <option value="August">August</option>
+                                            <option value="September">September</option>
+                                            <option value="October">October</option>
+                                            <option value="November">November</option>
+                                            <option value="December">December</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -55,18 +69,6 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="panchayat_id">Panchayat</label>
-                                        <select class="form-control" id="panchayat_id" name="panchayat_id">
-                                            <option value="">Select Panchayat</option>
-                                            <?php foreach ($panchayats as $panchayat): ?>
-                                                <option value="<?php echo $panchayat['id']; ?>"><?php echo htmlspecialchars($panchayat['name']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
                                         <label for="block_id">Block</label>
                                         <select class="form-control" id="block_id" name="block_id">
                                             <option value="">Select Block</option>
@@ -76,21 +78,23 @@
                                         </select>
                                     </div>
                                 </div>
-                                
-
-
-
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label for="panchayat_id">Panchayat</label>
+                                        <select class="form-control" id="panchayat_id" name="panchayat_id" disabled>
+                                            <option value="">Select Block first</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label for="village_id">Village</label>
-                                        <select class="form-control" id="village_id" name="village_id">
-                                            <option value="">Select Village</option>
-                                            <?php foreach ($villages as $village): ?>
-                                                <option value="<?php echo $village['id']; ?>"><?php echo htmlspecialchars($village['name']); ?></option>
-                                            <?php endforeach; ?>
+                                        <select class="form-control" id="village_id" name="village_id" disabled>
+                                            <option value="">Select Panchayat first</option>
                                         </select>
                                     </div>
                                 </div>
@@ -436,9 +440,13 @@
 
 <script>
 $(document).ready(function() {
+    var base_url = "<?php echo base_url()?>";
+    
     // Load Vidhan Sabha when district is selected
     $('#district_id').change(function() {
         var district_id = $(this).val();
+        var $vs = $("#vidhan_sabha_id");
+        $vs.empty().append('<option value="">Select Vidhan Sabha</option>').prop("disabled", !district_id);
         
         if (district_id) {
             $.ajax({
@@ -447,23 +455,77 @@ $(document).ready(function() {
                 data: { district_id: district_id },
                 dataType: 'json',
                 success: function(response) {
-                    var vidhan_sabha_select = $('#vidhan_sabha_id');
-                    vidhan_sabha_select.html('<option value="">Select Vidhan Sabha</option>');
-                    
                     if (response.length > 0) {
                         $.each(response, function(index, vs) {
-                            vidhan_sabha_select.append(
-                                '<option value="' + vs.id + '">' + vs.vidhan_sabha_name + '</option>'
-                            );
+                            $vs.append('<option value="' + vs.id + '">' + vs.vidhan_sabha_name + '</option>');
                         });
+                    } else {
+                        $vs.append('<option value="other">Other</option>');
                     }
                 },
                 error: function() {
-                    alert('Error loading Vidhan Sabha');
+                    $vs.append('<option value="other">Other</option>');
                 }
             });
-        } else {
-            $('#vidhan_sabha_id').html('<option value="">Select Vidhan Sabha</option>');
+        }
+    });
+    
+    // Load Panchayat when block is selected
+    $('#block_id').change(function() {
+        var block_id = $(this).val();
+        var $panchayat = $("#panchayat_id");
+        $panchayat.empty().append('<option value="">Select Panchayat</option>').prop("disabled", !block_id);
+        
+        // Reset village dropdown
+        $("#village_id").empty().append('<option value="">Select Panchayat first</option>').prop("disabled", true);
+        
+        if (block_id) {
+            $.ajax({
+                url: '<?php echo site_url('mp_vidhan_sabha_member/get_panchayats_by_block'); ?>',
+                type: 'POST',
+                data: { block_id: block_id },
+                dataType: 'json',
+                success: function(response) {
+                    if (!response.error && response.panchayats && response.panchayats.length > 0) {
+                        $.each(response.panchayats, function(index, panchayat) {
+                            $panchayat.append('<option value="' + panchayat.id + '">' + panchayat.name + '</option>');
+                        });
+                    } else {
+                        $panchayat.append('<option value="other">Other</option>');
+                    }
+                },
+                error: function() {
+                    $panchayat.append('<option value="other">Other</option>');
+                }
+            });
+        }
+    });
+    
+    // Load Village when panchayat is selected
+    $('#panchayat_id').change(function() {
+        var panchayat_id = $(this).val();
+        var $village = $("#village_id");
+        $village.empty().append('<option value="">Select Village</option>').prop("disabled", !panchayat_id);
+        
+        if (panchayat_id) {
+            $.ajax({
+                url: '<?php echo site_url('mp_vidhan_sabha_member/get_villages_by_panchayat'); ?>',
+                type: 'POST',
+                data: { panchayat_id: panchayat_id },
+                dataType: 'json',
+                success: function(response) {
+                    if (!response.error && response.villages && response.villages.length > 0) {
+                        $.each(response.villages, function(index, village) {
+                            $village.append('<option value="' + village.id + '">' + village.name + '</option>');
+                        });
+                    } else {
+                        $village.append('<option value="other">Other</option>');
+                    }
+                },
+                error: function() {
+                    $village.append('<option value="other">Other</option>');
+                }
+            });
         }
     });
 });

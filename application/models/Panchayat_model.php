@@ -37,5 +37,14 @@ public function get_panchayats() {
     public function delete_panchayat($id) {
         return $this->db->delete('panchayat', array('id' => $id));
     }
+
+    // Get panchayats by block ID
+    public function get_panchayats_by_block($block_id) {
+        $this->db->select('*');
+        $this->db->from('panchayat');
+        $this->db->where('blockid', $block_id);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }
 ?>

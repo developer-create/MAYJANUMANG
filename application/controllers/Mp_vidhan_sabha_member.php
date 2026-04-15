@@ -347,4 +347,32 @@ class Mp_vidhan_sabha_member extends BaseController {
         header('Content-Type: application/json');
         echo json_encode($vidhan_sabhas);
     }
+
+    public function get_panchayats_by_block() {
+        $this->load->model('Panchayat_model');
+        
+        $block_id = $this->input->post('block_id');
+        if ($block_id) {
+            $panchayats = $this->Panchayat_model->get_panchayats_by_block($block_id);
+            header('Content-Type: application/json');
+            echo json_encode(array('error' => false, 'panchayats' => $panchayats));
+        } else {
+            header('Content-Type: application/json');
+            echo json_encode(array('error' => true, 'message' => 'Block ID is required'));
+        }
+    }
+
+    public function get_villages_by_panchayat() {
+        $this->load->model('Village_model');
+        
+        $panchayat_id = $this->input->post('panchayat_id');
+        if ($panchayat_id) {
+            $villages = $this->Village_model->get_villages_by_panchayat($panchayat_id);
+            header('Content-Type: application/json');
+            echo json_encode(array('error' => false, 'villages' => $villages));
+        } else {
+            header('Content-Type: application/json');
+            echo json_encode(array('error' => true, 'message' => 'Panchayat ID is required'));
+        }
+    }
 }

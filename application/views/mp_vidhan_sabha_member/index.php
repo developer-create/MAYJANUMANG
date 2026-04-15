@@ -95,11 +95,15 @@
                     <thead>
                       <tr style="color:white;font-size:15px;background:#020254;"> 
                           <th>ID</th>
+                          <th>Month</th>
+                          <th>Date</th>
                           <th>Name</th>
                           <th>Position</th>
                           <th>Mobile No</th>
                           <th>District</th>
                           <th>Block</th>
+                          <th>Panchayat</th>
+                          <th>Village</th>
                           <th>Vidhan Sabha</th>
                           <th>BG</th>
                           <th>BC</th>
@@ -152,8 +156,10 @@
                           <th>IMP</th>
                           <th>ADVISE</th>
                           <th>REF</th>
+                          <th>Remark</th>
                           <th>Created By</th>
                           <th>Created Time</th>
+                          <th>Year</th>
                           <th>Actions</th>
                       </tr>
                     </thead>
@@ -161,11 +167,15 @@
                     <?php foreach ($members as $member): ?>
                     <tr>
                         <td><?php echo $member['id']; ?></td>
+                        <td><?php echo !empty($member['month']) ? htmlspecialchars($member['month']) : '-'; ?></td>
+                        <td><?php echo !empty($member['date']) ? htmlspecialchars($member['date']) : '-'; ?></td>
                         <td><?php echo htmlspecialchars($member['name']); ?></td>
                         <td><?php echo htmlspecialchars($member['position']); ?></td>
                         <td><?php echo htmlspecialchars($member['mobile_no']); ?></td>
                         <td><?php echo isset($member['district_name']) && $member['district_name'] ? htmlspecialchars($member['district_name']) : '-'; ?></td>
                         <td><?php echo isset($member['block_name']) && $member['block_name'] ? htmlspecialchars($member['block_name']) : '-'; ?></td>
+                        <td><?php echo isset($member['panchayat_name']) && $member['panchayat_name'] ? htmlspecialchars($member['panchayat_name']) : '-'; ?></td>
+                        <td><?php echo isset($member['village_name']) && $member['village_name'] ? htmlspecialchars($member['village_name']) : '-'; ?></td>
                         <td><?php echo isset($member['vidhan_sabha_name']) && $member['vidhan_sabha_name'] ? htmlspecialchars($member['vidhan_sabha_name']) : '-'; ?></td>
                         <td><?php echo isset($member['bg']) && $member['bg'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['bc']) && $member['bc'] ? '✓' : '-'; ?></td>
@@ -218,8 +228,10 @@
                         <td><?php echo isset($member['imp']) && $member['imp'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['advise']) && $member['advise'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['ref']) && $member['ref'] ? '✓' : '-'; ?></td>
+                        <td><?php echo !empty($member['remark']) ? htmlspecialchars($member['remark']) : '-'; ?></td>
                         <td><?php echo $member['created_by_name']; ?></td>
                         <td><?php echo date('d-m-Y H:i:s', strtotime($member['created_time'])); ?></td>
+                        <td><?php echo isset($member['date']) && $member['date'] ? date('Y', strtotime($member['date'])) : '-'; ?></td>
                         <td>
                             <a href="<?php echo site_url('mp_vidhan_sabha_member/edit/'.$member['id']); ?>"  class="btn btn-info"><i class="fa fa-pencil"></i></a>
                             <a href="<?php echo site_url('mp_vidhan_sabha_member/delete/'.$member['id']); ?>"  class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this Member?');"><i class="fa fa-trash"></i></a>
@@ -268,7 +280,7 @@ $(document).ready(function() {
             [10, 25, 50, 75, "All"]
         ],
         "columnDefs": [
-            { "orderable": false, "targets": 62 }
+            { "orderable": false, "targets": 63 }
         ],
         "scrollX": true
     });
