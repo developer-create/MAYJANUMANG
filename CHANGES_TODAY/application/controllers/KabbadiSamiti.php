@@ -19,12 +19,20 @@ class KabbadiSamiti extends BaseController
         } else {
             $searchText = $this->input->get_post('searchText');
             $filter_year = $this->input->get_post('filter_year');
+            $filter_month = $this->input->get_post('filter_month');
+            $filter_date = $this->input->get_post('filter_date');
             $filter_samiti_type = $this->input->get_post('filter_samiti_type');
             $filter_block = $this->input->get_post('filter_block');
             
             $filters = array();
             if ($filter_year !== null && $filter_year !== '') {
                 $filters['year'] = $filter_year;
+            }
+            if ($filter_month !== null && $filter_month !== '') {
+                $filters['month'] = $filter_month;
+            }
+            if ($filter_date !== null && $filter_date !== '') {
+                $filters['date'] = $filter_date;
             }
             if ($filter_samiti_type !== null && $filter_samiti_type !== '') {
                 $filters['samiti_type_id'] = $filter_samiti_type;
@@ -35,11 +43,15 @@ class KabbadiSamiti extends BaseController
             
             $data['searchText'] = $searchText;
             $data['filter_year'] = $filter_year;
+            $data['filter_month'] = $filter_month;
+            $data['filter_date'] = $filter_date;
             $data['filter_samiti_type'] = $filter_samiti_type;
             $data['filter_block'] = $filter_block;
             $data['records'] = $this->KabbadiSamiti_model->get_groups($searchText, $filters);
             $data['blocks'] = $this->KabbadiSamiti_model->get_blocks();
             $data['samiti_types'] = $this->KabbadiSamiti_model->get_samiti_types();
+            $data['years'] = $this->KabbadiSamiti_model->get_years();
+            $data['months'] = $this->KabbadiSamiti_model->get_months();
             $data['total_members'] = $this->KabbadiSamiti_model->get_total_members_count($filters);
             
             $this->global['pageTitle'] = 'Datacollector : Khel Samiti';

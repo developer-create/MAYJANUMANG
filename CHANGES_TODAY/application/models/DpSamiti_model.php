@@ -60,8 +60,8 @@ class DpSamiti_model extends CI_Model
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(g.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(g.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(g.created_at)', $filters['date']);
         }
         
         $this->db->group_by('g.id');

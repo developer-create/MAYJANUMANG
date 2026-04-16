@@ -49,8 +49,8 @@ class BoothSamiti_model extends CI_Model {
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(booth_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(booth_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(booth_samiti_groups.created_at)', $filters['date']);
         }
         
         $this->db->order_by('booth_samiti_groups.id', 'DESC');
@@ -236,8 +236,8 @@ class BoothSamiti_model extends CI_Model {
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(booth_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(booth_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(booth_samiti_groups.created_at)', $filters['date']);
         }
         
         $query = $this->db->get();

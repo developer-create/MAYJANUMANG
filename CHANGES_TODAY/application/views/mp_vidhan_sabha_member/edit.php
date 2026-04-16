@@ -17,13 +17,13 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="month">Month</label>
-                                        <input type="text" class="form-control" id="month" name="month" placeholder="Enter Month" value="<?php echo htmlspecialchars($member['month']); ?>">
+                                        <input type="text" class="form-control" id="month" name="month" placeholder="Enter Month" value="<?php echo isset($member['month']) ? htmlspecialchars($member['month']) : ''; ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="date">Date</label>
-                                        <input type="date" class="form-control" id="date" name="date" value="<?php echo htmlspecialchars($member['date']); ?>">
+                                        <input type="date" class="form-control" id="date" name="date" value="<?php echo isset($member['date']) ? htmlspecialchars($member['date']) : ''; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -35,7 +35,7 @@
                                         <select class="form-control" id="district_id" name="district_id">
                                             <option value="">Select District</option>
                                             <?php foreach ($districts as $district): ?>
-                                                <option value="<?php echo $district['id']; ?>" <?php echo ($member['district_id'] == $district['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($district['name']); ?></option>
+                                                <option value="<?php echo $district['id']; ?>" <?php echo (isset($member['district_id']) && $member['district_id'] == $district['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($district['name']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -46,7 +46,7 @@
                                         <select class="form-control" id="block_id" name="block_id">
                                             <option value="">Select Block</option>
                                             <?php foreach ($blocks as $block): ?>
-                                                <option value="<?php echo $block['id']; ?>" <?php echo ($member['block_id'] == $block['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($block['name']); ?></option>
+                                                <option value="<?php echo $block['id']; ?>" <?php echo (isset($member['block_id']) && $member['block_id'] == $block['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($block['name']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -60,7 +60,7 @@
                                         <select class="form-control" id="panchayat_id" name="panchayat_id">
                                             <option value="">Select Panchayat</option>
                                             <?php foreach ($panchayats as $panchayat): ?>
-                                                <option value="<?php echo $panchayat['id']; ?>" <?php echo ($member['panchayat_id'] == $panchayat['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($panchayat['name']); ?></option>
+                                                <option value="<?php echo $panchayat['id']; ?>" <?php echo (isset($member['panchayat_id']) && $member['panchayat_id'] == $panchayat['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($panchayat['name']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -71,7 +71,7 @@
                                         <select class="form-control" id="vidhan_sabha_id" name="vidhan_sabha_id">
                                             <option value="">Select Vidhan Sabha</option>
                                             <?php foreach ($vidhan_sabhas as $vs): ?>
-                                                <option value="<?php echo $vs['id']; ?>" <?php echo ($member['vidhan_sabha_id'] == $vs['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($vs['vidhan_sabha_name']); ?></option>
+                                                <option value="<?php echo $vs['id']; ?>" <?php echo (isset($member['vidhan_sabha_id']) && $member['vidhan_sabha_id'] == $vs['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($vs['vidhan_sabha_name']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -85,7 +85,7 @@
                                         <select class="form-control" id="village_id" name="village_id">
                                             <option value="">Select Village</option>
                                             <?php foreach ($villages as $village): ?>
-                                                <option value="<?php echo $village['id']; ?>" <?php echo ($member['village_id'] == $village['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($village['name']); ?></option>
+                                                <option value="<?php echo $village['id']; ?>" <?php echo (isset($member['village_id']) && $member['village_id'] == $village['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($village['name']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -96,13 +96,13 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="name">Name <span style="color:red;">*</span></label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="<?php echo htmlspecialchars($member['name']); ?>" required>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="<?php echo isset($member['name']) ? htmlspecialchars($member['name']) : ''; ?>" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="position">Position</label>
-                                        <input type="text" class="form-control" id="position" name="position" placeholder="Enter Position" value="<?php echo htmlspecialchars($member['position']); ?>">
+                                        <input type="text" class="form-control" id="position" name="position" placeholder="Enter Position" value="<?php echo isset($member['position']) ? htmlspecialchars($member['position']) : ''; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +111,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="mobile_no">Mobile No</label>
-                                        <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Enter Mobile No" value="<?php echo htmlspecialchars($member['mobile_no']); ?>">
+                                        <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Enter Mobile No" value="<?php echo isset($member['mobile_no']) ? htmlspecialchars($member['mobile_no']) : ''; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -121,352 +121,301 @@
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="bg">BG</label>
-                                        <input type="text" class="form-control" id="bg" name="bg" value="<?php echo htmlspecialchars($member['bg']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="bg" id="bg" <?php echo (isset($member['bg']) && $member['bg']) ? 'checked' : ''; ?>> BG</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="bc">BC</label>
-                                        <input type="text" class="form-control" id="bc" name="bc" value="<?php echo htmlspecialchars($member['bc']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="bc" id="bc" <?php echo (isset($member['bc']) && $member['bc']) ? 'checked' : ''; ?>> BC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="er">ER</label>
-                                        <input type="text" class="form-control" id="er" name="er" value="<?php echo htmlspecialchars($member['er']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="er" id="er" <?php echo (isset($member['er']) && $member['er']) ? 'checked' : ''; ?>> ER</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="br">BR</label>
-                                        <input type="text" class="form-control" id="br" name="br" value="<?php echo htmlspecialchars($member['br']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="br" id="br" <?php echo (isset($member['br']) && $member['br']) ? 'checked' : ''; ?>> BR</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ip">IP</label>
-                                        <input type="text" class="form-control" id="ip" name="ip" value="<?php echo htmlspecialchars($member['ip']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ip" id="ip" <?php echo (isset($member['ip']) && $member['ip']) ? 'checked' : ''; ?>> IP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sc">SC</label>
-                                        <input type="text" class="form-control" id="sc" name="sc" value="<?php echo htmlspecialchars($member['sc']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="sc" id="sc" <?php echo (isset($member['sc']) && $member['sc']) ? 'checked' : ''; ?>> SC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sa">SA</label>
-                                        <input type="text" class="form-control" id="sa" name="sa" value="<?php echo htmlspecialchars($member['sa']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="sa" id="sa" <?php echo (isset($member['sa']) && $member['sa']) ? 'checked' : ''; ?>> SA</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="yc">YC</label>
-                                        <input type="text" class="form-control" id="yc" name="yc" value="<?php echo htmlspecialchars($member['yc']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="yc" id="yc" <?php echo (isset($member['yc']) && $member['yc']) ? 'checked' : ''; ?>> YC</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ap">AP</label>
-                                        <input type="text" class="form-control" id="ap" name="ap" value="<?php echo htmlspecialchars($member['ap']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ap" id="ap" <?php echo (isset($member['ap']) && $member['ap']) ? 'checked' : ''; ?>> AP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="fp">FP</label>
-                                        <input type="text" class="form-control" id="fp" name="fp" value="<?php echo htmlspecialchars($member['fp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="fp" id="fp" <?php echo (isset($member['fp']) && $member['fp']) ? 'checked' : ''; ?>> FP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="pp">PP</label>
-                                        <input type="text" class="form-control" id="pp" name="pp" value="<?php echo htmlspecialchars($member['pp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pp" id="pp" <?php echo (isset($member['pp']) && $member['pp']) ? 'checked' : ''; ?>> PP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="wc">WC</label>
-                                        <input type="text" class="form-control" id="wc" name="wc" value="<?php echo htmlspecialchars($member['wc']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="wc" id="wc" <?php echo (isset($member['wc']) && $member['wc']) ? 'checked' : ''; ?>> WC</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="pa">PA</label>
-                                        <input type="text" class="form-control" id="pa" name="pa" value="<?php echo htmlspecialchars($member['pa']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pa" id="pa" <?php echo (isset($member['pa']) && $member['pa']) ? 'checked' : ''; ?>> PA</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="pc">PC</label>
-                                        <input type="text" class="form-control" id="pc" name="pc" value="<?php echo htmlspecialchars($member['pc']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pc" id="pc" <?php echo (isset($member['pc']) && $member['pc']) ? 'checked' : ''; ?>> PC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ak">AK</label>
-                                        <input type="text" class="form-control" id="ak" name="ak" value="<?php echo htmlspecialchars($member['ak']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ak" id="ak" <?php echo (isset($member['ak']) && $member['ak']) ? 'checked' : ''; ?>> AK</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="fm">FM</label>
-                                        <input type="text" class="form-control" id="fm" name="fm" value="<?php echo htmlspecialchars($member['fm']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="fm" id="fm" <?php echo (isset($member['fm']) && $member['fm']) ? 'checked' : ''; ?>> FM</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="zp">ZP</label>
-                                        <input type="text" class="form-control" id="zp" name="zp" value="<?php echo htmlspecialchars($member['zp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="zp" id="zp" <?php echo (isset($member['zp']) && $member['zp']) ? 'checked' : ''; ?>> ZP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="vp">VP</label>
-                                        <input type="text" class="form-control" id="vp" name="vp" value="<?php echo htmlspecialchars($member['vp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="vp" id="vp" <?php echo (isset($member['vp']) && $member['vp']) ? 'checked' : ''; ?>> VP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sr">SR</label>
-                                        <input type="text" class="form-control" id="sr" name="sr" value="<?php echo htmlspecialchars($member['sr']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="sr" id="sr" <?php echo (isset($member['sr']) && $member['sr']) ? 'checked' : ''; ?>> SR</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="in_field">IN</label>
-                                        <input type="text" class="form-control" id="in_field" name="in_field" value="<?php echo htmlspecialchars($member['in_field']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="in_field" id="in_field" <?php echo (isset($member['in_field']) && $member['in_field']) ? 'checked' : ''; ?>> IN</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="eo">EO</label>
-                                        <input type="text" class="form-control" id="eo" name="eo" value="<?php echo htmlspecialchars($member['eo']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="eo" id="eo" <?php echo (isset($member['eo']) && $member['eo']) ? 'checked' : ''; ?>> EO</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="gs">GS</label>
-                                        <input type="text" class="form-control" id="gs" name="gs" value="<?php echo htmlspecialchars($member['gs']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="gs" id="gs" <?php echo (isset($member['gs']) && $member['gs']) ? 'checked' : ''; ?>> GS</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="us">US</label>
-                                        <input type="text" class="form-control" id="us" name="us" value="<?php echo htmlspecialchars($member['us']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="us" id="us" <?php echo (isset($member['us']) && $member['us']) ? 'checked' : ''; ?>> US</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="pw">PW</label>
-                                        <input type="text" class="form-control" id="pw" name="pw" value="<?php echo htmlspecialchars($member['pw']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pw" id="pw" <?php echo (isset($member['pw']) && $member['pw']) ? 'checked' : ''; ?>> PW</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="nl">NL</label>
-                                        <input type="text" class="form-control" id="nl" name="nl" value="<?php echo htmlspecialchars($member['nl']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="nl" id="nl" <?php echo (isset($member['nl']) && $member['nl']) ? 'checked' : ''; ?>> NL</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="fr">FR</label>
-                                        <input type="text" class="form-control" id="fr" name="fr" value="<?php echo htmlspecialchars($member['fr']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="fr" id="fr" <?php echo (isset($member['fr']) && $member['fr']) ? 'checked' : ''; ?>> FR</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="so">SO</label>
-                                        <input type="text" class="form-control" id="so" name="so" value="<?php echo htmlspecialchars($member['so']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="so" id="so" <?php echo (isset($member['so']) && $member['so']) ? 'checked' : ''; ?>> SO</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="st">ST</label>
-                                        <input type="text" class="form-control" id="st" name="st" value="<?php echo htmlspecialchars($member['st']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="st" id="st" <?php echo (isset($member['st']) && $member['st']) ? 'checked' : ''; ?>> ST</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ob">OB</label>
-                                        <input type="text" class="form-control" id="ob" name="ob" value="<?php echo htmlspecialchars($member['ob']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ob" id="ob" <?php echo (isset($member['ob']) && $member['ob']) ? 'checked' : ''; ?>> OB</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="smw">SMW</label>
-                                        <input type="text" class="form-control" id="smw" name="smw" value="<?php echo htmlspecialchars($member['smw']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="smw" id="smw" <?php echo (isset($member['smw']) && $member['smw']) ? 'checked' : ''; ?>> SMW</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="smtw">SMTW</label>
-                                        <input type="text" class="form-control" id="smtw" name="smtw" value="<?php echo htmlspecialchars($member['smtw']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="smtw" id="smtw" <?php echo (isset($member['smtw']) && $member['smtw']) ? 'checked' : ''; ?>> SMTW</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="it">IT</label>
-                                        <input type="text" class="form-control" id="it" name="it" value="<?php echo htmlspecialchars($member['it']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="it" id="it" <?php echo (isset($member['it']) && $member['it']) ? 'checked' : ''; ?>> IT</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="test">TEST</label>
-                                        <input type="text" class="form-control" id="test" name="test" value="<?php echo htmlspecialchars($member['test']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="test" id="test" <?php echo (isset($member['test']) && $member['test']) ? 'checked' : ''; ?>> TEST</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="dyc">DYC</label>
-                                        <input type="text" class="form-control" id="dyc" name="dyc" value="<?php echo htmlspecialchars($member['dyc']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="dyc" id="dyc" <?php echo (isset($member['dyc']) && $member['dyc']) ? 'checked' : ''; ?>> DYC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="dcc">DCC</label>
-                                        <input type="text" class="form-control" id="dcc" name="dcc" value="<?php echo htmlspecialchars($member['dcc']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="dcc" id="dcc" <?php echo (isset($member['dcc']) && $member['dcc']) ? 'checked' : ''; ?>> DCC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="obc">OBC</label>
-                                        <input type="text" class="form-control" id="obc" name="obc" value="<?php echo htmlspecialchars($member['obc']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="obc" id="obc" <?php echo (isset($member['obc']) && $member['obc']) ? 'checked' : ''; ?>> OBC</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="cell">CELL</label>
-                                        <input type="text" class="form-control" id="cell" name="cell" value="<?php echo htmlspecialchars($member['cell']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="cell" id="cell" <?php echo (isset($member['cell']) && $member['cell']) ? 'checked' : ''; ?>> CELL</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="mp">MP</label>
-                                        <input type="text" class="form-control" id="mp" name="mp" value="<?php echo htmlspecialchars($member['mp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="mp" id="mp" <?php echo (isset($member['mp']) && $member['mp']) ? 'checked' : ''; ?>> MP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="dt">DT</label>
-                                        <input type="text" class="form-control" id="dt" name="dt" value="<?php echo htmlspecialchars($member['dt']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="dt" id="dt" <?php echo (isset($member['dt']) && $member['dt']) ? 'checked' : ''; ?>> DT</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="dp">DP</label>
-                                        <input type="text" class="form-control" id="dp" name="dp" value="<?php echo htmlspecialchars($member['dp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="dp" id="dp" <?php echo (isset($member['dp']) && $member['dp']) ? 'checked' : ''; ?>> DP</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="avp">AVP</label>
-                                        <input type="text" class="form-control" id="avp" name="avp" value="<?php echo htmlspecialchars($member['avp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="avp" id="avp" <?php echo (isset($member['avp']) && $member['avp']) ? 'checked' : ''; ?>> AVP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="meet">MEET</label>
-                                        <input type="text" class="form-control" id="meet" name="meet" value="<?php echo htmlspecialchars($member['meet']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="meet" id="meet" <?php echo (isset($member['meet']) && $member['meet']) ? 'checked' : ''; ?>> MEET</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="media">MEDIA</label>
-                                        <input type="text" class="form-control" id="media" name="media" value="<?php echo htmlspecialchars($member['media']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="media" id="media" <?php echo (isset($member['media']) && $member['media']) ? 'checked' : ''; ?>> MEDIA</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="mla_x_mla">MLA,X MLA</label>
-                                        <input type="text" class="form-control" id="mla_x_mla" name="mla_x_mla" value="<?php echo htmlspecialchars($member['mla_x_mla']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="mla_x_mla" id="mla_x_mla" <?php echo (isset($member['mla_x_mla']) && $member['mla_x_mla']) ? 'checked' : ''; ?>> MLA,X MLA</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="vech">VECH</label>
-                                        <input type="text" class="form-control" id="vech" name="vech" value="<?php echo htmlspecialchars($member['vech']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="vech" id="vech" <?php echo (isset($member['vech']) && $member['vech']) ? 'checked' : ''; ?>> VECH</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="it_cell_exp">IT CELL EXP</label>
-                                        <input type="text" class="form-control" id="it_cell_exp" name="it_cell_exp" value="<?php echo htmlspecialchars($member['it_cell_exp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="it_cell_exp" id="it_cell_exp" <?php echo (isset($member['it_cell_exp']) && $member['it_cell_exp']) ? 'checked' : ''; ?>> IT CELL EXP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="info">INFO</label>
-                                        <input type="text" class="form-control" id="info" name="info" value="<?php echo htmlspecialchars($member['info']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="info" id="info" <?php echo (isset($member['info']) && $member['info']) ? 'checked' : ''; ?>> INFO</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="nsui">NSUI</label>
-                                        <input type="text" class="form-control" id="nsui" name="nsui" value="<?php echo htmlspecialchars($member['nsui']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="nsui" id="nsui" <?php echo (isset($member['nsui']) && $member['nsui']) ? 'checked' : ''; ?>> NSUI</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="imp">IMP</label>
-                                        <input type="text" class="form-control" id="imp" name="imp" value="<?php echo htmlspecialchars($member['imp']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="imp" id="imp" <?php echo (isset($member['imp']) && $member['imp']) ? 'checked' : ''; ?>> IMP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="advise">ADVISE</label>
-                                        <input type="text" class="form-control" id="advise" name="advise" value="<?php echo htmlspecialchars($member['advise']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="advise" id="advise" <?php echo (isset($member['advise']) && $member['advise']) ? 'checked' : ''; ?>> ADVISE</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ref">REF</label>
-                                        <input type="text" class="form-control" id="ref" name="ref" value="<?php echo htmlspecialchars($member['ref']); ?>">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ref" id="ref" <?php echo (isset($member['ref']) && $member['ref']) ? 'checked' : ''; ?>> REF</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="remark">Remark</label>
-                                <textarea class="form-control" id="remark" name="remark" rows="4" placeholder="Enter Remark"><?php echo htmlspecialchars($member['remark']); ?></textarea>
+                                <textarea class="form-control" id="remark" name="remark" rows="4" placeholder="Enter Remark"><?php echo isset($member['remark']) ? htmlspecialchars($member['remark']) : ''; ?></textarea>
                             </div>
                         </div>
 
@@ -480,3 +429,48 @@
         </div>
     </section>
 </div>
+
+<script>
+$(document).ready(function() {
+    // Load Vidhan Sabha when district is selected
+    $('#district_id').change(function() {
+        var district_id = $(this).val();
+        
+        if (district_id) {
+            $.ajax({
+                url: '<?php echo site_url('mp_vidhan_sabha_member/get_vidhan_sabhas_by_district'); ?>',
+                type: 'POST',
+                data: { district_id: district_id },
+                dataType: 'json',
+                success: function(response) {
+                    var vidhan_sabha_select = $('#vidhan_sabha_id');
+                    var current_value = vidhan_sabha_select.val();
+                    vidhan_sabha_select.html('<option value="">Select Vidhan Sabha</option>');
+                    
+                    if (response.length > 0) {
+                        $.each(response, function(index, vs) {
+                            vidhan_sabha_select.append(
+                                '<option value="' + vs.id + '">' + vs.vidhan_sabha_name + '</option>'
+                            );
+                        });
+                        // Restore previous selection if it exists in new list
+                        if (current_value) {
+                            vidhan_sabha_select.val(current_value);
+                        }
+                    }
+                },
+                error: function() {
+                    alert('Error loading Vidhan Sabha');
+                }
+            });
+        } else {
+            $('#vidhan_sabha_id').html('<option value="">Select Vidhan Sabha</option>');
+        }
+    });
+    
+    // Trigger change on page load if district is already selected
+    if ($('#district_id').val()) {
+        $('#district_id').trigger('change');
+    }
+});
+</script>

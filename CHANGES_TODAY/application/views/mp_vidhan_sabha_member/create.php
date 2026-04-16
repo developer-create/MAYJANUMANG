@@ -17,7 +17,21 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="month">Month</label>
-                                        <input type="text" class="form-control" id="month" name="month" placeholder="Enter Month">
+                                        <select class="form-control" id="month" name="month">
+                                            <option value="">Select Month</option>
+                                            <option value="January">January</option>
+                                            <option value="February">February</option>
+                                            <option value="March">March</option>
+                                            <option value="April">April</option>
+                                            <option value="May">May</option>
+                                            <option value="June">June</option>
+                                            <option value="July">July</option>
+                                            <option value="August">August</option>
+                                            <option value="September">September</option>
+                                            <option value="October">October</option>
+                                            <option value="November">November</option>
+                                            <option value="December">December</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -40,6 +54,19 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="vidhan_sabha_id">Vidhan Sabha</label>
+                                        <select class="form-control" id="vidhan_sabha_id" name="vidhan_sabha_id">
+                                            <option value="">Select Vidhan Sabha</option>
+                                        </select>
+                                    </div>
+                                </div>
+                               
+                            </div>
+
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="block_id">Block</label>
@@ -57,36 +84,17 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="panchayat_id">Panchayat</label>
-                                        <select class="form-control" id="panchayat_id" name="panchayat_id">
-                                            <option value="">Select Panchayat</option>
-                                            <?php foreach ($panchayats as $panchayat): ?>
-                                                <option value="<?php echo $panchayat['id']; ?>"><?php echo htmlspecialchars($panchayat['name']); ?></option>
-                                            <?php endforeach; ?>
+                                        <select class="form-control" id="panchayat_id" name="panchayat_id" disabled>
+                                            <option value="">Select Block first</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="vidhan_sabha_id">Vidhan Sabha</label>
-                                        <select class="form-control" id="vidhan_sabha_id" name="vidhan_sabha_id">
-                                            <option value="">Select Vidhan Sabha</option>
-                                            <?php foreach ($vidhan_sabhas as $vs): ?>
-                                                <option value="<?php echo $vs['id']; ?>"><?php echo htmlspecialchars($vs['vidhan_sabha_name']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="village_id">Village</label>
-                                        <select class="form-control" id="village_id" name="village_id">
-                                            <option value="">Select Village</option>
-                                            <?php foreach ($villages as $village): ?>
-                                                <option value="<?php echo $village['id']; ?>"><?php echo htmlspecialchars($village['name']); ?></option>
-                                            <?php endforeach; ?>
+                                        <select class="form-control" id="village_id" name="village_id" disabled>
+                                            <option value="">Select Panchayat first</option>
                                         </select>
                                     </div>
                                 </div>
@@ -117,349 +125,298 @@
                             </div>
 
                             <hr>
-                            <h4>Additional Fields</h4>
+                            <h4>Additional Code</h4>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="bg">BG</label>
-                                        <input type="text" class="form-control" id="bg" name="bg">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="bg" id="bg"> BG</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="bc">BC</label>
-                                        <input type="text" class="form-control" id="bc" name="bc">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="bc" id="bc"> BC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="er">ER</label>
-                                        <input type="text" class="form-control" id="er" name="er">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="er" id="er"> ER</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="br">BR</label>
-                                        <input type="text" class="form-control" id="br" name="br">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="br" id="br"> BR</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ip">IP</label>
-                                        <input type="text" class="form-control" id="ip" name="ip">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ip" id="ip"> IP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sc">SC</label>
-                                        <input type="text" class="form-control" id="sc" name="sc">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="sc" id="sc"> SC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sa">SA</label>
-                                        <input type="text" class="form-control" id="sa" name="sa">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="sa" id="sa"> SA</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="yc">YC</label>
-                                        <input type="text" class="form-control" id="yc" name="yc">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="yc" id="yc"> YC</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ap">AP</label>
-                                        <input type="text" class="form-control" id="ap" name="ap">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ap" id="ap"> AP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="fp">FP</label>
-                                        <input type="text" class="form-control" id="fp" name="fp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="fp" id="fp"> FP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="pp">PP</label>
-                                        <input type="text" class="form-control" id="pp" name="pp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pp" id="pp"> PP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="wc">WC</label>
-                                        <input type="text" class="form-control" id="wc" name="wc">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="wc" id="wc"> WC</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="pa">PA</label>
-                                        <input type="text" class="form-control" id="pa" name="pa">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pa" id="pa"> PA</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="pc">PC</label>
-                                        <input type="text" class="form-control" id="pc" name="pc">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pc" id="pc"> PC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ak">AK</label>
-                                        <input type="text" class="form-control" id="ak" name="ak">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ak" id="ak"> AK</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="fm">FM</label>
-                                        <input type="text" class="form-control" id="fm" name="fm">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="fm" id="fm"> FM</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="zp">ZP</label>
-                                        <input type="text" class="form-control" id="zp" name="zp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="zp" id="zp"> ZP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="vp">VP</label>
-                                        <input type="text" class="form-control" id="vp" name="vp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="vp" id="vp"> VP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sr">SR</label>
-                                        <input type="text" class="form-control" id="sr" name="sr">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="sr" id="sr"> SR</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="in_field">IN</label>
-                                        <input type="text" class="form-control" id="in_field" name="in_field">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="in_field" id="in_field"> IN</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="eo">EO</label>
-                                        <input type="text" class="form-control" id="eo" name="eo">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="eo" id="eo"> EO</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="gs">GS</label>
-                                        <input type="text" class="form-control" id="gs" name="gs">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="gs" id="gs"> GS</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="us">US</label>
-                                        <input type="text" class="form-control" id="us" name="us">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="us" id="us"> US</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="pw">PW</label>
-                                        <input type="text" class="form-control" id="pw" name="pw">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pw" id="pw"> PW</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="nl">NL</label>
-                                        <input type="text" class="form-control" id="nl" name="nl">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="nl" id="nl"> NL</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="fr">FR</label>
-                                        <input type="text" class="form-control" id="fr" name="fr">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="fr" id="fr"> FR</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="so">SO</label>
-                                        <input type="text" class="form-control" id="so" name="so">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="so" id="so"> SO</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="st">ST</label>
-                                        <input type="text" class="form-control" id="st" name="st">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="st" id="st"> ST</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ob">OB</label>
-                                        <input type="text" class="form-control" id="ob" name="ob">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ob" id="ob"> OB</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="smw">SMW</label>
-                                        <input type="text" class="form-control" id="smw" name="smw">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="smw" id="smw"> SMW</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="smtw">SMTW</label>
-                                        <input type="text" class="form-control" id="smtw" name="smtw">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="smtw" id="smtw"> SMTW</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="it">IT</label>
-                                        <input type="text" class="form-control" id="it" name="it">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="it" id="it"> IT</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="test">TEST</label>
-                                        <input type="text" class="form-control" id="test" name="test">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="test" id="test"> TEST</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="dyc">DYC</label>
-                                        <input type="text" class="form-control" id="dyc" name="dyc">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="dyc" id="dyc"> DYC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="dcc">DCC</label>
-                                        <input type="text" class="form-control" id="dcc" name="dcc">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="dcc" id="dcc"> DCC</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="obc">OBC</label>
-                                        <input type="text" class="form-control" id="obc" name="obc">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="obc" id="obc"> OBC</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="cell">CELL</label>
-                                        <input type="text" class="form-control" id="cell" name="cell">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="cell" id="cell"> CELL</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="mp">MP</label>
-                                        <input type="text" class="form-control" id="mp" name="mp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="mp" id="mp"> MP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="dt">DT</label>
-                                        <input type="text" class="form-control" id="dt" name="dt">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="dt" id="dt"> DT</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="dp">DP</label>
-                                        <input type="text" class="form-control" id="dp" name="dp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="dp" id="dp"> DP</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="avp">AVP</label>
-                                        <input type="text" class="form-control" id="avp" name="avp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="avp" id="avp"> AVP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="meet">MEET</label>
-                                        <input type="text" class="form-control" id="meet" name="meet">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="meet" id="meet"> MEET</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="media">MEDIA</label>
-                                        <input type="text" class="form-control" id="media" name="media">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="media" id="media"> MEDIA</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="mla_x_mla">MLA,X MLA</label>
-                                        <input type="text" class="form-control" id="mla_x_mla" name="mla_x_mla">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="mla_x_mla" id="mla_x_mla"> MLA,X MLA</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="vech">VECH</label>
-                                        <input type="text" class="form-control" id="vech" name="vech">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="vech" id="vech"> VECH</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="it_cell_exp">IT CELL EXP</label>
-                                        <input type="text" class="form-control" id="it_cell_exp" name="it_cell_exp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="it_cell_exp" id="it_cell_exp"> IT CELL EXP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="info">INFO</label>
-                                        <input type="text" class="form-control" id="info" name="info">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="info" id="info"> INFO</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="nsui">NSUI</label>
-                                        <input type="text" class="form-control" id="nsui" name="nsui">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="nsui" id="nsui"> NSUI</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="imp">IMP</label>
-                                        <input type="text" class="form-control" id="imp" name="imp">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="imp" id="imp"> IMP</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="advise">ADVISE</label>
-                                        <input type="text" class="form-control" id="advise" name="advise">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="advise" id="advise"> ADVISE</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="ref">REF</label>
-                                        <input type="text" class="form-control" id="ref" name="ref">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="ref" id="ref"> REF</label>
                                     </div>
                                 </div>
                             </div>
@@ -480,3 +437,96 @@
         </div>
     </section>
 </div>
+
+<script>
+$(document).ready(function() {
+    var base_url = "<?php echo base_url()?>";
+    
+    // Load Vidhan Sabha when district is selected
+    $('#district_id').change(function() {
+        var district_id = $(this).val();
+        var $vs = $("#vidhan_sabha_id");
+        $vs.empty().append('<option value="">Select Vidhan Sabha</option>').prop("disabled", !district_id);
+        
+        if (district_id) {
+            $.ajax({
+                url: '<?php echo site_url('mp_vidhan_sabha_member/get_vidhan_sabhas_by_district'); ?>',
+                type: 'POST',
+                data: { district_id: district_id },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.length > 0) {
+                        $.each(response, function(index, vs) {
+                            $vs.append('<option value="' + vs.id + '">' + vs.vidhan_sabha_name + '</option>');
+                        });
+                    } else {
+                        $vs.append('<option value="other">Other</option>');
+                    }
+                },
+                error: function() {
+                    $vs.append('<option value="other">Other</option>');
+                }
+            });
+        }
+    });
+    
+    // Load Panchayat when block is selected
+    $('#block_id').change(function() {
+        var block_id = $(this).val();
+        var $panchayat = $("#panchayat_id");
+        $panchayat.empty().append('<option value="">Select Panchayat</option>').prop("disabled", !block_id);
+        
+        // Reset village dropdown
+        $("#village_id").empty().append('<option value="">Select Panchayat first</option>').prop("disabled", true);
+        
+        if (block_id) {
+            $.ajax({
+                url: '<?php echo site_url('mp_vidhan_sabha_member/get_panchayats_by_block'); ?>',
+                type: 'POST',
+                data: { block_id: block_id },
+                dataType: 'json',
+                success: function(response) {
+                    if (!response.error && response.panchayats && response.panchayats.length > 0) {
+                        $.each(response.panchayats, function(index, panchayat) {
+                            $panchayat.append('<option value="' + panchayat.id + '">' + panchayat.name + '</option>');
+                        });
+                    } else {
+                        $panchayat.append('<option value="other">Other</option>');
+                    }
+                },
+                error: function() {
+                    $panchayat.append('<option value="other">Other</option>');
+                }
+            });
+        }
+    });
+    
+    // Load Village when panchayat is selected
+    $('#panchayat_id').change(function() {
+        var panchayat_id = $(this).val();
+        var $village = $("#village_id");
+        $village.empty().append('<option value="">Select Village</option>').prop("disabled", !panchayat_id);
+        
+        if (panchayat_id) {
+            $.ajax({
+                url: '<?php echo site_url('mp_vidhan_sabha_member/get_villages_by_panchayat'); ?>',
+                type: 'POST',
+                data: { panchayat_id: panchayat_id },
+                dataType: 'json',
+                success: function(response) {
+                    if (!response.error && response.villages && response.villages.length > 0) {
+                        $.each(response.villages, function(index, village) {
+                            $village.append('<option value="' + village.id + '">' + village.name + '</option>');
+                        });
+                    } else {
+                        $village.append('<option value="other">Other</option>');
+                    }
+                },
+                error: function() {
+                    $village.append('<option value="other">Other</option>');
+                }
+            });
+        }
+    });
+});
+</script>

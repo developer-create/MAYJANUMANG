@@ -78,17 +78,12 @@
                                 </div>
                                 
                                 <div class="filter-group">
-                                    <label for="filter_day">दिन (Day)</label>
-                                    <select name="filter_day" id="filter_day">
-                                        <option value="">-- All Days --</option>
-                                        <?php for ($d = 1; $d <= 31; $d++): ?>
-                                        <option value="<?php echo $d; ?>" <?php echo (isset($filter_day) && $filter_day == $d) ? 'selected' : ''; ?>><?php echo $d; ?></option>
-                                        <?php endfor; ?>
-                                    </select>
+                                    <label for="filter_date">तारीख (Date)</label>
+                                    <input type="date" name="filter_date" id="filter_date" class="form-control" value="<?php echo isset($filter_date) ? $filter_date : ''; ?>">
                                 </div>
                                 
                                 <div class="filter-buttons">
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i> Filter</button>
+                                    <button type="submit" class="btn btn-primary" style="display:none;"><i class="fa fa-filter"></i> Filter</button>
                                     <a href="<?php echo site_url('ganeshsamiti'); ?>" class="btn btn-default"><i class="fa fa-refresh"></i> Reset</a>
                                 </div>
                             </div>
@@ -277,6 +272,7 @@ $(document).ready(function() {
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
 
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/common.js" charset="utf-8"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/auto-filter.js" charset="utf-8"></script>
 
 <script type="text/javascript">
 jQuery(document).ready(function(){

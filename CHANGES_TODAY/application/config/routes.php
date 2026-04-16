@@ -135,6 +135,16 @@ $route['mp_vidhan_sabha_member/store'] = "mp_vidhan_sabha_member/store";
 $route['mp_vidhan_sabha_member/edit/(:num)'] = "mp_vidhan_sabha_member/edit/$1";
 $route['mp_vidhan_sabha_member/update/(:num)'] = "mp_vidhan_sabha_member/update/$1";
 $route['mp_vidhan_sabha_member/delete/(:num)'] = "mp_vidhan_sabha_member/delete/$1";
+$route['mp_vidhan_sabha_member/get_panchayats_by_block'] = "mp_vidhan_sabha_member/get_panchayats_by_block";
+$route['mp_vidhan_sabha_member/get_villages_by_panchayat'] = "mp_vidhan_sabha_member/get_villages_by_panchayat";
+
+// US Code routes
+$route['us_code'] = "us_code/index";
+$route['us_code/create'] = "us_code/create";
+$route['us_code/store'] = "us_code/store";
+$route['us_code/edit/(:num)'] = "us_code/edit/$1";
+$route['us_code/update/(:num)'] = "us_code/update/$1";
+$route['us_code/delete/(:num)'] = "us_code/delete/$1";
 
 // Fix access matrix route
 $route['fix_access'] = "fix_access/fix_vidhan_sabha";

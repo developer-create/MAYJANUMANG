@@ -112,6 +112,24 @@ class Visitors extends BaseController {
         if (!$this->hasCreateAccess()) {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
+            // Set validation rules
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('type', 'Visitor Type', 'required');
+            
+            if ($this->form_validation->run() == FALSE) {
+                // Validation failed, reload the form with errors
+                $this->create();
+                return;
+            }
+            
+            // Get district name from district ID
+            $district_id = $this->input->post('district');
+            $district_name = '';
+            if (!empty($district_id)) {
+                $district = $this->db->get_where('district', array('id' => $district_id))->row_array();
+                $district_name = isset($district['name']) ? $district['name'] : '';
+            }
+            
             $data = array(
                 'name' => $this->input->post('name'),
                 'mobile_no' => $this->input->post('mobile_no'),
@@ -122,7 +140,7 @@ class Visitors extends BaseController {
                 'remark' => $this->input->post('remark'),
                 'uss_coding' => $this->input->post('uss_coding'),
                 'bhaiya_ke_nirdesh' => $this->input->post('bhaiya_ke_nirdesh'),
-                'district' => $this->input->post('district'),
+                'district' => $district_name,
                 'vidhan_sabha' => $this->input->post('vidhan_sabha'),
                 'block' => $this->input->post('block'),
                 'type' => $this->input->post('type'),
@@ -191,6 +209,14 @@ class Visitors extends BaseController {
         if (!$this->hasUpdateAccess()) {
             $this->loadThis(); // Redirect to the unauthorized access page
         } else {
+            // Get district name from district ID
+            $district_id = $this->input->post('district');
+            $district_name = '';
+            if (!empty($district_id)) {
+                $district = $this->db->get_where('district', array('id' => $district_id))->row_array();
+                $district_name = isset($district['name']) ? $district['name'] : '';
+            }
+            
             $data = array(
                 'name' => $this->input->post('name'),
                 'mobile_no' => $this->input->post('mobile_no'),
@@ -201,7 +227,7 @@ class Visitors extends BaseController {
                 'remark' => $this->input->post('remark'),
                 'uss_coding' => $this->input->post('uss_coding'),
                 'bhaiya_ke_nirdesh' => $this->input->post('bhaiya_ke_nirdesh'),
-                'district' => $this->input->post('district'),
+                'district' => $district_name,
                 'type' => $this->input->post('type'),
                 'attend' => $this->input->post('attend'),
                 'vidhan_sabha' => $this->input->post('vidhan_sabha'),

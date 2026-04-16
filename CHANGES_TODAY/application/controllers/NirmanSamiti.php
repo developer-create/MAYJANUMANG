@@ -24,7 +24,7 @@ class NirmanSamiti extends BaseController {
             $filter_block = $this->input->get_post('filter_block');
             $filter_year = $this->input->get_post('filter_year');
             $filter_month = $this->input->get_post('filter_month');
-            $filter_day = $this->input->get_post('filter_day');
+            $filter_date = $this->input->get_post('filter_date');
             
             $filters = array();
             if ($filter_block !== null && $filter_block !== '') {
@@ -36,15 +36,15 @@ class NirmanSamiti extends BaseController {
             if ($filter_month !== null && $filter_month !== '') {
                 $filters['month'] = $filter_month;
             }
-            if ($filter_day !== null && $filter_day !== '') {
-                $filters['day'] = $filter_day;
+            if ($filter_date !== null && $filter_date !== '') {
+                $filters['date'] = $filter_date;
             }
             
             $data['searchText'] = $searchText;
             $data['filter_block'] = $filter_block;
             $data['filter_year'] = $filter_year;
             $data['filter_month'] = $filter_month;
-            $data['filter_day'] = $filter_day;
+            $data['filter_date'] = $filter_date;
             $data['groups'] = $this->NirmanSamiti_model->get_groups($searchText, $filters);
             $data['blocks'] = $this->NirmanSamiti_model->get_blocks_with_data();
             $data['years'] = $this->NirmanSamiti_model->get_years();

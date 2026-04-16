@@ -60,7 +60,27 @@ class ProjectSummary_model extends CI_Model
         $this->db->limit($page, $segment);
         $query = $this->db->get();
         
-        $result = $query->result();        
+        $result = $query->result();
+        
+        // Add latest comment with date/time for each project
+        foreach($result as $row) {
+            $this->db->select('comment, created_at');
+            $this->db->from('project_comments');
+            $this->db->where('project_id', $row->id);
+            $this->db->where('is_deleted', 0);
+            $this->db->order_by('created_at', 'DESC');
+            $this->db->limit(1);
+            $comment_query = $this->db->get();
+            
+            if($comment_query->num_rows() > 0) {
+                $comment_row = $comment_query->row();
+                $formatted_date = date('d-m-Y H:i', strtotime($comment_row->created_at));
+                $row->last_comment = $comment_row->comment . ' (' . $formatted_date . ')';
+            } else {
+                $row->last_comment = 'No comments';
+            }
+        }
+        
         return $result;
     }
     
@@ -137,14 +157,14 @@ class ProjectSummary_model extends CI_Model
                           BaseTbl.tender_status, BaseTbl.company_name, BaseTbl.contractor_name, BaseTbl.phone_no, BaseTbl.usd_remark,
                           BaseTbl.remark, BaseTbl.created_at,
                           District.name as district_name, Block.name as block_name, Dept.name as department_name,
-                          LastComment.comment as last_comment');
+                          CONCAT(LastComment.comment, " (", DATE_FORMAT(LastComment.created_at, "%d-%m-%Y %H:%i"), ")") as last_comment');
         $this->db->from('project_details as BaseTbl');
         $this->db->join('district as District', 'District.id = BaseTbl.district_id', 'left');
         $this->db->join('block as Block', 'Block.id = BaseTbl.block_id', 'left');
         $this->db->join('department as Dept', 'Dept.id = BaseTbl.department_id', 'left');
         
         // Subquery to get the latest comment for each project
-        $this->db->join('(SELECT pc1.project_id, pc1.comment 
+        $this->db->join('(SELECT pc1.project_id, pc1.comment, pc1.created_at
                          FROM project_comments pc1
                          INNER JOIN (
                              SELECT project_id, MAX(id) as max_id

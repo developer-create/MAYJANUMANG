@@ -47,8 +47,8 @@ class GaneshSamiti_model extends CI_Model
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(ganesh_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(ganesh_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(ganesh_samiti_groups.created_at)', $filters['date']);
         }
         
         $this->db->order_by('ganesh_samiti_groups.id', 'DESC');
@@ -84,8 +84,8 @@ class GaneshSamiti_model extends CI_Model
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(ganesh_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(ganesh_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(ganesh_samiti_groups.created_at)', $filters['date']);
         }
         
         $query = $this->db->get();

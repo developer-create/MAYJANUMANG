@@ -45,8 +45,8 @@ class MandirSamiti_model extends CI_Model {
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(mandir_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(mandir_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(mandir_samiti_groups.created_at)', $filters['date']);
         }
         
         $this->db->order_by('mandir_samiti_groups.id', 'DESC');
@@ -232,15 +232,16 @@ class MandirSamiti_model extends CI_Model {
         if (!empty($filters['month'])) {
             $this->db->where('MONTH(mandir_samiti_groups.created_at)', (int)$filters['month']);
         }
-        if (!empty($filters['day'])) {
-            $this->db->where('DAY(mandir_samiti_groups.created_at)', (int)$filters['day']);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(mandir_samiti_groups.created_at)', $filters['date']);
         }
         
         $query = $this->db->get();
         $result = $query->row_array();
         return $result['total_members'] ?? 0;
     }
-}    // ===== BACKWARD COMPATIBILITY METHODS =====
+
+    // ===== BACKWARD COMPATIBILITY METHODS =====
     
     // For existing controller compatibility
     function getGroups() {
