@@ -84,9 +84,12 @@ class Us_code extends BaseController {
 
     // List all US codes
     public function index() {
-        if (!$this->hasListAccess()) {
-            $this->loadThis();
-            return;
+        // Allow admin users
+        if (!$this->isAdmin()) {
+            if (!$this->hasListAccess()) {
+                $this->loadThis();
+                return;
+            }
         }
 
         $this->global['pageTitle'] = 'US Code Management';
@@ -96,9 +99,11 @@ class Us_code extends BaseController {
 
     // Create new code form
     public function create() {
-        if (!$this->hasCreateAccess()) {
-            $this->loadThis();
-            return;
+        if (!$this->isAdmin()) {
+            if (!$this->hasCreateAccess()) {
+                $this->loadThis();
+                return;
+            }
         }
 
         $this->global['pageTitle'] = 'Add US Code';
@@ -107,9 +112,11 @@ class Us_code extends BaseController {
 
     // Store new code
     public function store() {
-        if (!$this->hasCreateAccess()) {
-            $this->loadThis();
-            return;
+        if (!$this->isAdmin()) {
+            if (!$this->hasCreateAccess()) {
+                $this->loadThis();
+                return;
+            }
         }
 
         $this->load->library('form_validation');
@@ -142,9 +149,11 @@ class Us_code extends BaseController {
 
     // Edit code form
     public function edit($id) {
-        if (!$this->hasUpdateAccess()) {
-            $this->loadThis();
-            return;
+        if (!$this->isAdmin()) {
+            if (!$this->hasUpdateAccess()) {
+                $this->loadThis();
+                return;
+            }
         }
 
         $this->global['pageTitle'] = 'Edit US Code';
@@ -161,9 +170,11 @@ class Us_code extends BaseController {
 
     // Update code
     public function update($id) {
-        if (!$this->hasUpdateAccess()) {
-            $this->loadThis();
-            return;
+        if (!$this->isAdmin()) {
+            if (!$this->hasUpdateAccess()) {
+                $this->loadThis();
+                return;
+            }
         }
 
         $this->load->library('form_validation');
@@ -195,9 +206,11 @@ class Us_code extends BaseController {
 
     // Delete code
     public function delete($id) {
-        if (!$this->hasDeleteAccess()) {
-            echo json_encode(['success' => false, 'message' => 'Access denied']);
-            return;
+        if (!$this->isAdmin()) {
+            if (!$this->hasDeleteAccess()) {
+                echo json_encode(['success' => false, 'message' => 'Access denied']);
+                return;
+            }
         }
 
         $code = $this->UsCode_model->get_code($id);
