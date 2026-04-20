@@ -93,6 +93,10 @@ $route['UserServayListing'] = 'user/userservaylisting';
 $route['getVidhanSabhaByDistrict'] = 'ServayController/getVidhanSabhaByDistrict';
 $route['IpuserListing'] = 'user/ipuserlisting';
 
+// Servay Controller routes - typo fix for backward compatibility
+$route['ServayController/createServayye'] = 'ServayController/createServay';
+$route['ServayController/createServay'] = 'ServayController/createServay';
+
 $route['Userwiseipuserlisting/(:any)'] =  "user/userwiseipuserlisting/$1";
 $route['user/delete_jansunwai/(:num)'] = "user/delete_jansunwai/$1";
 
