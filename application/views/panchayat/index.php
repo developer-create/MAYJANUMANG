@@ -17,8 +17,60 @@
                 <div class="box-header">
                     <h3 class="box-title">Panchayat List</h3>  
                     <a href="<?php echo site_url('panchayat/create'); ?>"  class="btn btn-success"  style="float: right;">Add New panchayat</a>
-
                 </div><!-- /.box-header -->
+                
+                <!-- Filter Section -->
+                <div class="box-body" style="background-color: #f5f5f5; padding: 15px; margin-bottom: 15px;">
+                    <form method="GET" action="<?php echo site_url('panchayat'); ?>" id="filterForm">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="block_id">Block:</label>
+                                    <select id="block_id" name="block_id" class="form-control">
+                                        <option value="">-- Select Block --</option>
+                                        <option value="all" <?php echo ($selected_block == 'all') ? 'selected' : ''; ?>>All Blocks</option>
+                                        <?php if(!empty($blocks)): ?>
+                                            <?php foreach($blocks as $block): ?>
+                                                <option value="<?php echo $block['id']; ?>" <?php echo ($selected_block == $block['id']) ? 'selected' : ''; ?>>
+                                                    <?php echo $block['name']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="year">Year:</label>
+                                    <select id="year" name="year" class="form-control">
+                                        <option value="">-- Select Year --</option>
+                                        <option value="all" <?php echo ($selected_year == 'all') ? 'selected' : ''; ?>>All Years</option>
+                                        <?php if(!empty($years)): ?>
+                                            <?php foreach($years as $yr): ?>
+                                                <option value="<?php echo $yr['year']; ?>" <?php echo ($selected_year == $yr['year']) ? 'selected' : ''; ?>>
+                                                    <?php echo $yr['year']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <div>
+                                        <a href="<?php echo site_url('panchayat'); ?>" class="btn btn-default">
+                                            <i class="fa fa-refresh"></i> Reset Filters
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
                 <div class="box-body table-responsive no-padding">
                   <table class="table table-hover" id="feedbackTa">
                     <thead>
@@ -32,21 +84,29 @@
         </tr>
         </thead>
         <tbody>
-        <?php foreach ($panchayats as $panchayat): ?>
-        <tr>
-            <td><?php echo $panchayat['id']; ?></td>
-            <td><?php echo $panchayat['name']; ?></td>
-            <td><?php echo $panchayat['year']; ?></td>
-            <td><?php echo $panchayat['block_name']; ?></td>
-            <td><?php echo $panchayat['booth_name']; ?></td>
-            
-            <td>
+        <?php if(!empty($panchayats)): ?>
+            <?php foreach ($panchayats as $panchayat): ?>
+            <tr>
+                <td><?php echo $panchayat['id']; ?></td>
+                <td><?php echo $panchayat['name']; ?></td>
+                <td><?php echo $panchayat['year']; ?></td>
+                <td><?php echo $panchayat['block_name']; ?></td>
+                <td><?php echo $panchayat['booth_name']; ?></td>
                 
-                <a href="<?php echo site_url('panchayat/edit/'.$panchayat['id']); ?>"  class="btn btn-info"><i class="fa fa-pencil"></i></a>
-                <a href="<?php echo site_url('panchayat/delete/'.$panchayat['id']); ?>"  class="btn btn-danger" onclick="return confirm('Are you sure?');"><i class="fa fa-trash"></i></a>
-            </td>
-        </tr>
-        <?php endforeach; ?>
+                <td>
+                    
+                    <a href="<?php echo site_url('panchayat/edit/'.$panchayat['id']); ?>"  class="btn btn-info"><i class="fa fa-pencil"></i></a>
+                    <a href="<?php echo site_url('panchayat/delete/'.$panchayat['id']); ?>"  class="btn btn-danger" onclick="return confirm('Are you sure?');"><i class="fa fa-trash"></i></a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px; color: #999;">
+                    <i class="fa fa-info-circle"></i> No panchayats found matching your filters.
+                </td>
+            </tr>
+        <?php endif; ?>
         </tbody>
     </table>
                 </div><!-- /.box-body -->
@@ -70,45 +130,30 @@
 <script>
 $(document).ready(function() {
     var qt_id = "<?php echo $this->uri->segment(3)?>";
+    
+    // Auto-submit filter form when dropdown changes
+    $('#block_id, #year').on('change', function() {
+        $('#filterForm').submit();
+    });
+    
     $('#feedbackTa').DataTable({
-        "processing": true, // Show processing indicator 
-        "serverSide": false, // Enable server-side processing
-        // "ajax": {
-        //     "url": "<?php echo base_url('question/serveydatanew') ?>", // Update with your controller function URL
-        //     "type": "GET",
-        //     "data": function(d) {
-        //         d.qt_id = qt_id; // Add qt_id to the request
-        //     }
-        // },
-        // "columns": [
-        //     { "data": "id" },
-        //     { "data": "name" },
-        //     { "data": "mobile" },
-        //     { "data": "qc_id" },
-        //     { "data": "zc_id" },
-        //     { "data": "qt_id" },
-        //     // Generate columns for all 40 answers dynamically
- 
-        //     { "data": "created_at" },
-        //     { "data": "action", "orderable": false, "searchable": false }
-        // ],
-                // dom: 'Bfrtip',
-
-        "dom": '<"top"lfB>rt<"bottom"ip>', // Control layout: l=lengthMenu, f=filter, B=buttons, t=table, i=info, p=pagination
+        "processing": true,
+        "serverSide": false,
+        "dom": '<"top"lfB>rt<"bottom"ip>',
         "buttons": [
             {
                 extend: 'excelHtml5',
                 text: 'Export Excel',
-                title: 'Feedback List'
+                title: 'Panchayat List'
             }
         ],
-        "paging": true, // Enable pagination
-        "searching": true, // Enable searching
-        "ordering": false, // Disable ordering
-        "info": true, // Display info about table
-        "lengthMenu": [ // Add lengthMenu to allow user to select number of entries to display
-            [10, 25, 50, 75, -1], // Page length options
-            [10, 25, 50, 75, "All"] // Text for the options
+        "paging": true,
+        "searching": true,
+        "ordering": false,
+        "info": true,
+        "lengthMenu": [
+            [10, 25, 50, 75, -1],
+            [10, 25, 50, 75, "All"]
         ]
     });
 });

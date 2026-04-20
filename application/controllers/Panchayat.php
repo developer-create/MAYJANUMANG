@@ -45,7 +45,23 @@ class Panchayat extends BaseController {
         if(!$this->hasListAccess()) {
             $this->loadThis(); // Load the restricted page
         } else {
-            $data['panchayats'] = $this->panchayat_model->get_panchayats();
+            // Get filter values from GET request
+            $block_id = $this->input->get('block_id');
+            $year = $this->input->get('year');
+            
+            // Get filtered panchayats
+            $data['panchayats'] = $this->panchayat_model->get_panchayats_filtered($block_id, $year);
+            
+            // Get blocks for filter dropdown
+            $data['blocks'] = $this->Block_model->get_blocks();
+            
+            // Get years for filter dropdown
+            $data['years'] = $this->panchayat_model->get_years();
+            
+            // Store current filter values for view
+            $data['selected_block'] = $block_id;
+            $data['selected_year'] = $year;
+            
             $this->global['pageTitle'] = 'Datacollector : Panchayat';
             $this->loadViews("panchayat/index", $this->global, $data, NULL);
         }

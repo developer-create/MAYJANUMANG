@@ -46,5 +46,37 @@ public function get_panchayats() {
         $query = $this->db->get();
         return $query->result_array();
     }
+
+    // Get panchayats with filters (block and year)
+    public function get_panchayats_filtered($block_id = null, $year = null) {
+        $this->db->select('panchayat.*, block.name as block_name, booth.name as booth_name, booth.year');
+        $this->db->from('panchayat');
+        $this->db->join('block', 'block.id = panchayat.blockid', 'left');
+        $this->db->join('booth', 'booth.id = panchayat.boothid', 'left');
+        
+        // Apply block filter if provided
+        if (!empty($block_id) && $block_id != 'all') {
+            $this->db->where('panchayat.blockid', $block_id);
+        }
+        
+        // Apply year filter if provided
+        if (!empty($year) && $year != 'all') {
+            $this->db->where('booth.year', $year);
+        }
+        
+        $this->db->order_by('panchayat.id', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // Get distinct years from booth table
+    public function get_years() {
+        $this->db->distinct();
+        $this->db->select('booth.year');
+        $this->db->from('booth');
+        $this->db->where('booth.year IS NOT NULL', null, false);
+        $this->db->order_by('booth.year', 'DESC');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }
-?>
