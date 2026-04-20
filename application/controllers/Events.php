@@ -641,8 +641,9 @@ public function update($id) {
      * Approve event (Admin only)
      */
     public function approve($id) {
-        if ($this->role != 1) {
-            $this->session->set_flashdata('error', 'Only administrators can approve events.');
+        // Check if user has Events-Approval permission
+        if (!$this->hasApprovalAccess()) {
+            $this->session->set_flashdata('error', 'You do not have permission to approve events.');
             redirect('events');
             return;
         }
@@ -674,12 +675,12 @@ public function update($id) {
     }
     
     /**
-     * Approval page - Admin only
+     * Approval page - Users with Events-Approval permission
      */
     public function approvals() {
-        // Check if user is admin
-        if ($this->role != 1) {
-            $this->session->set_flashdata('error', 'Only administrators can access approval page.');
+        // Check if user has Events-Approval permission
+        if (!$this->hasApprovalAccess()) {
+            $this->session->set_flashdata('error', 'You do not have permission to access approval page.');
             redirect('events');
             return;
         }
@@ -701,11 +702,12 @@ public function update($id) {
     }
     
     /**
-     * Reject event (Admin only)
+     * Reject event (Users with Events-Approval permission)
      */
     public function reject($id) {
-        if ($this->role != 1) {
-            $this->session->set_flashdata('error', 'Only administrators can reject events.');
+        // Check if user has Events-Approval permission
+        if (!$this->hasApprovalAccess()) {
+            $this->session->set_flashdata('error', 'You do not have permission to reject events.');
             redirect('events');
             return;
         }

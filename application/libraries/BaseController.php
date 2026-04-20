@@ -130,6 +130,26 @@ class BaseController extends CI_Controller {
 		return false;
 	}
 
+	/**
+	 * Check if user has Events-Approval permission
+	 */
+	protected function hasApprovalAccess() {
+		// Admin role (roleId == 1) has all permissions
+		if ($this->isAdmin()) {
+			return true;
+		}
+		// Check access matrix for Events-Approval module
+		if (!empty($this->accessInfo) && is_array($this->accessInfo) && array_key_exists('Events-Approval', $this->accessInfo)) {
+			$moduleAccess = $this->accessInfo['Events-Approval'];
+			if (is_array($moduleAccess) && 
+				((isset($moduleAccess['list']) && $moduleAccess['list'] == 1) 
+				|| (isset($moduleAccess['total_access']) && $moduleAccess['total_access'] == 1))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
  
 	function loadThis() {
 		$this->global ['pageTitle'] = 'CodeInsect : Access Denied';

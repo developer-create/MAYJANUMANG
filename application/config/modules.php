@@ -86,6 +86,11 @@ $config['moduleList'] = array(
         'url' => $url . 'Events'
     ),
     array(
+        'module' => 'Events-Approval',
+        'total_access' => 0, 'list' => 0, 'create_records' => 0, 'edit_records' => 0, 'delete_records' => 0,
+        'url' => $url . 'Events/approvals'
+    ),
+    array(
         'module' => 'Voter',
         'total_access' => 0, 'list' => 0, 'create_records' => 0, 'edit_records' => 0, 'delete_records' => 0,
         'url' => $url . 'voter'
