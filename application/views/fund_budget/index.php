@@ -1,7 +1,7 @@
 <div class="content-wrapper">
     <section class="content-header">
-        <h1><i class="fa fa-sliders"></i> फंड बजट सीमा (वित्तीय वर्ष अनुसार)</h1>
-        <small>MLA FUND, Swecha Nidhi, CLP Fund, Jansampark — कुल राशि यहाँ सेट करें</small>
+        <h1><i class="fa fa-sliders"></i> Fund Budget Limits (By Financial Year)</h1>
+        <small>MLA FUND, Swecha Nidhi, CLP Fund, Jansampark — Set total amount here</small>
     </section>
     <section class="content">
         <?php if ($this->session->flashdata('success')): ?>
@@ -14,22 +14,22 @@
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="box-title">बजट सूची</h3>
-                        <a href="<?php echo site_url('fundBudget/add'); ?>" class="btn btn-success" style="float:right;">नया जोड़ें</a>
+                        <h3 class="box-title">Budget List</h3>
+                        <a href="<?php echo site_url('fundBudget/add'); ?>" class="btn btn-success" style="float:right;">Add New</a>
                     </div>
                     <div class="box-body table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>वित्तीय वर्ष</th>
-                                    <th>फंड</th>
-                                    <th>कुल राशि (₹)</th>
-                                    <th>क्रियाएँ</th>
+                                    <th>Financial Year</th>
+                                    <th>Fund</th>
+                                    <th>Total Amount (₹)</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($rows)): ?>
-                                    <tr><td colspan="4">कोई रिकॉर्ड नहीं। कृपया नया जोड़ें।</td></tr>
+                                    <tr><td colspan="4">No records found. Please add new.</td></tr>
                                 <?php else: ?>
                                     <?php foreach ($rows as $r): ?>
                                         <tr>
@@ -38,7 +38,7 @@
                                             <td><?php echo number_format((float) $r['total_amount'], 2); ?></td>
                                             <td>
                                                 <a href="<?php echo site_url('fundBudget/edit/' . (int) $r['id']); ?>" class="btn btn-info btn-sm"><i class="fa fa-pencil"></i></a>
-                                                <a href="<?php echo site_url('fundBudget/delete/' . (int) $r['id']); ?>" class="btn btn-danger btn-sm" onclick="return confirm('डिलीट करें?');"><i class="fa fa-trash"></i></a>
+                                                <a href="<?php echo site_url('fundBudget/delete/' . (int) $r['id']); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Delete?');"><i class="fa fa-trash"></i></a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
