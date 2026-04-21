@@ -1,7 +1,7 @@
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
-            <i class="fa fa-code" aria-hidden="true"></i> US Code Management
+             US Code Management
         </h1>
     </section>
     <section class="content">
