@@ -52,6 +52,12 @@ table {
     color: white !important;
 }
 
+#dashboardtable1 thead th.th-total-count,
+#dashboardtable1 thead th.th-today-count {
+    background-color: #1a6fc4 !important;
+    color: white !important;
+}
+
 #dashboardtable2 thead th {
     background-color: #f39c12 !important; /* Orange */
     color: white !important;

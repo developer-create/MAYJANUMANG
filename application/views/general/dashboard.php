@@ -644,8 +644,8 @@
                             <thead>
                                 <tr>
                                     <th>Block Name</th>
-                                    <th>Total Count</th>
-                                    <th>Today Count</th>
+                                    <th class="th-total-count">Total Count</th>
+                                    <th class="th-today-count">Today Count</th>
                                     <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
                                     <th><?php echo htmlspecialchars($ct['label']); ?></th>
                                     <?php endforeach; } ?>
@@ -692,8 +692,8 @@
                             <thead>
                                 <tr>
                                     <th>Block Name</th>
-                                    <th>Total Count</th>
-                                    <th>Today Count</th>
+                                    <th class="th-total-count">Total Count</th>
+                                    <th class="th-today-count">Today Count</th>
                                     <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
                                     <th><?php echo htmlspecialchars($ct['label']); ?></th>
                                     <?php endforeach; } ?>
