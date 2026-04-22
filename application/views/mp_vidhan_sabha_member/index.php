@@ -16,7 +16,14 @@
               <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">MP Vidhan Sabha Member List</h3>  
-                    <a href="<?php echo site_url('mp_vidhan_sabha_member/create'); ?>"  class="btn btn-success"  style="float: right;">Add New Member</a>
+                    <div style="float: right;">
+                        <a href="<?php echo site_url('mp_vidhan_sabha_member/bulk_upload'); ?>" class="btn btn-info" style="margin-right: 5px;">
+                            <i class="fa fa-upload"></i> Bulk Upload
+                        </a>
+                        <a href="<?php echo site_url('mp_vidhan_sabha_member/create'); ?>" class="btn btn-success">
+                            <i class="fa fa-plus"></i> Add New Member
+                        </a>
+                    </div>
                 </div><!-- /.box-header -->
                 
                 <!-- Filters Section -->

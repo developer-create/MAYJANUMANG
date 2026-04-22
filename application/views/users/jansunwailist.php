@@ -3,6 +3,12 @@
    <section class="content-header">
       <h1>
          <i class="fa fa-users"></i> Public Problems Management
+         <a href="<?php echo site_url('user/jansunwai_bulk_upload'); ?>" class="btn btn-info btn-sm" style="float: right; margin-left: 5px;">
+            <i class="fa fa-upload"></i> Bulk Upload
+         </a>
+         <a href="<?php echo site_url('user/addNewJansunwai'); ?>" class="btn btn-success btn-sm" style="float: right;">
+            <i class="fa fa-plus"></i> Add New Entry
+         </a>
       </h1>
    </section>
    <section class="content">

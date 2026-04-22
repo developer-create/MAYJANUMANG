@@ -98,6 +98,15 @@ $route['ServayController/createServayye'] = 'ServayController/createServay';
 $route['ServayController/createServay'] = 'ServayController/createServay';
 
 $route['Userwiseipuserlisting/(:any)'] =  "user/userwiseipuserlisting/$1";
+
+// Bulk Upload Routes
+$route['mp_vidhan_sabha_member/bulk_upload'] = 'mp_vidhan_sabha_member/bulk_upload';
+$route['mp_vidhan_sabha_member/process_bulk_upload'] = 'mp_vidhan_sabha_member/process_bulk_upload';
+$route['mp_vidhan_sabha_member/download_template'] = 'mp_vidhan_sabha_member/download_template';
+
+$route['user/jansunwai_bulk_upload'] = 'user/jansunwai_bulk_upload';
+$route['user/process_jansunwai_bulk_upload'] = 'user/process_jansunwai_bulk_upload';
+$route['user/download_jansunwai_template'] = 'user/download_jansunwai_template';
 $route['user/delete_jansunwai/(:num)'] = "user/delete_jansunwai/$1";
 
 

@@ -2593,6 +2593,224 @@ $insert_id = $this->db->insert_id();
         }
     }
     
+    // Show bulk upload form for Jansunwai
+    public function jansunwai_bulk_upload() {
+        $this->module = "Block-Level";
+        if (!$this->hasCreateAccess()) {
+            $this->loadThis();
+        } else {
+            $data["blocks"] = $this->Comman_model->get_all_data("block");
+            $data["departments"] = $this->Comman_model->get_all_data("department");
+            
+            $this->global["pageTitle"] = "CodeInsect : Bulk Upload Jansunwai";
+            $this->loadViews("users/jansunwai_bulk_upload", $this->global, $data, null);
+        }
+    }
+
+    // Process bulk upload for Jansunwai
+    public function process_jansunwai_bulk_upload() {
+        $this->module = "Block-Level";
+        if (!$this->hasCreateAccess()) {
+            $this->loadThis();
+        } else {
+            $config['upload_path'] = './uploads/bulk/';
+            $config['allowed_types'] = 'csv';
+            $config['max_size'] = 10240; // 10MB
+            
+            // Create upload directory if it doesn't exist
+            if (!is_dir($config['upload_path'])) {
+                mkdir($config['upload_path'], 0755, true);
+            }
+            
+            $this->load->library('upload', $config);
+            $this->load->helper('bulk_upload');
+            
+            if (!$this->upload->do_upload('bulk_file')) {
+                $this->session->set_flashdata('error', $this->upload->display_errors());
+                redirect('user/jansunwai_bulk_upload');
+            } else {
+                $upload_data = $this->upload->data();
+                $file_path = $upload_data['full_path'];
+                
+                try {
+                    $rows = parse_bulk_upload_file($file_path);
+                    
+                    if (empty($rows)) {
+                        $file_ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+                        if ($file_ext === 'xlsx' || $file_ext === 'xls') {
+                            throw new Exception('Excel file parsing failed. Please convert your Excel file to CSV format and try again. To convert: Open in Excel → Save As → CSV (Comma delimited)');
+                        } else {
+                            throw new Exception('Unable to parse file. Please ensure it is a valid CSV file.');
+                        }
+                    }
+                    
+                    $success_count = 0;
+                    $error_count = 0;
+                    $errors = array();
+                    
+                    // Skip header row
+                    for ($i = 1; $i < count($rows); $i++) {
+                        $row = $rows[$i];
+                        
+                        // Skip completely empty rows only
+                        if (empty(array_filter($row))) continue;
+                        
+                        // Lookup IDs from names
+                        $block_id = !empty($row[8]) ? get_id_by_name($this, 'block', 'name', $row[8]) : null;
+                        $department_id = !empty($row[18]) ? get_id_by_name($this, 'department', 'name', $row[18]) : null;
+                        $sub_work_type_id = !empty($row[23]) ? get_id_by_name($this, 'subtype_of_work', 'name', $row[23]) : null;
+                        
+                        $data = array(
+                            "createdAt" => date('Y-m-d H:i:s'),
+                            "sector_name" => !empty($row[0]) ? $row[0] : '',
+                            "micro_sector_no" => !empty($row[1]) ? $row[1] : '',
+                            "micro_sector_name" => !empty($row[2]) ? $row[2] : '',
+                            "year" => !empty($row[3]) ? $row[3] : '',
+                            "month" => !empty($row[4]) ? $row[4] : '',
+                            "date" => !empty($row[5]) ? date("Y-m-d", strtotime($row[5])) : null,
+                            "district" => !empty($row[6]) ? $row[6] : '',
+                            "assembly" => !empty($row[7]) ? $row[7] : '',
+                            "block" => $block_id,
+                            "recommended_letter_no" => !empty($row[9]) ? $row[9] : '',
+                            "booth_no" => !empty($row[10]) ? $row[10] : '',
+                            "booth_name" => !empty($row[11]) ? $row[11] : '',
+                            "panchayat_name" => !empty($row[12]) ? $row[12] : '',
+                            "village" => !empty($row[13]) ? $row[13] : '',
+                            "majra_faliya" => !empty($row[14]) ? $row[14] : '',
+                            "work_problem" => !empty($row[15]) ? $row[15] : '',
+                            "office" => !empty($row[16]) ? $row[16] : '',
+                            "approximate_cost" => !empty($row[17]) ? (float)$row[17] : 0,
+                            "department" => $department_id,
+                            "priority" => !empty($row[19]) ? $row[19] : '',
+                            "ts_no_date" => !empty($row[20]) ? $row[20] : '',
+                            "as_no_date" => !empty($row[21]) ? $row[21] : '',
+                            "type_of_work" => !empty($row[22]) ? $row[22] : '',
+                            "sub_work_type_id" => $sub_work_type_id,
+                            "middle_men" => !empty($row[24]) ? $row[24] : '',
+                            "cont_no" => !empty($row[25]) ? $row[25] : '',
+                            "beneficial" => !empty($row[26]) ? $row[26] : '',
+                            "mobile" => !empty($row[27]) ? $row[27] : '',
+                            "po" => !empty($row[28]) ? $row[28] : '',
+                            "work_status" => "Incomplete",
+                            "work_agency" => !empty($row[29]) ? $row[29] : '',
+                            "approved_fund" => !empty($row[30]) ? $row[30] : '',
+                            "account_details" => !empty($row[31]) ? $row[31] : '',
+                            "id_proof_number" => !empty($row[32]) ? $row[32] : '',
+                            "residential_number" => !empty($row[33]) ? $row[33] : '',
+                            "remark_goshana" => !empty($row[34]) ? $row[34] : '',
+                            "createdBy" => $this->session->userdata('userId'),
+                            "uname" => !empty($row[26]) ? $row[26] : ''
+                        );
+                        
+                        // Validate required fields
+                        if (empty($data['sector_name']) || empty($data['work_problem']) || empty($data['beneficial'])) {
+                            $errors[] = "Row " . ($i + 1) . ": Required fields missing (Sector Name, Work Problem, Beneficial)";
+                            $error_count++;
+                            continue;
+                        }
+                        
+                        // Validate mobile number
+                        if (!empty($data['mobile']) && !preg_match('/^\d{10}$/', $data['mobile'])) {
+                            $errors[] = "Row " . ($i + 1) . ": Invalid mobile number format";
+                            $error_count++;
+                            continue;
+                        }
+                        
+                        // Validate contact number
+                        if (!empty($data['cont_no']) && !preg_match('/^\d{10}$/', $data['cont_no'])) {
+                            $errors[] = "Row " . ($i + 1) . ": Invalid contact number format";
+                            $error_count++;
+                            continue;
+                        }
+                        
+                        // Budget validation
+                        $this->load->helper("fund_budget");
+                        $this->load->model("Fund_budget_model");
+                        $resolved_fund = $data['approved_fund'];
+                        $norm_fund = normalize_approved_fund_name($resolved_fund);
+                        if ($norm_fund !== null && !empty($data['approximate_cost'])) {
+                            $fy = canonicalize_financial_year_for_budget($data['year']);
+                            $chk = $this->Fund_budget_model->check_budget($norm_fund, $fy, (float)$data['approximate_cost'], null, null);
+                            if (!$chk["ok"]) {
+                                $errors[] = "Row " . ($i + 1) . ": " . $chk["message"];
+                                $error_count++;
+                                continue;
+                            }
+                        }
+                        
+                        // Insert data into database
+                        $result = $this->db->insert('jansunwai', $data);
+                        if ($result) {
+                            $insert_id = $this->db->insert_id();
+                            $this->logActivity('add', 'jansunwai', $insert_id, $data, null, 'Jansunwai entry created via bulk upload with ID: ' . $insert_id . ' (Sector: ' . $data['sector_name'] . ')');
+                            $success_count++;
+                        } else {
+                            $errors[] = "Row " . ($i + 1) . ": Failed to insert record";
+                            $error_count++;
+                        }
+                    }
+                    
+                    // Clean up uploaded file
+                    unlink($file_path);
+                    
+                    $message = "Bulk upload completed. Success: $success_count, Errors: $error_count";
+                    if (!empty($errors)) {
+                        $message .= "\nErrors: " . implode(", ", array_slice($errors, 0, 5));
+                        if (count($errors) > 5) {
+                            $message .= " and " . (count($errors) - 5) . " more...";
+                        }
+                    }
+                    
+                    if ($success_count > 0) {
+                        $this->session->set_flashdata('success', $message);
+                    } else {
+                        $this->session->set_flashdata('error', $message);
+                    }
+                    
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('error', 'Error processing file: ' . $e->getMessage());
+                }
+                
+                redirect('user/jansunwai');
+            }
+        }
+    }
+
+    // Download sample CSV template for Jansunwai
+    public function download_jansunwai_template() {
+        $filename = 'jansunwai_template.csv';
+        
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        
+        // CSV headers
+        $headers = array(
+            'Sector Name*', 'Micro Sector No*', 'Micro Sector Name*', 'Year*', 'Month*', 'Date (YYYY-MM-DD)*',
+            'District*', 'Assembly*', 'Block ID*', 'Recommended Letter No*', 'Booth No*', 'Booth Name*',
+            'Panchayat Name*', 'Village*', 'Majra Faliya*', 'Work Problem*', 'Office*', 'Approximate Cost*',
+            'Department ID*', 'Priority*', 'TS No/Date', 'AS No/Date', 'Type of Work*', 'Sub Work Type ID',
+            'Middle Men*', 'Contact No*', 'Beneficial*', 'Mobile*', 'PO*', 'Work Agency*', 'Approved Fund*',
+            'Account Details', 'ID Proof Number', 'Residential Number', 'Remark/Goshana'
+        );
+        
+        fputcsv($output, $headers);
+        
+        // Sample data row
+        $sample = array(
+            'Sample Sector', '001', 'Sample Micro Sector', '2026', 'January', '2026-01-15',
+            'Sample District', 'Sample Assembly', '1', 'RLN001', '001', 'Sample Booth',
+            'Sample Panchayat', 'Sample Village', 'Sample Majra', 'Sample Work Problem', 'Sample Office', '50000',
+            '1', 'High', 'TS001/2026', 'AS001/2026', 'Sample Work Type', '1',
+            'Sample Middle Man', '9876543210', 'Sample Beneficial', '9876543210', 'Sample PO', 'Sample Agency', 'MLA Sweechanudan',
+            'Sample Account Details', '123456789012', 'IFSC0001234', 'Sample Remark'
+        );
+        
+        fputcsv($output, $sample);
+        fclose($output);
+    }
+    
     /**
      * User logout functionality
      */
