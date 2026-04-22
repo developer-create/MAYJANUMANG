@@ -174,8 +174,13 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="district">District</label>
-                                        <input type="text" class="form-control required" id="district" name="district"
-                                            value="<?php echo isset($form_data['district']) ? htmlspecialchars($form_data['district']) : ''; ?>">
+                                        <select class="form-control select2 required" id="district" name="district">
+                                            <option value="">Select District</option>
+                                            <?php foreach($districts as $district){ ?>
+                                            <option value="<?php echo $district->id ?>" <?php echo set_select('district', $district->id); ?>>
+                                                <?php echo $district->name ?></option>
+                                            <?php } ?>
+                                        </select>
                                         <?php echo form_error('district', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -183,8 +188,13 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="assembly">Assembly</label>
-                                        <input type="text" class="form-control required" id="assembly" name="assembly"
-                                            value="<?php echo isset($form_data['assembly']) ? htmlspecialchars($form_data['assembly']) : ''; ?>">
+                                        <select class="form-control select2 required" id="assembly" name="assembly">
+                                            <option value="">Select Assembly</option>
+                                            <?php foreach($assemblies as $assembly){ ?>
+                                            <option value="<?php echo $assembly->id ?>" <?php echo set_select('assembly', $assembly->id); ?>>
+                                                <?php echo $assembly->vidhan_sabha_name ?></option>
+                                            <?php } ?>
+                                        </select>
                                         <?php echo form_error('assembly', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -251,8 +261,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="village">Village</label>
-                                        <select class="form-control select2 required" id="village" name="village"
-                                            required>
+                                        <select class="form-control select2" id="village" name="village">
                                             <option value="">Select Village</option>
                                         </select>
                                         <?php echo form_error('village', '<div class="text-danger">', '</div>'); ?>
@@ -519,7 +528,7 @@
                                 <input type="hidden" id="work_status" name="work_status" value="Incomplete">
                             </div>
 
-                            <div id="section6_wrapper" style="display:none;">
+                            <div id="section6_wrapper">
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 style="background-color: #3C8DBC; color: white; padding: 10px; display: block; border-radius: 4px;"><strong>6. Section Details</strong></h4>
@@ -530,8 +539,8 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="account_details">Account Details</label>
-                                        <input class="form-control" id="account_details"
-                                            name="account_details"><?php echo isset($form_data['account_details']) ? htmlspecialchars($form_data['account_details']) : ''; ?></inpute>
+                                        <textarea class="form-control" id="account_details"
+                                            name="account_details"><?php echo isset($form_data['account_details']) ? htmlspecialchars($form_data['account_details']) : ''; ?></textarea>
                                         <?php echo form_error('account_details', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
@@ -540,7 +549,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="residential_number">IFSC Number</label>
-                                        <input type="text" class="form-control required" id="residential_number"
+                                        <input type="text" class="form-control" id="residential_number"
                                             name="residential_number"
                                             value="<?php echo isset($form_data['residential_number']) ? htmlspecialchars($form_data['residential_number']) : ''; ?>">
                                         <?php echo form_error('residential_number', '<div class="text-danger">', '</div>'); ?>
@@ -550,7 +559,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="id_proof_number">Adhar Card Number</label>
-                                        <input type="text" class="form-control required" id="id_proof_number"
+                                        <input type="text" class="form-control" id="id_proof_number"
                                             name="id_proof_number" value="<?php echo isset($form_data['id_proof_number']) ? htmlspecialchars($form_data['id_proof_number']) : ''; ?>">
                                         <?php echo form_error('id_proof_number', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -665,6 +674,16 @@ $(document).ready(function() {
         });
 
         // Trigger changes for dependent dropdowns with proper sequencing
+        if (formDataFromSession.district) {
+            $('#district').val(formDataFromSession.district).trigger('change');
+            // Wait for AJAX to complete before restoring dependent fields
+            setTimeout(function() {
+                if (formDataFromSession.assembly) {
+                    $('#assembly').val(formDataFromSession.assembly);
+                }
+            }, 800);
+        }
+        
         if (formDataFromSession.block) {
             $('#block').val(formDataFromSession.block).trigger('change');
             // Wait for AJAX to complete before restoring dependent fields
@@ -719,6 +738,16 @@ $(document).ready(function() {
         });
 
         // Trigger changes for dependent dropdowns with proper sequencing
+        if (formData.district) {
+            $('#district').val(formData.district).trigger('change');
+            // Wait for AJAX to complete before restoring dependent fields
+            setTimeout(function() {
+                if (formData.assembly) {
+                    $('#assembly').val(formData.assembly);
+                }
+            }, 800);
+        }
+        
         if (formData.block) {
             $('#block').val(formData.block).trigger('change');
             // Wait for AJAX to complete before restoring dependent fields
@@ -758,6 +787,42 @@ $(document).ready(function() {
             $('#date').val(formData.date).trigger('change');
         }
     }
+
+    // Handle District change - populate Assembly dropdown
+    $('#district').change(function() {
+        var districtId = $(this).val();
+        if (districtId != 0 && districtId != '') {
+            $.ajax({
+                url: '<?php echo site_url('user/getAssembliesByDistrict'); ?>',
+                method: 'POST',
+                data: {
+                    district_id: districtId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $('#assembly').empty();
+                    $('#assembly').append('<option value="">Select Assembly</option>');
+                    if (response.success && response.assemblies && response.assemblies.length > 0) {
+                        $.each(response.assemblies, function(index, value) {
+                            $('#assembly').append('<option value="' + value.id + '">' + value.vidhan_sabha_name + '</option>');
+                        });
+
+                        // Restore assembly if it was selected
+                        if (formData.assembly) {
+                            $('#assembly').val(formData.assembly);
+                        }
+                    }
+                },
+                error: function() {
+                    $('#assembly').empty();
+                    $('#assembly').append('<option value="">Select Assembly</option>');
+                }
+            });
+        } else {
+            $('#assembly').empty();
+            $('#assembly').append('<option value="">Select Assembly</option>');
+        }
+    });
 
     $('#block').change(function() {
         var blockId = $(this).val();
@@ -832,7 +897,7 @@ $(document).ready(function() {
 
     $('#panchayat_name').change(function() {
         var boothid = $(this).val();
-        if (boothid != 0) {
+        if (boothid != 0 && boothid != '') {
             $.ajax({
                 url: '<?php echo site_url('panchayat/getvillageBypanchayat'); ?>',
                 method: 'POST',
@@ -843,14 +908,23 @@ $(document).ready(function() {
                 success: function(response) {
                     $('#village').empty();
                     $('#village').append('<option value="">Select Village</option>');
-                    $.each(response, function(index, value) {
-                        $('#village').append('<option value="' + value.id + '">' + value.name + '</option>');
-                    });
+                    if (response && response.length > 0) {
+                        $.each(response, function(index, value) {
+                            $('#village').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    } else {
+                        console.log('No villages found for panchayat ID: ' + boothid);
+                    }
 
                     // Restore village if it was selected
                     if (formData.village) {
                         $('#village').val(formData.village);
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading villages:', error);
+                    $('#village').empty();
+                    $('#village').append('<option value="">Select Village</option>');
                 }
             });
         } else {
@@ -865,12 +939,12 @@ $(document).ready(function() {
         var shouldShowSectionSix = (selectedText.indexOf('स्वेछानुदान') !== -1) ||
             (selectedText.indexOf('स्वेच्छानुदान') !== -1) ||
             (selectedText.indexOf('swechanudan') !== -1);
+        
+        // Section 6 is always visible now, only toggle remark_goshana requirement
         if (shouldShowSectionSix) {
-            $('#section6_wrapper').slideDown();
-            $('#account_details, #id_proof_number, #residential_number, #remark_goshana').addClass('required');
+            $('#remark_goshana').addClass('required');
         } else {
-            $('#section6_wrapper').slideUp();
-            $('#account_details, #id_proof_number, #residential_number, #remark_goshana').removeClass('required');
+            $('#remark_goshana').removeClass('required');
         }
     }
 

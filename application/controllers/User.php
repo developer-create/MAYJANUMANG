@@ -366,7 +366,6 @@ $data["results"] = $query->result();
             $this->form_validation->set_rules("booth_no", "Booth No.", "required");
             $this->form_validation->set_rules("booth_name", "Booth Name", "required");
             $this->form_validation->set_rules("panchayat_name", "Panchayat Name", "required");
-            $this->form_validation->set_rules("village", "Village", "required");
             $this->form_validation->set_rules("majra_faliya", "Majra-Faliya", "required");
             $this->form_validation->set_rules("work_problem", "Work/Problem", "required");
             $this->form_validation->set_rules("office", "Office", "required");
@@ -401,9 +400,6 @@ $data["results"] = $query->result();
                         || (strpos($subWorkTypeName, 'swechanudan') !== false);
 
                     if ($isSwechanudan) {
-                        $this->form_validation->set_rules("account_details", "Account Details", "required");
-                        $this->form_validation->set_rules("id_proof_number", "Adhar Card Number", "required");
-                        $this->form_validation->set_rules("residential_number", "IFSC Number", "required");
                         $this->form_validation->set_rules("remark_goshana", "Remark/Goshana", "required");
                     }
                 }
@@ -411,6 +407,8 @@ $data["results"] = $query->result();
             $this->global["pageTitle"] = "CodeInsect : Add New Jansunwai";
             $data["blocks"] = $this->Comman_model->get_all_data("block");
             $data["departments"] = $this->Comman_model->get_all_data("department");
+            $data["districts"] = $this->db->select('id, name')->from('district')->order_by('name', 'ASC')->get()->result();
+            $data["assemblies"] = [];
             
             if ($this->form_validation->run() == false) {
                 // Preserve form data on validation error
@@ -568,6 +566,16 @@ $insert_id = $this->db->insert_id();
             $this->global["pageTitle"] = "CodeInsect : Edit Jansunwai";
             $data["blocks"] = $this->Comman_model->get_all_data("block");
             $data["departments"] = $this->Comman_model->get_all_data("department");
+            $data["districts"] = $this->db->select('id, name')->from('district')->order_by('name', 'ASC')->get()->result();
+            
+            // Load assemblies for the current district if it exists
+            if ($data["jansunwai"] && $data["jansunwai"]->district) {
+                $this->load->model('Vidhan_sabha_model');
+                $data["assemblies"] = $this->Vidhan_sabha_model->get_vidhan_sabhas_by_district($data["jansunwai"]->district);
+            } else {
+                $data["assemblies"] = [];
+            }
+            
             $this->loadViews("users/editJansunwai", $this->global, $data, null);
         }
     }
@@ -586,7 +594,6 @@ $insert_id = $this->db->insert_id();
         $this->form_validation->set_rules("booth_no", "Booth No.", "required");
         $this->form_validation->set_rules("booth_name", "Booth Name", "required");
         $this->form_validation->set_rules("panchayat_name", "Panchayat Name", "required");
-        $this->form_validation->set_rules("village", "Village", "required");
         $this->form_validation->set_rules("majra_faliya", "Majra-Faliya", "required");
         $this->form_validation->set_rules("work_problem", "Work/Problem", "required");
         $this->form_validation->set_rules("office", "Office", "required");
@@ -601,9 +608,6 @@ $insert_id = $this->db->insert_id();
         $this->form_validation->set_rules("beneficial", "Beneficial", "required");
         $this->form_validation->set_rules("mobile", "Beneficial Cont No.", "required|regex_match[/^\d{10}$/]");
         $this->form_validation->set_rules("po", "PO", "required");
-        $this->form_validation->set_rules("account_details", "Account Details", "required");
-        $this->form_validation->set_rules("id_proof_number", "ID Proof Number", "required");
-        $this->form_validation->set_rules("residential_number", "Residential Number", "required");
         $this->form_validation->set_rules("work_agency", "Work Agency", "required");
         $this->form_validation->set_rules("approved_fund", "Approved Fund", "required");
         // $this->form_validation->set_rules("work_status", "Work Status", "required");
@@ -2473,6 +2477,29 @@ $insert_id = $this->db->insert_id();
         echo json_encode([
             'success' => true,
             'subtypes' => $subTypes
+        ]);
+    }
+
+    public function getAssembliesByDistrict() {
+        header('Content-Type: application/json');
+        
+        $districtId = $this->input->post('district_id');
+        
+        if (empty($districtId)) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'District ID is required',
+                'assemblies' => []
+            ]);
+            return;
+        }
+        
+        $this->load->model('Vidhan_sabha_model');
+        $assemblies = $this->Vidhan_sabha_model->get_vidhan_sabhas_by_district($districtId);
+        
+        echo json_encode([
+            'success' => true,
+            'assemblies' => $assemblies
         ]);
     }
 
