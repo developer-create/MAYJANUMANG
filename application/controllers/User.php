@@ -347,9 +347,11 @@ $data["results"] = $query->result();
         if (!$this->hasCreateAccess()) {
             $this->loadThis();
         } else {
-            // Clear session data if form is being loaded fresh (not from error)
+            // Clear ALL session data on fresh GET request (no POST data)
             if (!$this->input->post()) {
                 $this->session->unset_userdata('jansunwai_form_data');
+                // Also clear any flashdata errors on fresh load
+                $this->session->unset_userdata('error');
             }
             
             // Set form validation rules
@@ -407,12 +409,17 @@ $data["results"] = $query->result();
             $data["departments"] = $this->Comman_model->get_all_data("department");
             $data["districts"] = $this->db->select('id, name')->from('district')->order_by('name', 'ASC')->get()->result();
             $data["assemblies"] = [];
+            // Always start with empty form data
+            $data["form_data"] = [];
+            $data["form_data_json"] = '{}';
             
             if ($this->form_validation->run() == false) {
-                // Preserve form data on validation error
+                // Preserve form data on validation error (only if POST request)
                 $post_data = $this->input->post();
-                $data["form_data"] = $post_data;
-                $data["form_data_json"] = json_encode($post_data);
+                if (!empty($post_data)) {
+                    $data["form_data"] = $post_data;
+                    $data["form_data_json"] = json_encode($post_data);
+                }
                 
                 // Helper function to get old value
                 $data["get_old_value"] = function($field_name, $default = '') use ($post_data) {

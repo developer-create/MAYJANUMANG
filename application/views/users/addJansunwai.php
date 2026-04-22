@@ -15,7 +15,10 @@
                     <!-- Check if form data exists in session (from budget error) -->
                     <?php 
                     if (!isset($form_data) || empty($form_data)) {
-                        $form_data = $this->session->userdata('jansunwai_form_data');
+                        // Only restore session data if there's a budget error (flashdata present)
+                        if ($this->session->flashdata('error')) {
+                            $form_data = $this->session->userdata('jansunwai_form_data');
+                        }
                         if (!$form_data) {
                             $form_data = [];
                         }
