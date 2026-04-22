@@ -27,7 +27,7 @@
                         <div class="modal-dialog" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; width: auto; max-width: 500px;">
                             <div class="modal-content" style="background-color: #f8d7da; border: 2px solid #f5c6cb; border-radius: 5px;">
                                 <div class="modal-header" style="background-color: #f5c6cb; border-bottom: 1px solid #f5c6cb;">
-                                    <h4 class="modal-title" style="color: #721c24;">⚠️ बजट सीमा अतिक्रमण</h4>
+                                    <h4 class="modal-title" style="color: #721c24;">⚠️ Invalid Fund Limit</h4>
                                     <button type="button" class="close" data-dismiss="modal" style="color: #721c24;">&times;</button>
                                 </div>
                                 <div class="modal-body" style="color: #721c24; padding: 20px;">
@@ -213,35 +213,6 @@
                                         <?php echo form_error('block', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="row">
-
-                               
-                                <!-- Booth Name -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="booth_name">Booth Name</label>
-                                        <select class="form-control select2 required" id="booth_name" name="booth_name">
-                                            <option value="">Select Booth</option>
-                                            <!-- Booth options will be populated dynamically based on selected Block -->
-                                        </select>
-                                        <?php echo form_error('booth_name', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
-                                <!-- Booth No -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="booth_no">Booth No.</label>
-                                        <select class="form-control select2 required" id="booth_no" name="booth_no">
-                                            <option value="">Select Booth</option>
-                                            <!-- Booth options will be populated dynamically based on selected Block -->
-                                        </select>
-
-                                        <?php echo form_error('booth_no', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
-
                             </div>
 
                             <div class="row">
@@ -617,7 +588,12 @@
                     <?php echo $success; ?>
                 </div>
                 <?php } ?>
-                <?php $ferr = $this->session->flashdata('error'); if ($ferr) { ?>
+                <?php 
+                $ferr = $this->session->flashdata('error'); 
+                // Don't show alert for budget errors - they will be shown in modal
+                $isBudgetError = $ferr && (strpos($ferr, 'बजट') !== false || strpos($ferr, 'कुल बजट') !== false);
+                if ($ferr && !$isBudgetError) { 
+                ?>
                 <div class="alert alert-danger alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     <?php echo $ferr; ?>

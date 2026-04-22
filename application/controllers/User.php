@@ -363,8 +363,6 @@ $data["results"] = $query->result();
             $this->form_validation->set_rules("assembly", "Assembly", "required");
             $this->form_validation->set_rules("block", "Block", "required");
             $this->form_validation->set_rules("recommended_letter_no", "Recommended Letter No.", "required");
-            $this->form_validation->set_rules("booth_no", "Booth No.", "required");
-            $this->form_validation->set_rules("booth_name", "Booth Name", "required");
             $this->form_validation->set_rules("panchayat_name", "Panchayat Name", "required");
             $this->form_validation->set_rules("majra_faliya", "Majra-Faliya", "required");
             $this->form_validation->set_rules("work_problem", "Work/Problem", "required");
@@ -576,6 +574,57 @@ $insert_id = $this->db->insert_id();
                 $data["assemblies"] = [];
             }
             
+            // Load booths for the current block if it exists
+            if ($data["jansunwai"] && $data["jansunwai"]->block) {
+                $this->load->model('Booth_model');
+                $data["booths"] = $this->Booth_model->getBoothsByBlock($data["jansunwai"]->block);
+            } else {
+                $data["booths"] = [];
+            }
+            
+            // Load panchayats for the current panchayat_name if it exists
+            if ($data["jansunwai"] && $data["jansunwai"]->panchayat_name) {
+                $this->load->model('Booth_model');
+                // Fetch panchayat data directly by ID
+                $panchayat_data = $this->db->select('*')->from('panchayat')->where('id', $data["jansunwai"]->panchayat_name)->get()->result_array();
+                if (!empty($panchayat_data)) {
+                    $data["panchayats"] = $panchayat_data;
+                } else {
+                    $data["panchayats"] = [];
+                }
+            } else {
+                $data["panchayats"] = [];
+            }
+            
+            // Load villages for the current panchayat if it exists
+            if ($data["jansunwai"] && $data["jansunwai"]->panchayat_name) {
+                $this->load->model('Booth_model');
+                $data["villages"] = $this->Booth_model->getvillageBypanchayat($data["jansunwai"]->panchayat_name);
+            } else {
+                $data["villages"] = [];
+            }
+            
+            // Load sub work types for the current work type if it exists
+            if ($data["jansunwai"] && $data["jansunwai"]->type_of_work) {
+                $workTypeName = trim($data["jansunwai"]->type_of_work);
+                $this->db->select('id');
+                $this->db->from('workType');
+                $this->db->where('name', $workTypeName);
+                $workTypeQuery = $this->db->get();
+                $workType = $workTypeQuery->row();
+                
+                if ($workType) {
+                    $this->db->select('id, name');
+                    $this->db->from('subtype_of_work');
+                    $this->db->where('work_type_id', $workType->id);
+                    $data["sub_work_types"] = $this->db->get()->result_array();
+                } else {
+                    $data["sub_work_types"] = [];
+                }
+            } else {
+                $data["sub_work_types"] = [];
+            }
+            
             $this->loadViews("users/editJansunwai", $this->global, $data, null);
         }
     }
@@ -591,13 +640,11 @@ $insert_id = $this->db->insert_id();
         $this->form_validation->set_rules("assembly", "Assembly", "required");
         $this->form_validation->set_rules("block", "Block", "required");
         $this->form_validation->set_rules("recommended_letter_no", "Recommended Letter No.", "required");
-        $this->form_validation->set_rules("booth_no", "Booth No.", "required");
-        $this->form_validation->set_rules("booth_name", "Booth Name", "required");
         $this->form_validation->set_rules("panchayat_name", "Panchayat Name", "required");
         $this->form_validation->set_rules("majra_faliya", "Majra-Faliya", "required");
         $this->form_validation->set_rules("work_problem", "Work/Problem", "required");
         $this->form_validation->set_rules("office", "Office", "required");
-        $this->form_validation->set_rules("approximate_cost", "Approximate Cost", "required|decimal");
+        $this->form_validation->set_rules("approximate_cost", "Approximate Cost", "required|numeric");
         $this->form_validation->set_rules("department", "Department", "required");
         $this->form_validation->set_rules("priority", "Priority", "required");
         //$this->form_validation->set_rules("ts_no_date", "TS No/Date", "required");

@@ -23,7 +23,7 @@
                         <div class="modal-dialog" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; width: auto; max-width: 500px;">
                             <div class="modal-content" style="background-color: #f8d7da; border: 2px solid #f5c6cb; border-radius: 5px;">
                                 <div class="modal-header" style="background-color: #f5c6cb; border-bottom: 1px solid #f5c6cb;">
-                                    <h4 class="modal-title" style="color: #721c24;">⚠️ बजट सीमा अतिक्रमण</h4>
+                                    <h4 class="modal-title" style="color: #721c24;">⚠️ Invalid Fund Limit</h4>
                                     <button type="button" class="close" data-dismiss="modal" style="color: #721c24;">&times;</button>
                                 </div>
                                 <div class="modal-body" style="color: #721c24; padding: 20px;">
@@ -40,6 +40,15 @@
                         enctype="multipart/form-data" method="post">
                         <div class="box-body">
                             <input type="hidden" name="id" value="<?php echo $jansunwai->id; ?>">
+                            
+                            <!-- Hidden fields to store initial data for JavaScript -->
+                            <input type="hidden" id="initialBlock" value="<?php echo htmlspecialchars($jansunwai->block ?? ''); ?>">
+                            <input type="hidden" id="initialBoothName" value="<?php echo htmlspecialchars($jansunwai->booth_name ?? ''); ?>">
+                            <input type="hidden" id="initialBoothNo" value="<?php echo htmlspecialchars($jansunwai->booth_no ?? ''); ?>">
+                            <input type="hidden" id="initialPanchayat" value="<?php echo htmlspecialchars($jansunwai->panchayat_name ?? ''); ?>">
+                            <input type="hidden" id="initialVillage" value="<?php echo htmlspecialchars($jansunwai->village ?? ''); ?>">
+                            <input type="hidden" id="initialTypeOfWork" value="<?php echo htmlspecialchars($jansunwai->type_of_work ?? ''); ?>">
+                            <input type="hidden" id="initialSubWorkType" value="<?php echo htmlspecialchars($jansunwai->sub_work_type_id ?? ''); ?>">
                             
                             <div class="row">
                                 <div class="col-md-12">
@@ -214,35 +223,6 @@
                             </div>
 
                             <div class="row">
-
-                               
-                                <!-- Booth Name -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="booth_name">Booth Name</label>
-                                        <select class="form-control select2 required" id="booth_name" name="booth_name">
-                                            <option value="">Select Booth</option>
-                                            <!-- Booth options will be populated dynamically based on selected Block -->
-                                        </select>
-                                        <?php echo form_error('booth_name', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
-                                <!-- Booth No -->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="booth_no">Booth No.</label>
-                                        <select class="form-control select2 required" id="booth_no" name="booth_no">
-                                            <option value="">Select Booth</option>
-                                            <!-- Booth options will be populated dynamically based on selected Block -->
-                                        </select>
-
-                                        <?php echo form_error('booth_no', '<div class="text-danger">', '</div>'); ?>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="row">
                                 <!-- Panchayat Name -->
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -250,7 +230,10 @@
                                         <select class="form-control select2 required" id="panchayat_name"
                                             name="panchayat_name" required>
                                             <option value="">Select Panchayat</option>
-                                            <!-- Panchayat options will be populated dynamically based on selected Booth -->
+                                            <?php foreach($panchayats as $panchayat){ ?>
+                                            <option value="<?php echo $panchayat['id'] ?>" <?php echo set_select('panchayat_name', $panchayat['id'], $jansunwai->panchayat_name == $panchayat['id']); ?>>
+                                                <?php echo $panchayat['name'] ?></option>
+                                            <?php } ?>
                                         </select>
                                         <?php echo form_error('panchayat_name', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -261,6 +244,10 @@
                                         <label for="village">Village</label>
                                         <select class="form-control select2" id="village" name="village">
                                             <option value="">Select Village</option>
+                                            <?php foreach($villages as $village){ ?>
+                                            <option value="<?php echo $village['id'] ?>" <?php echo set_select('village', $village['id'], $jansunwai->village == $village['id']); ?>>
+                                                <?php echo $village['name'] ?></option>
+                                            <?php } ?>
                                         </select>
                                         <?php echo form_error('village', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -320,6 +307,10 @@
                                         <select class="form-control select2" id="sub_work_type_id"
                                             name="sub_work_type_id">
                                             <option value="">Select Sub Work Type</option>
+                                            <?php foreach($sub_work_types as $subtype){ ?>
+                                            <option value="<?php echo $subtype['id'] ?>" <?php echo set_select('sub_work_type_id', $subtype['id'], $jansunwai->sub_work_type_id == $subtype['id']); ?>>
+                                                <?php echo $subtype['name'] ?></option>
+                                            <?php } ?>
                                         </select>
                                         <?php echo form_error('sub_work_type_id', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -615,7 +606,12 @@
                     <?php echo $success; ?>
                 </div>
                 <?php } ?>
-                <?php $ferr = $this->session->flashdata('error'); if ($ferr) { ?>
+                <?php 
+                $ferr = $this->session->flashdata('error'); 
+                // Don't show alert for budget errors - they will be shown in modal
+                $isBudgetError = $ferr && (strpos($ferr, 'बजट') !== false || strpos($ferr, 'कुल बजट') !== false);
+                if ($ferr && !$isBudgetError) { 
+                ?>
                 <div class="alert alert-danger alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     <?php echo $ferr; ?>
@@ -634,6 +630,70 @@
 var formData = <?php echo isset($form_data_json) ? $form_data_json : '{}'; ?>;
 
 $(document).ready(function() {
+    // Get initial data from hidden fields
+    var initialData = {
+        block: $('#initialBlock').val(),
+        booth_name: $('#initialBoothName').val(),
+        booth_no: $('#initialBoothNo').val(),
+        panchayat_name: $('#initialPanchayat').val(),
+        type_of_work: $('#initialTypeOfWork').val(),
+        sub_work_type_id: $('#initialSubWorkType').val(),
+        village: $('#initialVillage').val()
+    };
+    
+    console.log('Initial Data from hidden fields:', initialData);
+    console.log('Block dropdown options:', $('#block option').length);
+    console.log('Block dropdown values:', $('#block').find('option').map(function() { return $(this).val(); }).get());
+    
+    // Restore initial data on page load
+    if (initialData.block && initialData.block !== '') {
+        console.log('Setting block to:', initialData.block);
+        console.log('Block option exists?', $('#block option[value="' + initialData.block + '"]').length > 0);
+        $('#block').val(initialData.block).trigger('change');
+        
+        // Wait for AJAX to complete before restoring dependent fields
+        setTimeout(function() {
+            console.log('After 800ms - Booth Name options:', $('#booth_name option').length);
+            if (initialData.booth_name && initialData.booth_name !== '') {
+                console.log('Setting booth_name to:', initialData.booth_name);
+                $('#booth_name').val(initialData.booth_name).trigger('change');
+            }
+            if (initialData.booth_no && initialData.booth_no !== '') {
+                console.log('Setting booth_no to:', initialData.booth_no);
+                $('#booth_no').val(initialData.booth_no);
+            }
+        }, 800);
+        
+        setTimeout(function() {
+            console.log('After 1600ms - Panchayat options:', $('#panchayat_name option').length);
+            if (initialData.panchayat_name && initialData.panchayat_name !== '') {
+                console.log('Setting panchayat_name to:', initialData.panchayat_name);
+                $('#panchayat_name').val(initialData.panchayat_name).trigger('change');
+            }
+        }, 1600);
+        
+        setTimeout(function() {
+            console.log('After 2400ms - Village options:', $('#village option').length);
+            if (initialData.village && initialData.village !== '') {
+                console.log('Setting village to:', initialData.village);
+                $('#village').val(initialData.village);
+            }
+        }, 2400);
+    }
+    
+    if (initialData.type_of_work && initialData.type_of_work !== '') {
+        console.log('Setting type_of_work to:', initialData.type_of_work);
+        console.log('Type of work option exists?', $('#type_of_work option[value="' + initialData.type_of_work + '"]').length > 0);
+        $('#type_of_work').val(initialData.type_of_work).trigger('change');
+        setTimeout(function() {
+            console.log('After 800ms - Sub Work Type options:', $('#sub_work_type_id option').length);
+            if (initialData.sub_work_type_id && initialData.sub_work_type_id !== '') {
+                console.log('Setting sub_work_type_id to:', initialData.sub_work_type_id);
+                $('#sub_work_type_id').val(initialData.sub_work_type_id);
+            }
+        }, 800);
+    }
+    
     // Check if there's a budget error message in the session
     <?php if ($this->session->flashdata('error')): ?>
         var errorMessage = "<?php echo addslashes($this->session->flashdata('error')); ?>";
@@ -839,9 +899,10 @@ $(document).ready(function() {
                         $('#booth_name').append('<option bnumbervalue="' + value.bnumber + '" value="' + value.id + '">' + value.name + '</option>');
                     });
 
-                    // Restore booth_name if it was selected
-                    if (formData.booth_name) {
-                        $('#booth_name').val(formData.booth_name).trigger('change');
+                    // Restore booth_name from initial data or formData
+                    var boothToRestore = initialData.booth_name || formData.booth_name;
+                    if (boothToRestore) {
+                        $('#booth_name').val(boothToRestore).trigger('change');
                     }
 
                     $('#booth_no').empty().append('<option value="">Select Booth No.</option>');
@@ -881,9 +942,10 @@ $(document).ready(function() {
                         $('#panchayat_name').append('<option value="' + value.id + '">' + value.name + '</option>');
                     });
 
-                    // Restore panchayat_name if it was selected
-                    if (formData.panchayat_name) {
-                        $('#panchayat_name').val(formData.panchayat_name).trigger('change');
+                    // Restore panchayat_name from initial data or formData
+                    var panchayatToRestore = initialData.panchayat_name || formData.panchayat_name;
+                    if (panchayatToRestore) {
+                        $('#panchayat_name').val(panchayatToRestore).trigger('change');
                     }
                 }
             });
@@ -914,9 +976,10 @@ $(document).ready(function() {
                         console.log('No villages found for panchayat ID: ' + boothid);
                     }
 
-                    // Restore village if it was selected
-                    if (formData.village) {
-                        $('#village').val(formData.village);
+                    // Restore village from initial data or formData
+                    var villageToRestore = initialData.village || formData.village;
+                    if (villageToRestore && villageToRestore !== '0') {
+                        $('#village').val(villageToRestore);
                     }
                 },
                 error: function(xhr, status, error) {
@@ -965,9 +1028,10 @@ $(document).ready(function() {
                                 value.name + '</option>');
                         });
 
-                        // Restore sub_work_type_id if it was selected
-                        if (formData.sub_work_type_id) {
-                            $('#sub_work_type_id').val(formData.sub_work_type_id);
+                        // Restore sub_work_type_id from initial data or formData
+                        var subWorkTypeToRestore = initialData.sub_work_type_id || formData.sub_work_type_id;
+                        if (subWorkTypeToRestore) {
+                            $('#sub_work_type_id').val(subWorkTypeToRestore);
                         }
                     }
                     toggleSectionSixBySubWorkType();

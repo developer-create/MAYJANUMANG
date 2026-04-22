@@ -152,13 +152,15 @@ class Fund_budget_model extends CI_Model {
 
         $limit = (float) $row['total_amount'];
         $spent = $this->sum_spent_for_fund_year($normalized_fund, $financial_year_canonical, $exclude_table, $exclude_id);
+        $remaining = $limit - $spent;
 
         if ($spent + (float) $new_amount > $limit + 0.00001) {
             return [
                 'ok' => false,
-                'message' => 'इस वित्तीय वर्ष के लिए कुल बजट ₹' . number_format($limit, 2) . ' है। पहले से उपयोग: ₹' . number_format($spent, 2) . '। नई राशि ₹' . number_format((float) $new_amount, 2) . ' जोड़ने पर सीमा पार हो जाएगी। कृपया राशि कम करें या मास्टर में बजट बढ़ाएं।',
+                'message' => 'इस वित्तीय वर्ष के लिए कुल बजट ₹' . number_format($limit, 2) . ' है। पहले से उपयोग: ₹' . number_format($spent, 2) . '। शेष धनराशि: ₹' . number_format($remaining, 2) . '। नई राशि ₹' . number_format((float) $new_amount, 2) . ' जोड़ने पर सीमा पार हो जाएगी। कृपया राशि कम करें या मास्टर में बजट बढ़ाएं।',
                 'spent' => $spent,
                 'limit' => $limit,
+                'remaining' => $remaining,
                 'skipped' => false,
             ];
         }
