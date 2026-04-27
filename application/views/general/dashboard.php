@@ -180,6 +180,7 @@
                      $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `jansunwai` WHERE `work_status`='Reject' ");
                      $cc122=$cc12->row();
                      echo $cc122->totalusers; ?></div>
+                    <a href="<?php echo base_url('user/jansunwai?status=Reject'); ?>" class="stat-card-btn">View</a>
                 </div>
             </div>
         </div>
@@ -258,6 +259,7 @@
                      $cc12=  $this->db->query("SELECT count(*) as totalusers FROM `districtpublicproblem` WHERE `work_status`='Reject' ");
                      $cc122=$cc12->row();
                      echo $cc122->totalusers; ?></div>
+                    <a href="<?php echo base_url('Districtpublicproblem/Disctrictproblem?status=Reject'); ?>" class="stat-card-btn">View</a>
                 </div>
             </div>
         </div>

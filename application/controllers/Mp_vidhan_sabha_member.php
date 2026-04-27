@@ -395,6 +395,15 @@ class Mp_vidhan_sabha_member extends BaseController {
                         }
                     }
                     
+                    // Get header row to map columns dynamically
+                    $headers = array_map('trim', $rows[0]);
+                    $column_map = array();
+                    
+                    // Map column names to indices
+                    foreach ($headers as $index => $header) {
+                        $column_map[strtolower(str_replace(' ', '_', $header))] = $index;
+                    }
+                    
                     $success_count = 0;
                     $error_count = 0;
                     $errors = array();
@@ -406,84 +415,119 @@ class Mp_vidhan_sabha_member extends BaseController {
                         // Skip completely empty rows only
                         if (empty(array_filter($row))) continue;
                         
-                        // Lookup IDs from names
-                        $district_id = !empty($row[2]) ? get_id_by_name($this, 'district', 'name', $row[2]) : null;
-                        $block_id = !empty($row[3]) ? get_id_by_name($this, 'block', 'name', $row[3]) : null;
-                        // Panchayat - can be ID or name
-                        $panchayat_id = null;
-                        if (!empty($row[4])) {
-                            $panchayat_id = is_numeric($row[4]) ? (int)$row[4] : get_id_by_name($this, 'panchayat', 'name', $row[4]);
+                        // Helper function to get value by column name
+                        $get_col = function($col_name) use ($row, $column_map) {
+                            $key = strtolower(str_replace(' ', '_', $col_name));
+                            return isset($column_map[$key]) && isset($row[$column_map[$key]]) ? trim($row[$column_map[$key]]) : '';
+                        };
+                        
+                        // Lookup IDs from names or IDs
+                        $district_id = !empty($get_col('District ID')) ? (int)$get_col('District ID') : null;
+                        if (!$district_id && !empty($get_col('District Name'))) {
+                            $district_id = get_id_by_name($this, 'district', 'name', $get_col('District Name'));
                         }
-                        $vidhan_sabha_id = !empty($row[5]) ? get_id_by_name($this, 'vidhan_sabha', 'vidhan_sabha_name', $row[5]) : null;
-                        // Village - can be ID or name
-                        $village_id = null;
-                        if (!empty($row[6])) {
-                            $village_id = is_numeric($row[6]) ? (int)$row[6] : get_id_by_name($this, 'village', 'name', $row[6]);
+                        
+                        $block_id = !empty($get_col('Block ID')) ? (int)$get_col('Block ID') : null;
+                        if (!$block_id && !empty($get_col('Block Name'))) {
+                            $block_id = get_id_by_name($this, 'block', 'name', $get_col('Block Name'));
+                        }
+
+                        $vidhan_sabha_id = !empty($get_col('Vidhan Sabha ID')) ? (int)$get_col('Vidhan Sabha ID') : null;
+                        if (!$vidhan_sabha_id && !empty($get_col('Vidhan Sabha Name'))) {
+                            $vidhan_sabha_id = get_id_by_name($this, 'vidhan_sabha', 'vidhan_sabha_name', $get_col('Vidhan Sabha Name'));
+                        }
+
+                        $panchayat_id = !empty($get_col('Panchayat ID')) ? (int)$get_col('Panchayat ID') : null;
+                        $panchayat_name = $get_col('Panchayat Name');
+                        if (!$panchayat_id && !empty($panchayat_name)) {
+                            $panchayat_id = get_id_by_name($this, 'panchayat', 'name', $panchayat_name, 'blockid', $block_id);
+                            if (empty($panchayat_id)) {
+                                $this->db->insert('panchayat', ['name' => $panchayat_name, 'blockid' => $block_id ?: 0]);
+                                $panchayat_id = $this->db->insert_id();
+                            }
+                        }
+
+                        // Village handling
+                        $village_id = !empty($get_col('Village ID')) && is_numeric($get_col('Village ID')) ? (int)$get_col('Village ID') : null;
+                        $village_name = $get_col('Village Name');
+                        if (empty($village_name) && !is_numeric($get_col('Village ID'))) {
+                            $village_name = $get_col('Village ID'); // might be a name placed in the ID column
+                        }
+                        if (empty($village_name)) {
+                            $village_name = $get_col('Village'); // another possible header
+                        }
+                        
+                        if (!$village_id && !empty($village_name)) {
+                            $village_id = get_id_by_name($this, 'village', 'name', $village_name, 'blockid', $block_id);
+                            if (empty($village_id)) {
+                                $this->db->insert('village', ['name' => $village_name, 'blockid' => $block_id ?: 0, 'panchayatid' => $panchayat_id ?: 0]);
+                                $village_id = $this->db->insert_id();
+                            }
                         }
                         
                         $data = array(
-                            'month' => !empty($row[0]) ? $row[0] : null,
-                            'date' => !empty($row[1]) ? date('Y-m-d', strtotime($row[1])) : null,
+                            'month' => !empty($get_col('Month')) ? $get_col('Month') : null,
+                            'date' => !empty($get_col('Date')) ? date('Y-m-d', strtotime($get_col('Date'))) : null,
                             'district_id' => $district_id,
                             'block_id' => $block_id,
                             'panchayat_id' => $panchayat_id,
                             'vidhan_sabha_id' => $vidhan_sabha_id,
                             'village_id' => $village_id,
-                            'name' => !empty($row[7]) ? $row[7] : '',
-                            'position' => !empty($row[8]) ? $row[8] : '',
-                            'mobile_no' => !empty($row[9]) ? $row[9] : '',
-                            'bg' => !empty($row[10]) ? 1 : 0,
-                            'bc' => !empty($row[11]) ? 1 : 0,
-                            'er' => !empty($row[12]) ? 1 : 0,
-                            'br' => !empty($row[13]) ? 1 : 0,
-                            'ip' => !empty($row[14]) ? 1 : 0,
-                            'sc' => !empty($row[15]) ? 1 : 0,
-                            'sa' => !empty($row[16]) ? 1 : 0,
-                            'yc' => !empty($row[17]) ? 1 : 0,
-                            'ap' => !empty($row[18]) ? 1 : 0,
-                            'fp' => !empty($row[19]) ? 1 : 0,
-                            'pp' => !empty($row[20]) ? 1 : 0,
-                            'wc' => !empty($row[21]) ? 1 : 0,
-                            'pa' => !empty($row[22]) ? 1 : 0,
-                            'pc' => !empty($row[23]) ? 1 : 0,
-                            'ak' => !empty($row[24]) ? 1 : 0,
-                            'fm' => !empty($row[25]) ? 1 : 0,
-                            'zp' => !empty($row[26]) ? 1 : 0,
-                            'vp' => !empty($row[27]) ? 1 : 0,
-                            'sr' => !empty($row[28]) ? 1 : 0,
-                            'in_field' => !empty($row[29]) ? 1 : 0,
-                            'eo' => !empty($row[30]) ? 1 : 0,
-                            'gs' => !empty($row[31]) ? 1 : 0,
-                            'us' => !empty($row[32]) ? 1 : 0,
-                            'pw' => !empty($row[33]) ? 1 : 0,
-                            'nl' => !empty($row[34]) ? 1 : 0,
-                            'fr' => !empty($row[35]) ? 1 : 0,
-                            'so' => !empty($row[36]) ? 1 : 0,
-                            'st' => !empty($row[37]) ? 1 : 0,
-                            'ob' => !empty($row[38]) ? 1 : 0,
-                            'smw' => !empty($row[39]) ? 1 : 0,
-                            'smtw' => !empty($row[40]) ? 1 : 0,
-                            'it' => !empty($row[41]) ? 1 : 0,
-                            'test' => !empty($row[42]) ? 1 : 0,
-                            'dyc' => !empty($row[43]) ? 1 : 0,
-                            'dcc' => !empty($row[44]) ? 1 : 0,
-                            'obc' => !empty($row[45]) ? 1 : 0,
-                            'cell' => !empty($row[46]) ? 1 : 0,
-                            'mp' => !empty($row[47]) ? 1 : 0,
-                            'dt' => !empty($row[48]) ? 1 : 0,
-                            'dp' => !empty($row[49]) ? 1 : 0,
-                            'avp' => !empty($row[50]) ? 1 : 0,
-                            'meet' => !empty($row[51]) ? 1 : 0,
-                            'media' => !empty($row[52]) ? 1 : 0,
-                            'mla_x_mla' => !empty($row[53]) ? 1 : 0,
-                            'vech' => !empty($row[54]) ? 1 : 0,
-                            'it_cell_exp' => !empty($row[55]) ? 1 : 0,
-                            'info' => !empty($row[56]) ? 1 : 0,
-                            'nsui' => !empty($row[57]) ? 1 : 0,
-                            'imp' => !empty($row[58]) ? 1 : 0,
-                            'advise' => !empty($row[59]) ? 1 : 0,
-                            'ref' => !empty($row[60]) ? 1 : 0,
-                            'remark' => !empty($row[61]) ? $row[61] : '',
+                            'name' => !empty($get_col('Name')) ? $get_col('Name') : '',
+                            'position' => !empty($get_col('Position')) ? $get_col('Position') : '',
+                            'mobile_no' => !empty($get_col('Mobile No')) ? $get_col('Mobile No') : '',
+                            'bg' => !empty($get_col('BG')) ? 1 : 0,
+                            'bc' => !empty($get_col('BC')) ? 1 : 0,
+                            'er' => !empty($get_col('ER')) ? 1 : 0,
+                            'br' => !empty($get_col('BR')) ? 1 : 0,
+                            'ip' => !empty($get_col('IP')) ? 1 : 0,
+                            'sc' => !empty($get_col('SC')) ? 1 : 0,
+                            'sa' => !empty($get_col('SA')) ? 1 : 0,
+                            'yc' => !empty($get_col('YC')) ? 1 : 0,
+                            'ap' => !empty($get_col('AP')) ? 1 : 0,
+                            'fp' => !empty($get_col('FP')) ? 1 : 0,
+                            'pp' => !empty($get_col('PP')) ? 1 : 0,
+                            'wc' => !empty($get_col('WC')) ? 1 : 0,
+                            'pa' => !empty($get_col('PA')) ? 1 : 0,
+                            'pc' => !empty($get_col('PC')) ? 1 : 0,
+                            'ak' => !empty($get_col('AK')) ? 1 : 0,
+                            'fm' => !empty($get_col('FM')) ? 1 : 0,
+                            'zp' => !empty($get_col('ZP')) ? 1 : 0,
+                            'vp' => !empty($get_col('VP')) ? 1 : 0,
+                            'sr' => !empty($get_col('SR')) ? 1 : 0,
+                            'in_field' => !empty($get_col('In Field')) ? 1 : 0,
+                            'eo' => !empty($get_col('EO')) ? 1 : 0,
+                            'gs' => !empty($get_col('GS')) ? 1 : 0,
+                            'us' => !empty($get_col('US')) ? 1 : 0,
+                            'pw' => !empty($get_col('PW')) ? 1 : 0,
+                            'nl' => !empty($get_col('NL')) ? 1 : 0,
+                            'fr' => !empty($get_col('FR')) ? 1 : 0,
+                            'so' => !empty($get_col('SO')) ? 1 : 0,
+                            'st' => !empty($get_col('ST')) ? 1 : 0,
+                            'ob' => !empty($get_col('OB')) ? 1 : 0,
+                            'smw' => !empty($get_col('SMW')) ? 1 : 0,
+                            'smtw' => !empty($get_col('SMTW')) ? 1 : 0,
+                            'it' => !empty($get_col('IT')) ? 1 : 0,
+                            'test' => !empty($get_col('Test')) ? 1 : 0,
+                            'dyc' => !empty($get_col('DYC')) ? 1 : 0,
+                            'dcc' => !empty($get_col('DCC')) ? 1 : 0,
+                            'obc' => !empty($get_col('OBC')) ? 1 : 0,
+                            'cell' => !empty($get_col('Cell')) ? 1 : 0,
+                            'mp' => !empty($get_col('MP')) ? 1 : 0,
+                            'dt' => !empty($get_col('DT')) ? 1 : 0,
+                            'dp' => !empty($get_col('DP')) ? 1 : 0,
+                            'avp' => !empty($get_col('AVP')) ? 1 : 0,
+                            'meet' => !empty($get_col('Meet')) ? 1 : 0,
+                            'media' => !empty($get_col('Media')) ? 1 : 0,
+                            'mla_x_mla' => !empty($get_col('MLA X MLA')) ? 1 : 0,
+                            'vech' => !empty($get_col('Vech')) ? 1 : 0,
+                            'it_cell_exp' => !empty($get_col('IT Cell Exp')) ? 1 : 0,
+                            'info' => !empty($get_col('Info')) ? 1 : 0,
+                            'nsui' => !empty($get_col('NSUI')) ? 1 : 0,
+                            'imp' => !empty($get_col('IMP')) ? 1 : 0,
+                            'advise' => !empty($get_col('Advise')) ? 1 : 0,
+                            'ref' => !empty($get_col('Ref')) ? 1 : 0,
+                            'remark' => !empty($get_col('Remark')) ? $get_col('Remark') : '',
                             'created_by' => $this->session->userdata('userId'),
                             'added_by' => $this->session->userdata('userId')
                         );

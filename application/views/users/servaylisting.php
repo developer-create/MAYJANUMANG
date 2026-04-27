@@ -42,7 +42,9 @@
                     <div class="box-header">
                         <h3 class="box-title">Member List</h3>
                         <a href="<?php echo base_url() ?>ServayController/createServay"
-                            class="btn btn-info btn-sm pull-right  ">Add New</a>
+                            class="btn btn-info btn-sm pull-right" style="margin-left: 5px;">Add New</a>
+                        <a href="<?php echo base_url() ?>user/member_bulk_upload"
+                            class="btn btn-success btn-sm pull-right">Bulk Upload</a>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">

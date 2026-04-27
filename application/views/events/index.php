@@ -186,7 +186,6 @@ color:#000000 !important;
                     <thead>
                       <tr style="color:white;font-size:15px;background-color:#020254;">
                        <th>Sr No</th>  
-                       <th>Unique ID</th>
                        <th>District</th>
                        <th>Block</th>
                        <th>Office</th>
@@ -222,7 +221,6 @@ color:#000000 !important;
                     <?php foreach ($events as $key => $events): ?>
                     <tr>    
                            <td><?php  echo $key+1;?></td>
-                           <td><?php echo isset($events['unique_id']) ? $events['unique_id'] : 'N/A'; ?></strong></td>
                            <td><?php 
                                // Display district - check if it's a numeric ID or custom name
                                $districtValue = $events['district'];

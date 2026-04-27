@@ -23,6 +23,9 @@ class Panchayat extends BaseController {
         $blockId = $this->input->post('blockid');
         $year = $this->input->post('year');
         $booths = $this->booth_model->getBoothsByBlock($blockId, $year);
+        
+        // Set proper JSON header
+        header('Content-Type: application/json');
         echo json_encode($booths);
     }
 
@@ -30,6 +33,9 @@ class Panchayat extends BaseController {
     public function getpanchayatidByBooth() {
         $boothId = $this->input->post('boothid');
         $panchayat = $this->booth_model->getpanchayatidByBooth($boothId);
+        
+        // Set proper JSON header
+        header('Content-Type: application/json');
         echo json_encode($panchayat);
     }
 
@@ -37,6 +43,9 @@ class Panchayat extends BaseController {
     public function getvillageBypanchayat() {
         $panchayatId = $this->input->post('panchayatid');
         $villages = $this->booth_model->getvillageBypanchayat($panchayatId);
+        
+        // Set proper JSON header
+        header('Content-Type: application/json');
         echo json_encode($villages);
     }
 

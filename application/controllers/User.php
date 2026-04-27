@@ -2725,6 +2725,15 @@ $insert_id = $this->db->insert_id();
                         }
                     }
                     
+                    // Get header row to map columns dynamically
+                    $headers = array_map('trim', $rows[0]);
+                    $column_map = array();
+                    
+                    // Map column names to indices
+                    foreach ($headers as $index => $header) {
+                        $column_map[strtolower(str_replace(' ', '_', $header))] = $index;
+                    }
+                    
                     $success_count = 0;
                     $error_count = 0;
                     $errors = array();
@@ -2736,51 +2745,158 @@ $insert_id = $this->db->insert_id();
                         // Skip completely empty rows only
                         if (empty(array_filter($row))) continue;
                         
+                        // Helper function to get value by column name
+                        $get_col = function($col_name) use ($row, $column_map) {
+                            $key = strtolower(str_replace(' ', '_', $col_name));
+                            return isset($column_map[$key]) && isset($row[$column_map[$key]]) ? trim($row[$column_map[$key]]) : '';
+                        };
+                        
                         // Lookup IDs from names
-                        $block_id = !empty($row[8]) ? get_id_by_name($this, 'block', 'name', $row[8]) : null;
-                        $department_id = !empty($row[18]) ? get_id_by_name($this, 'department', 'name', $row[18]) : null;
-                        $sub_work_type_id = !empty($row[23]) ? get_id_by_name($this, 'subtype_of_work', 'name', $row[23]) : null;
+                        // Lookup IDs from names
+                        $block_name = $get_col('Block Name');
+                        $department_name = $get_col('Department Name');
+                        
+                        // Try Sub Work Type Name first, then Sub Work Type
+                        $sub_work_type_name = $get_col('Sub Work Type Name');
+                        if (empty($sub_work_type_name)) {
+                            $sub_work_type_name = $get_col('Sub Work Type');
+                        }
+                        
+                        $booth_name = $get_col('Booth Name');
+                        $panchayat_name = $get_col('Panchayat Name');
+                        $village_name = $get_col('Village');
+                        
+                        $block_id = !empty($block_name) ? get_id_by_name($this, 'block', 'name', $block_name) : null;
+                        $department_id = !empty($department_name) ? get_id_by_name($this, 'department', 'name', $department_name) : null;
+                        
+                        // Use block_id as filter for booth, panchayat, village if available
+                        $booth_id = !empty($booth_name) ? get_id_by_name($this, 'booth', 'name', $booth_name, 'blockid', $block_id) : null;
+                        if (empty($booth_id) && !empty($booth_name)) {
+                            $booth_no_val = $get_col('Booth No') ?: '';
+                            $this->db->insert('booth', ['name' => $booth_name, 'bnumber' => $booth_no_val, 'blockid' => $block_id ?: 0, 'year' => date('Y')]);
+                            $booth_id = $this->db->insert_id();
+                        }
+                        
+                        $panchayat_id = !empty($panchayat_name) ? get_id_by_name($this, 'panchayat', 'name', $panchayat_name, 'blockid', $block_id) : null;
+                        if (empty($panchayat_id) && !empty($panchayat_name)) {
+                            $this->db->insert('panchayat', ['name' => $panchayat_name, 'boothid' => $booth_id ?: 0, 'blockid' => $block_id ?: 0]);
+                            $panchayat_id = $this->db->insert_id();
+                        }
+
+                        $village_id = !empty($village_name) ? get_id_by_name($this, 'village', 'name', $village_name, 'blockid', $block_id) : null;
+                        if (empty($village_id) && !empty($village_name)) {
+                            $this->db->insert('village', ['name' => $village_name, 'boothid' => $booth_id ?: 0, 'blockid' => $block_id ?: 0, 'panchayatid' => $panchayat_id ?: 0]);
+                            $village_id = $this->db->insert_id();
+                        }
+                        
+                        $sub_work_type_id = !empty($sub_work_type_name) ? get_id_by_name($this, 'subtype_of_work', 'name', $sub_work_type_name) : null;
+                        if (empty($sub_work_type_id) && !empty($sub_work_type_name)) {
+                            // Resolve a valid work_type_id to satisfy the FK constraint on subtype_of_work
+                            $type_of_work_name = $get_col('Type of Work');
+                            $valid_work_type_id = null;
+                            if (!empty($type_of_work_name)) {
+                                $wt = $this->db->reset_query()->where('name', $type_of_work_name)->get('workType')->row();
+                                if (!$wt) {
+                                    // Case-insensitive fallback
+                                    $wt = $this->db->reset_query()
+                                        ->where("LOWER(name) = LOWER('" . $this->db->escape_str($type_of_work_name) . "')")
+                                        ->get('workType')->row();
+                                }
+                                if ($wt) {
+                                    $valid_work_type_id = $wt->id;
+                                } else {
+                                    // Auto-create the work type
+                                    $this->db->reset_query()->insert('workType', ['name' => $type_of_work_name]);
+                                    $valid_work_type_id = $this->db->insert_id();
+                                }
+                            }
+                            // Only insert if we have a valid work_type_id (FK requires it)
+                            if (!empty($valid_work_type_id)) {
+                                $this->db->reset_query()->insert('subtype_of_work', [
+                                    'name'         => $sub_work_type_name,
+                                    'work_type_id' => $valid_work_type_id
+                                ]);
+                                $sub_work_type_id = $this->db->insert_id();
+                            }
+                        }
+                        
+                        // Handle Month name to number conversion
+                        $month_val = $get_col('Month');
+                        $month_number = $month_val;
+                        if (!empty($month_val) && !is_numeric($month_val)) {
+                            $months_map = [
+                                'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4,
+                                'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8,
+                                'september' => 9, 'october' => 10, 'november' => 11, 'december' => 12
+                            ];
+                            $month_number = isset($months_map[strtolower($month_val)]) ? $months_map[strtolower($month_val)] : $month_val;
+                        }
+
+                        // Validate that required IDs were found
+                        if (empty($block_id)) {
+                            $errors[] = "Row " . ($i + 1) . ": Block not found: " . $block_name;
+                            $error_count++;
+                            continue;
+                        }
+                        
+                        if (empty($department_id)) {
+                            $errors[] = "Row " . ($i + 1) . ": Department not found: " . $department_name;
+                            $error_count++;
+                            continue;
+                        }
                         
                         $data = array(
                             "createdAt" => date('Y-m-d H:i:s'),
-                            "sector_name" => !empty($row[0]) ? $row[0] : '',
-                            "micro_sector_no" => !empty($row[1]) ? $row[1] : '',
-                            "micro_sector_name" => !empty($row[2]) ? $row[2] : '',
-                            "year" => !empty($row[3]) ? $row[3] : '',
-                            "month" => !empty($row[4]) ? $row[4] : '',
-                            "date" => !empty($row[5]) ? date("Y-m-d", strtotime($row[5])) : null,
-                            "district" => !empty($row[6]) ? $row[6] : '',
-                            "assembly" => !empty($row[7]) ? $row[7] : '',
+                            "sector_name" => $get_col('Sector Name'),
+                            "micro_sector_no" => $get_col('Micro Sector No'),
+                            "micro_sector_name" => $get_col('Micro Sector Name'),
+                            "year" => $get_col('Year'),
+                            "month" => $month_number,
+                            "date" => !empty($get_col('Date')) ? date("Y-m-d", strtotime($get_col('Date'))) : null,
+                            "district" => $get_col('District'),
+                            "assembly" => $get_col('Assembly'),
                             "block" => $block_id,
-                            "recommended_letter_no" => !empty($row[9]) ? $row[9] : '',
-                            "booth_no" => !empty($row[10]) ? $row[10] : '',
-                            "booth_name" => !empty($row[11]) ? $row[11] : '',
-                            "panchayat_name" => !empty($row[12]) ? $row[12] : '',
-                            "village" => !empty($row[13]) ? $row[13] : '',
-                            "majra_faliya" => !empty($row[14]) ? $row[14] : '',
-                            "work_problem" => !empty($row[15]) ? $row[15] : '',
-                            "office" => !empty($row[16]) ? $row[16] : '',
-                            "approximate_cost" => !empty($row[17]) ? (float)$row[17] : 0,
+                            "recommended_letter_no" => $get_col('Recommended Letter No'),
+                            "booth_no" => $get_col('Booth No'),
+                            "booth_name" => $booth_id,
+                            "panchayat_name" => $panchayat_id,
+                            "village" => $village_id,
+                            "majra_faliya" => $get_col('Majra Faliya'),
+                            "work_problem" => $get_col('Work Problem'),
+                            "office" => $get_col('Office'),
+                            "approximate_cost" => !empty($get_col('Approximate Cost')) ? (float)$get_col('Approximate Cost') : 0,
                             "department" => $department_id,
-                            "priority" => !empty($row[19]) ? $row[19] : '',
-                            "ts_no_date" => !empty($row[20]) ? $row[20] : '',
-                            "as_no_date" => !empty($row[21]) ? $row[21] : '',
-                            "type_of_work" => !empty($row[22]) ? $row[22] : '',
+                            "priority" => $get_col('Priority'),
+                            "ts_no_date" => $get_col('TS No Date'),
+                            "as_no_date" => $get_col('AS No Date'),
+                            "type_of_work" => $get_col('Type of Work'),
                             "sub_work_type_id" => $sub_work_type_id,
-                            "middle_men" => !empty($row[24]) ? $row[24] : '',
-                            "cont_no" => !empty($row[25]) ? $row[25] : '',
-                            "beneficial" => !empty($row[26]) ? $row[26] : '',
-                            "mobile" => !empty($row[27]) ? $row[27] : '',
-                            "po" => !empty($row[28]) ? $row[28] : '',
+                            "middle_men" => $get_col('Middle Men'),
+                            "cont_no" => $get_col('Cont No'),
+                            "beneficial" => $get_col('Beneficial'),
+                            "mobile" => $get_col('Mobile'),
+                            "po" => $get_col('PO'),
                             "work_status" => "Incomplete",
-                            "work_agency" => !empty($row[29]) ? $row[29] : '',
-                            "approved_fund" => !empty($row[30]) ? $row[30] : '',
-                            "account_details" => !empty($row[31]) ? $row[31] : '',
-                            "id_proof_number" => !empty($row[32]) ? $row[32] : '',
-                            "residential_number" => !empty($row[33]) ? $row[33] : '',
-                            "remark_goshana" => !empty($row[34]) ? $row[34] : '',
+                            "work_agency" => $get_col('Work Agency'),
+                            "approved_fund" => $get_col('Approved Fund'),
+                            "account_details" => $get_col('Account Details'),
+                            "id_proof_number" => $get_col('ID Proof Number'),
+                            "residential_number" => $get_col('Residential Number'),
+                            "remark_goshana" => $get_col('Remark Goshana'),
+                            "remark" => !empty($get_col('REMARK / TIP/ USD')) ? $get_col('REMARK / TIP/ USD') : $get_col('Remark Goshana'),
                             "createdBy" => $this->session->userdata('userId'),
-                            "uname" => !empty($row[26]) ? $row[26] : ''
+                            "updatedBy" => $this->session->userdata('userId'),
+                            "current_stage" => 1,
+                            "uname" => $get_col('Beneficial'),
+                            "registration_no" => $get_col('Recommended Letter No'),
+                            "panchayat" => $panchayat_name,
+                            "gram" => $village_name,
+                            "faliya" => $get_col('Majra Faliya'),
+                            "samasya" => $get_col('Work Problem'),
+                            "vibhag" => $department_id,
+                            "anumanit_lagat" => !empty($get_col('Approximate Cost')) ? (float)$get_col('Approximate Cost') : 0,
+                            "lat" => 0.00000000,
+                            "lng" => 0.00000000
                         );
                         
                         // Validate required fields
@@ -2826,7 +2942,7 @@ $insert_id = $this->db->insert_id();
                             $this->logActivity('add', 'jansunwai', $insert_id, $data, null, 'Jansunwai entry created via bulk upload with ID: ' . $insert_id . ' (Sector: ' . $data['sector_name'] . ')');
                             $success_count++;
                         } else {
-                            $errors[] = "Row " . ($i + 1) . ": Failed to insert record";
+                            $errors[] = "Row " . ($i + 1) . ": Failed to insert record - " . $this->db->error()['message'];
                             $error_count++;
                         }
                     }
@@ -2869,11 +2985,11 @@ $insert_id = $this->db->insert_id();
         // CSV headers
         $headers = array(
             'Sector Name*', 'Micro Sector No*', 'Micro Sector Name*', 'Year*', 'Month*', 'Date (YYYY-MM-DD)*',
-            'District*', 'Assembly*', 'Block ID*', 'Recommended Letter No*', 'Booth No*', 'Booth Name*',
+            'District*', 'Assembly*', 'Block Name*', 'Recommended Letter No*', 'Booth No*', 'Booth Name*',
             'Panchayat Name*', 'Village*', 'Majra Faliya*', 'Work Problem*', 'Office*', 'Approximate Cost*',
-            'Department ID*', 'Priority*', 'TS No/Date', 'AS No/Date', 'Type of Work*', 'Sub Work Type ID',
+            'Department Name*', 'Priority*', 'TS No/Date', 'AS No/Date', 'Type of Work*', 'Sub Work Type',
             'Middle Men*', 'Contact No*', 'Beneficial*', 'Mobile*', 'PO*', 'Work Agency*', 'Approved Fund*',
-            'Account Details', 'ID Proof Number', 'Residential Number', 'Remark/Goshana'
+            'Account Details', 'ID Proof Number', 'Residential Number', 'Remark/Goshana', 'REMARK / TIP/ USD'
         );
         
         fputcsv($output, $headers);
@@ -2881,10 +2997,10 @@ $insert_id = $this->db->insert_id();
         // Sample data row
         $sample = array(
             'Sample Sector', '001', 'Sample Micro Sector', '2026', 'January', '2026-01-15',
-            'Sample District', 'Sample Assembly', '1', 'RLN001', '001', 'Sample Booth',
+            'Sample District', 'Sample Assembly', 'Gandhwani', 'RLN001', '001', 'Sample Booth',
             'Sample Panchayat', 'Sample Village', 'Sample Majra', 'Sample Work Problem', 'Sample Office', '50000',
-            '1', 'High', 'TS001/2026', 'AS001/2026', 'Sample Work Type', '1',
-            'Sample Middle Man', '9876543210', 'Sample Beneficial', '9876543210', 'Sample PO', 'Sample Agency', 'MLA Sweechanudan',
+            'PWD (लोक निर्माण विभाग)', 'High', 'TS001/2026', 'AS001/2026', 'Sample Work Type', 'Sample Sub Work Type',
+            'Sample Middle Man', '9876543210', 'Sample Beneficial', '9876543210', 'Sample PO', 'Sample Agency', 'MLA FUND',
             'Sample Account Details', '123456789012', 'IFSC0001234', 'Sample Remark'
         );
         
@@ -2892,6 +3008,225 @@ $insert_id = $this->db->insert_id();
         fclose($output);
     }
     
+    public function member_bulk_upload() {
+        $this->module = "MemberList";
+        if (!$this->hasCreateAccess()) {
+            $this->loadThis();
+        } else {
+            $data["districts"] = $this->Comman_model->getAllData("district", [], "");
+            $data["blocks"] = $this->Comman_model->getAllData("block", [], "");
+            $data["parties"] = $this->Comman_model->getAllData("party", [], "");
+            $this->global["pageTitle"] = "Member Bulk Upload";
+            $this->loadViews("users/member_bulk_upload", $this->global, $data, null);
+        }
+    }
+
+    public function download_member_template() {
+        $filename = 'member_template.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        $output = fopen('php://output', 'w');
+        $headers = array(
+            'District*', 'Vidhan Sabha*', 'Block Name/Number*', 'Janpad Panchayat', 'Mandalam', 
+            'Booth Name', 'Booth Number', 'Gram Panchayat', 'Village', 'Name*', 'Father Name', 
+            'Caste', 'Age', 'Education', 'Mobile*', 'Voter Code', 'Address', 'Gender', 'Vehicle', 
+            'Government Employee', 'Party', 'Code', 'Respect for Women', 'Farmer Loan Waiver', 
+            'Samithi', 'Facebook', 'Instagram', 'Twitter', 'Group', 'Toll', 'Padvarsh', 
+            'Remark', 'Reference', 'DOB', 'DOM'
+        );
+        fputcsv($output, $headers);
+        $sample = array(
+            'Dhar', 'Gandhwani', 'Gandhwani', 'Sample Janpad', 'Sample Mandalam', 
+            'Sample Booth', '001', 'Sample Panchayat', 'Sample Village', 'John Doe', 'Father Doe', 
+            'General', '30', 'Graduate', '9876543210', 'ABC1234567', 'Sample Address', 'Male', '4 व्हीलर', 
+            'No', 'INC', 'BC (बूथ कमेटी)', 'Yes', 'No', 
+            'Sample Samiti', 'fb.com/user', 'ig.com/user', 'tw.com/user', 'A', 'Sample Toll', '2024', 
+            'Sample Remark', 'Sample Reference', '1990-01-01', '2015-05-20'
+        );
+        fputcsv($output, $sample);
+        fclose($output);
+    }
+
+    public function process_member_bulk_upload() {
+        $this->module = "MemberList";
+        if (!$this->hasCreateAccess()) {
+            $this->loadThis();
+        } else {
+            $this->load->helper('bulk_upload');
+            $config['upload_path'] = './uploads/bulk_uploads/';
+            $config['allowed_types'] = 'csv';
+            $config['max_size'] = 10240;
+            if (!is_dir($config['upload_path'])) {
+                mkdir($config['upload_path'], 0755, true);
+            }
+            $this->load->library('upload', $config);
+            if (!$this->upload->do_upload('bulk_file')) {
+                $this->session->set_flashdata('error', $this->upload->display_errors());
+                redirect('user/member_bulk_upload');
+            } else {
+                $file_data = $this->upload->data();
+                $file_path = $file_data['full_path'];
+                try {
+                    $rows = parse_bulk_upload_file($file_path);
+                    if (empty($rows) || count($rows) < 2) {
+                        $this->session->set_flashdata('error', 'The file is empty or missing data rows.');
+                        redirect('user/member_bulk_upload');
+                        return;
+                    }
+                    $headers = array_map('trim', $rows[0]);
+                    $column_map = array();
+                    foreach ($headers as $index => $header) {
+                        $column_map[strtolower(str_replace(' ', '_', $header))] = $index;
+                    }
+                    
+                    $current_row_index = 0;
+                    $get_col = function($col_name) use ($rows, $column_map, &$current_row_index) {
+                        $key = strtolower(str_replace(' ', '_', $col_name));
+                        $key_clean = preg_replace('/[^a-z0-9_]/', '', $key);
+                        
+                        foreach($column_map as $map_key => $idx) {
+                            $map_key_clean = preg_replace('/[^a-z0-9_]/', '', $map_key);
+                            if ($map_key === $key || $map_key_clean === $key_clean) {
+                                return isset($rows[$current_row_index][$idx]) ? trim($rows[$current_row_index][$idx]) : '';
+                            }
+                        }
+                        return '';
+                    };
+                    
+                    $success_count = 0;
+                    $error_count = 0;
+                    $errors = array();
+                    $this->load->model('ServayModel');
+                    
+                    for ($i = 1; $i < count($rows); $i++) {
+                        $current_row_index = $i;
+                        $row = $rows[$i];
+                        if (empty(array_filter($row))) continue;
+                        
+                        $district_name = $get_col('District');
+                        $vs_name = $get_col('Vidhan Sabha');
+                        $block_name = $get_col('Block Name/Number');
+                        $party_name = $get_col('Party');
+                        $samiti_name = $get_col('Samithi');
+                        
+                        $district_id = !empty($district_name) ? get_id_by_name($this, 'district', 'name', $district_name) : null;
+                        $vs_id = !empty($vs_name) ? get_id_by_name($this, 'vidhan_sabha', 'vidhan_sabha_name', $vs_name, 'district_id', $district_id) : null;
+                        $block_id = !empty($block_name) ? get_id_by_name($this, 'block', 'name', $block_name) : null;
+                        $party_id = !empty($party_name) ? get_id_by_name($this, 'party', 'name', $party_name) : null;
+                        $samiti_id = !empty($samiti_name) ? get_id_by_name($this, 'samiti', 'name', $samiti_name) : null;
+                        
+                        if (empty($district_id) && !empty($district_name)) {
+                            $this->db->insert('district', ['name' => $district_name]);
+                            $district_id = $this->db->insert_id();
+                        }
+                        if (empty($vs_id) && !empty($vs_name)) {
+                            $this->db->insert('vidhan_sabha', ['vidhan_sabha_name' => $vs_name, 'district_id' => $district_id ?: 0]);
+                            $vs_id = $this->db->insert_id();
+                        }
+                        if (empty($block_id) && !empty($block_name)) {
+                            $this->db->insert('block', ['name' => $block_name]);
+                            $block_id = $this->db->insert_id();
+                        }
+                        
+                        // Resolve IDs for booth, panchayat, village
+                        $booth_name = $get_col('Booth Name');
+                        $booth_number = $get_col('Booth Number');
+                        $panchayat_name = $get_col('Gram Panchayat');
+                        $village_name = $get_col('Village');
+
+                        $booth_id = !empty($booth_name) ? get_id_by_name($this, 'booth', 'name', $booth_name) : null;
+                        $panchayat_id = !empty($panchayat_name) ? get_id_by_name($this, 'panchayat', 'name', $panchayat_name) : null;
+                        $village_id = !empty($village_name) ? get_id_by_name($this, 'village', 'name', $village_name) : null;
+
+                        if (empty($booth_id) && !empty($booth_name)) {
+                            $this->db->insert('booth', ['name' => $booth_name]);
+                            $booth_id = $this->db->insert_id();
+                        }
+                        if (empty($panchayat_id) && !empty($panchayat_name)) {
+                            $this->db->insert('panchayat', ['name' => $panchayat_name]);
+                            $panchayat_id = $this->db->insert_id();
+                        }
+                        if (empty($village_id) && !empty($village_name)) {
+                            $this->db->insert('village', ['name' => $village_name]);
+                            $village_id = $this->db->insert_id();
+                        }
+
+                        $data = array(
+                            'district' => $district_id ?: 'NA',
+                            'vidhan_sabha_id' => $vs_id,
+                            'block_name_number' => $block_id ?: 'NA',
+                            'janpad_panchayat' => $get_col('Janpad Panchayat') ?: 'NA',
+                            'mandalam' => $get_col('Mandalam') ?: 'NA',
+                            'boothname' => $booth_id ?: 'NA',
+                            'boothnumber' => $booth_number ?: 'NA',
+                            'grampanchayat' => $panchayat_id ?: 'NA',
+                            'village' => $village_id ?: 'NA',
+                            'name' => $get_col('Name') ?: 'NA',
+                            'fathername' => $get_col('Father Name') ?: 'NA',
+                            'jaati' => $get_col('Caste') ?: 'NA',
+                            'age' => $get_col('Age') ?: 'NA',
+                            'education' => $get_col('Education') ?: 'NA',
+                            'mobile' => $get_col('Mobile') ?: 'NA',
+                            'votarcode' => $get_col('Voter Code') ?: 'NA',
+                            'address' => $get_col('Address') ?: 'NA',
+                            'gender' => $get_col('Gender') ?: 'NA',
+                            'vehicle' => $get_col('Vehicle') ?: 'NA',
+                            'government_employee' => $get_col('Government Employee') ?: 'NA',
+                            'parti' => $party_id ?: 'NA',
+                            'code' => $get_col('Code') ?: 'NA',
+                            'respect_for_women' => $get_col('Respect for Women') ?: 'NA',
+                            'farmer_loan_waiver' => $get_col('Farmer Loan Waiver') ?: 'NA',
+                            'samithi' => $samiti_id ?: 'NA',
+                            'facebook' => $get_col('Facebook') ?: 'NA',
+                            'instagram' => $get_col('Instagram') ?: 'NA',
+                            'twitter' => $get_col('Twitter') ?: 'NA',
+                            'group' => $get_col('Group') ?: 'NA',
+                            'toll' => $get_col('Toll') ?: 'NA',
+                            'padvarsh' => $get_col('Padvarsh') ?: 'NA',
+                            'remark' => $get_col('Remark') ?: 'NA',
+                            'reference' => $get_col('Reference') ?: 'NA',
+                            'dob' => !empty($get_col('DOB')) ? date("Y-m-d", strtotime($get_col('DOB'))) : '0000-00-00',
+                            'dom' => !empty($get_col('DOM')) ? date("Y-m-d", strtotime($get_col('DOM'))) : '0000-00-00',
+                            'user_id' => $this->session->userdata('userId'),
+                            'create_date' => date('Y-m-d H:i:s'),
+                            'startdate' => date('D M d Y H:i:s \G\M\T+0530 (T)'),
+                            'enddate' => date('D M d Y H:i:s \G\M\T+0530 (T)'),
+                            'lat' => 0, 'long' => 0, 'end_lat' => 0, 'end_long' => 0
+                        );
+                        
+                        if ($data['name'] == 'NA' || $data['mobile'] == 'NA') {
+                            $errors[] = "Row " . ($i + 1) . ": Name and Mobile are required.";
+                            $error_count++;
+                            continue;
+                        }
+                        
+                        $insertId = $this->ServayModel->insertServay($data);
+                        if ($insertId) {
+                            $success_count++;
+                        } else {
+                            $error_count++;
+                        }
+                    }
+                    
+                    unlink($file_path);
+                    $message = "Bulk upload completed. Success: $success_count, Errors: $error_count";
+                    if (!empty($errors)) $message .= "\nErrors: " . implode(", ", array_slice($errors, 0, 5));
+                    
+                    if ($success_count > 0) {
+                        $this->session->set_flashdata('success', $message);
+                    } else {
+                        $this->session->set_flashdata('error', $message);
+                    }
+                    
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('error', 'Error processing file: ' . $e->getMessage());
+                }
+                
+                redirect('ServayListing');
+            }
+        }
+    }
+
     /**
      * User logout functionality
      */

@@ -223,6 +223,28 @@
                             </div>
 
                             <div class="row">
+                                <!-- Booth Name -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="booth_name">Booth Name</label>
+                                        <select class="form-control select2 required" id="booth_name" name="booth_name">
+                                            <option value="">Select Booth</option>
+                                            <!-- Booth options will be populated dynamically based on selected Block -->
+                                        </select>
+                                        <?php echo form_error('booth_name', '<div class="text-danger">', '</div>'); ?>
+                                    </div>
+                                </div>
+                                <!-- Booth No -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="booth_no">Booth No.</label>
+                                        <select class="form-control select2 required" id="booth_no" name="booth_no">
+                                            <option value="">Select Booth</option>
+                                            <!-- Booth options will be populated dynamically based on selected Block -->
+                                        </select>
+                                        <?php echo form_error('booth_no', '<div class="text-danger">', '</div>'); ?>
+                                    </div>
+                                </div>
                                 <!-- Panchayat Name -->
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -238,6 +260,9 @@
                                         <?php echo form_error('panchayat_name', '<div class="text-danger">', '</div>'); ?>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="row">
                                 <!-- Village -->
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -956,23 +981,48 @@ $(document).ready(function() {
     });
 
     $('#panchayat_name').change(function() {
-        var boothid = $(this).val();
-        if (boothid != 0 && boothid != '') {
+        var panchayatid = $(this).val();
+        console.log('Panchayat changed, ID:', panchayatid);
+        
+        if (panchayatid != 0 && panchayatid != '') {
             $.ajax({
                 url: '<?php echo site_url('panchayat/getvillageBypanchayat'); ?>',
                 method: 'POST',
                 data: {
-                    panchayatid: boothid
+                    panchayatid: panchayatid
                 },
                 dataType: 'json',
                 success: function(response) {
+                    console.log('Villages response:', response);
                     $('#village').empty();
                     $('#village').append('<option value="">Select Village</option>');
                     if (response && response.length > 0) {
                         $.each(response, function(index, value) {
+                            console.log('Adding village:', value.id, value.name);
                             $('#village').append('<option value="' + value.id + '">' + value.name + '</option>');
                         });
+                        
+                        // Restore village from initial data or formData
+                        var villageToRestore = initialData.village || formData.village;
+                        if (villageToRestore) {
+                            $('#village').val(villageToRestore);
+                        }
                     } else {
+                        console.log('No villages found for panchayat ID: ' + panchayatid);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading villages:', error);
+                    console.error('Response:', xhr.responseText);
+                    $('#village').empty();
+                    $('#village').append('<option value="">Select Village</option>');
+                }
+            });
+        } else {
+            $('#village').empty();
+            $('#village').append('<option value="">Select Village</option>');
+        }
+    });
                         console.log('No villages found for panchayat ID: ' + boothid);
                     }
 

@@ -7,8 +7,8 @@ $role = $this->session->userdata('role');
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            <i class="fa fa-upload"></i> Bulk Upload Jansunwai Entries
-            <small>Upload multiple Jansunwai entries using CSV/Excel file</small>
+            <i class="fa fa-upload"></i> Bulk Upload Member Entries
+            <small>Upload multiple member entries using CSV file</small>
         </h1>
     </section>
     
@@ -19,11 +19,14 @@ $role = $this->session->userdata('role');
                     <div class="box-header">
                         <h3 class="box-title">Upload File</h3>
                         <div class="box-tools">
-                            <a class="btn btn-primary btn-sm" href="<?php echo base_url('user/jansunwai'); ?>">
+                            <a class="btn btn-primary btn-sm" href="<?php echo base_url('ServayListing'); ?>">
                                 <i class="fa fa-arrow-left"></i> Back to List
                             </a>
-                            <a class="btn btn-success btn-sm" href="<?php echo base_url('user/download_jansunwai_template'); ?>">
+                            <a class="btn btn-success btn-sm" href="<?php echo base_url('user/download_member_template'); ?>">
                                 <i class="fa fa-download"></i> Download Template
+                            </a>
+                            <a class="btn btn-info btn-sm" href="<?php echo base_url('member_sample.csv'); ?>" download>
+                                <i class="fa fa-file-excel-o"></i> Sample CSV
                             </a>
                         </div>
                     </div>
@@ -34,7 +37,7 @@ $role = $this->session->userdata('role');
                         if($error) {
                             echo '<div class="alert alert-danger alert-dismissable">
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                    '.$error.'
+                                    '.nl2br($error).'
                                   </div>';
                         }
                         
@@ -49,7 +52,7 @@ $role = $this->session->userdata('role');
                         
                         <div class="row">
                             <div class="col-md-8">
-                                <?php echo form_open_multipart('user/process_jansunwai_bulk_upload'); ?>
+                                <?php echo form_open_multipart('user/process_member_bulk_upload'); ?>
                                 
                                 <div class="form-group">
                                     <label for="bulk_file">Select CSV File *</label>
@@ -93,51 +96,39 @@ $role = $this->session->userdata('role');
                                     </div>
                                     <div class="box-body">
                                         <ul>
-                                            <li><strong>Required Fields:</strong> Sector Name, Work Problem, Beneficial</li>
-                                            <li><strong>Date Format:</strong> Use YYYY-MM-DD format (e.g., 2026-01-15)</li>
-                                            <li><strong>Reference Fields:</strong> Use names (not IDs) for Block, Department, Sub Work Type</li>
+                                            <li><strong>Required Fields:</strong> District, Vidhan Sabha, Block Name/Number, Name, Mobile</li>
+                                            <li><strong>Date Format:</strong> Use YYYY-MM-DD format (e.g., 2026-01-15) for DOB/DOM</li>
+                                            <li><strong>Reference Fields:</strong> Use names (not IDs) for District, Vidhan Sabha, Block, Samiti, Party</li>
                                             <li><strong>Mobile Numbers:</strong> 10-digit numbers without country code</li>
-                                            <li><strong>Approximate Cost:</strong> Numeric value without currency symbols</li>
+                                            <li><strong>Multiple Selections:</strong> For 'Code' and 'Vehicle', use comma-separated values if multiple</li>
                                             <li><strong>Empty Rows:</strong> Will be skipped automatically</li>
-                                            <li><strong>Budget Validation:</strong> System will check fund availability</li>
                                         </ul>
                                         
                                         <h4>Reference Data:</h4>
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
+                                                <strong>Districts:</strong>
+                                                <ul class="list-unstyled">
+                                                    <?php foreach(array_slice($districts, 0, 10) as $district): ?>
+                                                        <li><?php echo $district->name; ?></li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-4">
                                                 <strong>Blocks:</strong>
                                                 <ul class="list-unstyled">
                                                     <?php foreach(array_slice($blocks, 0, 10) as $block): ?>
-                                                                                                                <li><?php echo $block['name']; ?></li>
+                                                        <li><?php echo $block->name; ?></li>
                                                     <?php endforeach; ?>
-                                                    <?php if(count($blocks) > 10): ?>
-                                                        <li><em>... and <?php echo count($blocks) - 10; ?> more</em></li>
-                                                    <?php endif; ?>
                                                 </ul>
                                             </div>
-                                            <div class="col-md-6">
-                                                <strong>Departments:</strong>
+                                            <div class="col-md-4">
+                                                <strong>Parties:</strong>
                                                 <ul class="list-unstyled">
-                                                    <?php foreach(array_slice($departments, 0, 10) as $dept): ?>
-                                                                                                                <li><?php echo $dept['name']; ?></li>
+                                                    <?php foreach(array_slice($parties, 0, 10) as $party): ?>
+                                                        <li><?php echo $party->name; ?></li>
                                                     <?php endforeach; ?>
-                                                    <?php if(count($departments) > 10): ?>
-                                                        <li><em>... and <?php echo count($departments) - 10; ?> more</em></li>
-                                                    <?php endif; ?>
                                                 </ul>
-                                            </div>
-                                        </div>
-                                        
-                                        <h4>Sample Values:</h4>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <strong>Priority:</strong> High, Medium, Low
-                                            </div>
-                                            <div class="col-md-4">
-                                                <strong>Approved Fund:</strong> MLA Sweechanudan, CLP Sweechanudan, Jansampark Fund
-                                            </div>
-                                            <div class="col-md-4">
-                                                <strong>Type of Work:</strong> Construction, Repair, Development
                                             </div>
                                         </div>
                                     </div>
@@ -156,6 +147,8 @@ $(document).ready(function() {
     // File validation
     $('#bulk_file').change(function() {
         var file = this.files[0];
+        if (!file) return;
+        
         var fileSize = file.size;
         var maxSize = 10 * 1024 * 1024; // 10MB
         
@@ -165,8 +158,8 @@ $(document).ready(function() {
             return false;
         }
         
-        var allowedTypes = ['text/csv', 'application/csv'];
-        if (allowedTypes.indexOf(file.type) === -1 && !file.name.endsWith('.csv')) {
+        var allowedExtensions = /(\.csv)$/i;
+        if (!allowedExtensions.exec($(this).val())) {
             alert('Please select a valid CSV file.');
             $(this).val('');
             return false;
