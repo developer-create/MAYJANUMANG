@@ -212,7 +212,7 @@
                                         <select class="form-control select2 required" id="block" name="block">
                                             <option value="">Select</option>
                                             <?php foreach($blocks as $eachblock){ ?>
-                                            <option value="<?php echo $eachblock['id'] ?>" <?php echo set_select('block', $eachblock['id']); ?>>
+                                            <option value="<?php echo $eachblock['id'] ?>" <?php echo set_select('block', $eachblock['id'], $jansunwai->block == $eachblock['id']); ?>>
                                                 <?php echo $eachblock['name'] ?></option>
                                             <?php }   ?>
 
@@ -316,7 +316,7 @@
                                             name="type_of_work">
                                             <option value="">Select Type of Work</option>
                                             <?php foreach ($worktypes as $each_aa): ?>
-                                            <option value="<?= $each_aa->name ?>" <?php echo set_select('type_of_work', $each_aa->name); ?>>
+                                            <option value="<?= $each_aa->name ?>" <?php echo set_select('type_of_work', $each_aa->name, $jansunwai->type_of_work == $each_aa->name); ?>>
                                                 <?= htmlspecialchars($each_aa->name) ?></option>
                                             <?php endforeach; ?>
                                         </select>
@@ -377,7 +377,7 @@
                                         <select class="form-control select2 required" id="department" name="department">
                                             <option value="">Select</option>
                                             <?php foreach($departments as $eachblock){ ?>
-                                            <option value="<?php echo $eachblock['id'] ?>" <?php echo set_select('department', $eachblock['id']); ?>>
+                                            <option value="<?php echo $eachblock['id'] ?>" <?php echo set_select('department', $eachblock['id'], $jansunwai->department == $eachblock['id']); ?>>
                                                 <?php echo $eachblock['name'] ?></option>
                                             <?php } ?>
                                         </select>
@@ -402,13 +402,19 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="approved_fund">Approved Fund</label>
+                                        <?php
+                                        // Check if approved_fund is a custom value (not in predefined list)
+                                        $predefined_funds = ['MLA FUND', 'MLA Swechanudan', 'CLP Swechanudan', 'Jansampark Fund'];
+                                        $is_custom_fund = !in_array($jansunwai->approved_fund, $predefined_funds) && !empty($jansunwai->approved_fund);
+                                        $selected_fund = $is_custom_fund ? 'others' : $jansunwai->approved_fund;
+                                        ?>
                                         <select class="form-control" id="approved_fund" name="approved_fund">
                                             <option value="">Select Fund</option>
                                             <option value="MLA FUND" <?php echo set_select('approved_fund', 'MLA FUND', $jansunwai->approved_fund === 'MLA FUND'); ?>>MLA FUND</option>
                                             <option value="MLA Swechanudan" <?php echo set_select('approved_fund', 'MLA Swechanudan', $jansunwai->approved_fund === 'MLA Swechanudan'); ?>>MLA Swechanudan</option>
                                             <option value="CLP Swechanudan" <?php echo set_select('approved_fund', 'CLP Swechanudan', $jansunwai->approved_fund === 'CLP Swechanudan'); ?>>CLP Swechanudan</option>
                                             <option value="Jansampark Fund" <?php echo set_select('approved_fund', 'Jansampark Fund', $jansunwai->approved_fund === 'Jansampark Fund'); ?>>Jansampark Fund</option>
-                                            <option value="others" <?php echo set_select('approved_fund', 'others', $jansunwai->approved_fund === 'others'); ?>>Others</option>
+                                            <option value="others" <?php echo set_select('approved_fund', 'others', $is_custom_fund); ?>>Others</option>
                                         </select>
                                         <?php echo form_error('approved_fund', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -416,11 +422,11 @@
 
 
                                 <!-- Approved Fund (Others) - Initially Hidden -->
-                                <div class="col-md-4" id="approved_fund_other_wrapper" style="display:none;">
+                                <div class="col-md-4" id="approved_fund_other_wrapper" style="display:<?php echo $is_custom_fund ? 'block' : 'none'; ?>;">
                                     <div class="form-group">
                                         <label for="approved_fund_other">Enter Fund Name</label>
                                         <input type="text" class="form-control" id="approved_fund_other" name="approved_fund_other"
-                                            value="<?php echo set_value('approved_fund_other', $jansunwai->approved_fund_other); ?>"
+                                            value="<?php echo set_value('approved_fund_other', $is_custom_fund ? $jansunwai->approved_fund : ''); ?>"
                                             placeholder="Enter custom fund name">
                                         <?php echo form_error('approved_fund_other', '<div class="text-danger">', '</div>'); ?>
                                     </div>
@@ -657,6 +663,8 @@ var formData = <?php echo isset($form_data_json) ? $form_data_json : '{}'; ?>;
 $(document).ready(function() {
     // Get initial data from hidden fields
     var initialData = {
+        district: '<?php echo htmlspecialchars($jansunwai->district ?? ''); ?>',
+        assembly: '<?php echo htmlspecialchars($jansunwai->assembly ?? ''); ?>',
         block: $('#initialBlock').val(),
         booth_name: $('#initialBoothName').val(),
         booth_no: $('#initialBoothNo').val(),
@@ -667,13 +675,25 @@ $(document).ready(function() {
     };
     
     console.log('Initial Data from hidden fields:', initialData);
-    console.log('Block dropdown options:', $('#block option').length);
-    console.log('Block dropdown values:', $('#block').find('option').map(function() { return $(this).val(); }).get());
     
-    // Restore initial data on page load
+    // Restore initial data on page load - Start with District
+    if (initialData.district && initialData.district !== '') {
+        console.log('Setting district to:', initialData.district);
+        $('#district').val(initialData.district).trigger('change');
+        
+        // Wait for AJAX to complete before restoring assembly
+        setTimeout(function() {
+            console.log('After 800ms - Assembly options:', $('#assembly option').length);
+            if (initialData.assembly && initialData.assembly !== '') {
+                console.log('Setting assembly to:', initialData.assembly);
+                $('#assembly').val(initialData.assembly);
+            }
+        }, 800);
+    }
+    
+    // Restore Block and dependent fields
     if (initialData.block && initialData.block !== '') {
         console.log('Setting block to:', initialData.block);
-        console.log('Block option exists?', $('#block option[value="' + initialData.block + '"]').length > 0);
         $('#block').val(initialData.block).trigger('change');
         
         // Wait for AJAX to complete before restoring dependent fields
@@ -706,9 +726,9 @@ $(document).ready(function() {
         }, 2400);
     }
     
+    // Restore Type of Work and Sub Work Type
     if (initialData.type_of_work && initialData.type_of_work !== '') {
         console.log('Setting type_of_work to:', initialData.type_of_work);
-        console.log('Type of work option exists?', $('#type_of_work option[value="' + initialData.type_of_work + '"]').length > 0);
         $('#type_of_work').val(initialData.type_of_work).trigger('change');
         setTimeout(function() {
             console.log('After 800ms - Sub Work Type options:', $('#sub_work_type_id option').length);
@@ -1014,26 +1034,6 @@ $(document).ready(function() {
                 error: function(xhr, status, error) {
                     console.error('Error loading villages:', error);
                     console.error('Response:', xhr.responseText);
-                    $('#village').empty();
-                    $('#village').append('<option value="">Select Village</option>');
-                }
-            });
-        } else {
-            $('#village').empty();
-            $('#village').append('<option value="">Select Village</option>');
-        }
-    });
-                        console.log('No villages found for panchayat ID: ' + boothid);
-                    }
-
-                    // Restore village from initial data or formData
-                    var villageToRestore = initialData.village || formData.village;
-                    if (villageToRestore && villageToRestore !== '0') {
-                        $('#village').val(villageToRestore);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error loading villages:', error);
                     $('#village').empty();
                     $('#village').append('<option value="">Select Village</option>');
                 }

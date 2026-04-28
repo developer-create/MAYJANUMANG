@@ -632,6 +632,9 @@ $insert_id = $this->db->insert_id();
                 $data["sub_work_types"] = [];
             }
             
+            // Initialize form_data_json for edit mode
+            $data["form_data_json"] = '{}';
+            
             $this->loadViews("users/editJansunwai", $this->global, $data, null);
         }
     }
