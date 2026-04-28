@@ -45,10 +45,18 @@ class BhagoriaSamiti_model extends CI_Model {
             $this->db->where('YEAR(bhagoria_samiti.created_at)', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(bhagoria_samiti.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(bhagoria_samiti.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(bhagoria_samiti.created_at)', $filters['date']);
+            $this->db->or_where('DATE(bhagoria_samiti.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
 
         $this->db->order_by('bhagoria_samiti.id', 'DESC');
@@ -174,10 +182,18 @@ class BhagoriaSamiti_model extends CI_Model {
             $this->db->where('YEAR(bhagoria_samiti.created_at)', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(bhagoria_samiti.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(bhagoria_samiti.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(bhagoria_samiti.created_at)', $filters['date']);
+            $this->db->or_where('DATE(bhagoria_samiti.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         
         $query = $this->db->get();

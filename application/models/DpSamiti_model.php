@@ -58,10 +58,18 @@ class DpSamiti_model extends CI_Model
             $this->db->where('g.year', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(g.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(g.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(g.created_at)', $filters['date']);
+            $this->db->or_where('DATE(g.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         
         $this->db->group_by('g.id');
@@ -322,10 +330,18 @@ class DpSamiti_model extends CI_Model
             $this->db->where('dp_samiti_groups.year', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(dp_samiti_groups.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(dp_samiti_groups.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['day'])) {
+            // Filter by day from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DAY(dp_samiti_groups.created_at)', (int)$filters['day']);
+            $this->db->or_where('DAY(dp_samiti_groups.updated_at)', (int)$filters['day']);
+            $this->db->group_end();
         }
         
         $query = $this->db->get();

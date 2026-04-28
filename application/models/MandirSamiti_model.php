@@ -43,10 +43,18 @@ class MandirSamiti_model extends CI_Model {
             $this->db->where('mandir_samiti_groups.year', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(mandir_samiti_groups.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(mandir_samiti_groups.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(mandir_samiti_groups.created_at)', $filters['date']);
+            $this->db->or_where('DATE(mandir_samiti_groups.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         
         $this->db->order_by('mandir_samiti_groups.id', 'DESC');
@@ -230,10 +238,18 @@ class MandirSamiti_model extends CI_Model {
             $this->db->where('mandir_samiti_groups.year', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(mandir_samiti_groups.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(mandir_samiti_groups.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(mandir_samiti_groups.created_at)', $filters['date']);
+            $this->db->or_where('DATE(mandir_samiti_groups.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         
         $query = $this->db->get();

@@ -45,10 +45,18 @@ class BlockSamiti_model extends CI_Model {
             $this->db->where('block_samiti_groups.year', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(block_samiti_groups.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(block_samiti_groups.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(block_samiti_groups.created_at)', $filters['date']);
+            $this->db->or_where('DATE(block_samiti_groups.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         
         $this->db->order_by('block_samiti_groups.id', 'DESC');
@@ -233,10 +241,18 @@ class BlockSamiti_model extends CI_Model {
             $this->db->where('block_samiti_groups.year', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(block_samiti_groups.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(block_samiti_groups.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(block_samiti_groups.created_at)', $filters['date']);
+            $this->db->or_where('DATE(block_samiti_groups.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         
         $query = $this->db->get();

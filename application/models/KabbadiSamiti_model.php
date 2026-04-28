@@ -44,10 +44,18 @@ class KabbadiSamiti_model extends CI_Model
             $this->db->where('YEAR(BaseTbl.created_at)', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(BaseTbl.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(BaseTbl.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(BaseTbl.created_at)', $filters['date']);
+            $this->db->or_where('DATE(BaseTbl.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         if (isset($filters['samiti_type_id']) && $filters['samiti_type_id'] !== '' && $filters['samiti_type_id'] !== null) {
             $this->db->where('BaseTbl.samiti_type_id', (int)$filters['samiti_type_id']);
@@ -225,10 +233,18 @@ class KabbadiSamiti_model extends CI_Model
             $this->db->where('YEAR(kabbadi_samiti_groups.created_at)', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(kabbadi_samiti_groups.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(kabbadi_samiti_groups.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(kabbadi_samiti_groups.created_at)', $filters['date']);
+            $this->db->or_where('DATE(kabbadi_samiti_groups.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         if (!empty($filters['block'])) {
             $this->db->where('kabbadi_samiti_groups.block', (int)$filters['block']);

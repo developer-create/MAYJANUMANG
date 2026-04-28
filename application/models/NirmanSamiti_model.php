@@ -43,10 +43,18 @@ class NirmanSamiti_model extends CI_Model {
             $this->db->where('nirman_samiti_groups.year', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(nirman_samiti_groups.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(nirman_samiti_groups.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(nirman_samiti_groups.created_at)', $filters['date']);
+            $this->db->or_where('DATE(nirman_samiti_groups.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         
         $this->db->order_by('nirman_samiti_groups.id', 'DESC');
@@ -230,10 +238,18 @@ class NirmanSamiti_model extends CI_Model {
             $this->db->where('nirman_samiti_groups.year', $filters['year']);
         }
         if (!empty($filters['month'])) {
+            // Filter by month from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('MONTH(nirman_samiti_groups.created_at)', (int)$filters['month']);
+            $this->db->or_where('MONTH(nirman_samiti_groups.updated_at)', (int)$filters['month']);
+            $this->db->group_end();
         }
         if (!empty($filters['date'])) {
+            // Filter by date from either created_at or updated_at
+            $this->db->group_start();
             $this->db->where('DATE(nirman_samiti_groups.created_at)', $filters['date']);
+            $this->db->or_where('DATE(nirman_samiti_groups.updated_at)', $filters['date']);
+            $this->db->group_end();
         }
         
         $query = $this->db->get();
