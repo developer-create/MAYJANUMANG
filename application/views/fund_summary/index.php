@@ -161,6 +161,7 @@
                                 <tr style="color:white;font-size:15px;background-color:#020254;">
                                     <th>Sr No</th>
                                     <th>Regi No</th>
+                                    <th>Recommended Letter No</th>
                                     <th>Financial Year</th>
                                     <th>Name</th>
                                     <th>Mobile</th>
@@ -400,9 +401,9 @@ jQuery(document).ready(function(){
         pageLength: 20,
         responsive: true,
         scrollX: true,
-        order: [[21, 'desc']],
+        order: [[22, 'desc']],
         columnDefs: [
-            { targets: [5, 16], orderable: false }
+            { targets: [6, 17], orderable: false }
         ],
         initComplete: function () {
             jQuery('#fundSummaryTable tbody').css('display', 'table-row-group');

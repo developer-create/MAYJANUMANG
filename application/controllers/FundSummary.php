@@ -91,14 +91,14 @@ class FundSummary extends BaseController {
         $start = isset($request['start']) ? (int) $request['start'] : 0;
         $length = isset($request['length']) ? (int) $request['length'] : 20;
 
-        $orderCol = 21;
+        $orderCol = 22;
         $orderDir = 'desc';
         if (!empty($request['order'][0])) {
             $orderCol = (int) $request['order'][0]['column'];
             $orderDir = isset($request['order'][0]['dir']) ? $request['order'][0]['dir'] : 'desc';
         }
         if ($orderCol === 0) {
-            $orderCol = 21;
+            $orderCol = 22;
         }
 
         $recordsTotal = $this->FundSummary_model->count_fund_summary_total();
@@ -146,6 +146,7 @@ class FundSummary extends BaseController {
             $out[] = [
                 $i++,
                 htmlspecialchars((string) ($row['registration_no'] ?? '')),
+                htmlspecialchars((string) (($row['recommended_letter_no'] ?? '') !== '' ? $row['recommended_letter_no'] : '-')),
                 htmlspecialchars((string) $display_year),
                 htmlspecialchars((string) ($row['uname'] ?? '')),
                 htmlspecialchars((string) ($row['mobile'] ?? '')),

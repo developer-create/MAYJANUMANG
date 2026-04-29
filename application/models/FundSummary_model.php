@@ -18,7 +18,7 @@ class FundSummary_model extends CI_Model {
                           j.approximate_cost, j.createdAt as date, j.year, 
                           COALESCE(dist.name, j.district) as district_name, COALESCE(b.name, '') as block_name, COALESCE(p.name, '') as panchayat_name, COALESCE(v.name, '') as village_name, 
                           COALESCE(d.name, '') as department_name, j.work_status, j.booth_no, COALESCE(booth.name, j.booth_name) as booth_name, j.majra_faliya, COALESCE(j.assembly, '') as vidhan_sabha_name,
-                          j.work_agency, j.remark, j.address");
+                          j.work_agency, j.remark, j.address, j.recommended_letter_no");
         $this->db->from('jansunwai j');
         $this->db->join('district dist', 'dist.id = j.district', 'left');
         $this->db->join('block b', 'b.id = j.block', 'left');
@@ -43,7 +43,7 @@ class FundSummary_model extends CI_Model {
                           dp.approximate_cost, dp.createdAt as date, dp.year, 
                           COALESCE(dist.name, dp.district) as district_name, COALESCE(b.name, '') as block_name, COALESCE(p.name, '') as panchayat_name, COALESCE(v.name, '') as village_name, 
                           COALESCE(d.name, '') as department_name, dp.work_status, dp.booth_no, dp.booth_name, dp.majra_faliya, COALESCE(dp.assembly, '') as vidhan_sabha_name,
-                          dp.work_agency, dp.remark, dp.address");
+                          dp.work_agency, dp.remark, dp.address, dp.recommended_letter_no");
         $this->db->from('districtpublicproblem dp');
         $this->db->join('district dist', 'dist.id = dp.district', 'left');
         $this->db->join('block b', 'b.id = dp.block', 'left');
@@ -107,7 +107,7 @@ class FundSummary_model extends CI_Model {
             return $sql;
         }
         $term = $this->db->escape('%' . $search . '%');
-        $sql .= " AND (registration_no LIKE {$term} OR uname LIKE {$term} OR mobile LIKE {$term} OR source LIKE {$term} OR district_name LIKE {$term} OR block_name LIKE {$term} OR panchayat_name LIKE {$term} OR village_name LIKE {$term} OR department_name LIKE {$term} OR work_problem LIKE {$term} OR work_status LIKE {$term} OR approved_fund LIKE {$term} OR work_agency LIKE {$term} OR remark LIKE {$term} OR CAST(year AS CHAR) LIKE {$term} OR vidhan_sabha_name LIKE {$term})";
+        $sql .= " AND (registration_no LIKE {$term} OR recommended_letter_no LIKE {$term} OR uname LIKE {$term} OR mobile LIKE {$term} OR source LIKE {$term} OR district_name LIKE {$term} OR block_name LIKE {$term} OR panchayat_name LIKE {$term} OR village_name LIKE {$term} OR department_name LIKE {$term} OR work_problem LIKE {$term} OR work_status LIKE {$term} OR approved_fund LIKE {$term} OR work_agency LIKE {$term} OR remark LIKE {$term} OR CAST(year AS CHAR) LIKE {$term} OR vidhan_sabha_name LIKE {$term})";
         return $sql;
     }
 
@@ -140,27 +140,28 @@ class FundSummary_model extends CI_Model {
     public function get_fund_summary_page($filters, $search, $start, $length, $order_col, $order_dir)
     {
         $orderMap = [
-            1 => 'registration_no',
-            2 => 'year',
-            3 => 'uname',
-            4 => 'mobile',
-            5 => 'source',
-            6 => 'district_name',
-            7 => 'block_name',
-            8 => 'booth_no',
-            9 => 'booth_name',
-            10 => 'vidhan_sabha_name',
-            11 => 'panchayat_name',
-            12 => 'village_name',
-            13 => 'majra_faliya',
-            14 => 'department_name',
-            15 => 'work_problem',
-            16 => 'work_status',
-            17 => 'approved_fund',
-            18 => 'approximate_cost',
-            19 => 'work_agency',
-            20 => 'remark',
-            21 => 'date',
+            1  => 'registration_no',
+            2  => 'recommended_letter_no',
+            3  => 'year',
+            4  => 'uname',
+            5  => 'mobile',
+            6  => 'source',
+            7  => 'district_name',
+            8  => 'block_name',
+            9  => 'booth_no',
+            10 => 'booth_name',
+            11 => 'vidhan_sabha_name',
+            12 => 'panchayat_name',
+            13 => 'village_name',
+            14 => 'majra_faliya',
+            15 => 'department_name',
+            16 => 'work_problem',
+            17 => 'work_status',
+            18 => 'approved_fund',
+            19 => 'approximate_cost',
+            20 => 'work_agency',
+            21 => 'remark',
+            22 => 'date',
         ];
         $col = isset($orderMap[$order_col]) ? $orderMap[$order_col] : 'date';
         $dir = strtoupper($order_dir) === 'ASC' ? 'ASC' : 'DESC';
