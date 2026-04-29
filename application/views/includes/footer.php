@@ -21,6 +21,27 @@
         var y= $('a[href="'+windowURL+'"]');
             y.addClass('active');
             y.parent().addClass('active');
+
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Disable common shortcuts like Ctrl+C, Ctrl+U, Ctrl+S, F12
+        document.onkeydown = function(e) {
+            if (e.ctrlKey && 
+                (e.keyCode === 67 || // Ctrl+C
+                 e.keyCode === 86 || // Ctrl+V
+                 e.keyCode === 85 || // Ctrl+U
+                 e.keyCode === 83 || // Ctrl+S
+                 e.keyCode === 117)) { // F12
+                return false;
+            } else if (e.keyCode === 123) { // F12
+                return false;
+            } else {
+                return true;
+            }
+        };
     </script>
   </body>
 </html>

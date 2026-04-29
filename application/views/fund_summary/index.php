@@ -151,7 +151,7 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label>&nbsp;</label>
-                                        <a href="<?php echo site_url('fundSummary'); ?>?financial_year=" class="btn btn-default form-control"><i class="fa fa-refresh"></i> Reset</a>
+                                        <a href="<?php echo site_url('fundSummary'); ?>?financial_year=2026-2027" class="btn btn-default form-control"><i class="fa fa-refresh"></i> Reset</a>
                                     </div>
                                 </div>
                             </div>

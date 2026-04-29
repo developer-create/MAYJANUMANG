@@ -319,6 +319,13 @@ table tbody td:last-child {
     color: #f0f0f0 !important;
     text-decoration: underline;
 }
+    /* Disable text selection */
+    body {
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none;    /* Firefox */
+        -ms-user-select: none;     /* IE10+ */
+        user-select: none;         /* Standard */
+    }
     </style>
     <script src="<?php echo base_url(); ?>assets/bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript">

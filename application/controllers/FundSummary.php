@@ -14,11 +14,9 @@ class FundSummary extends BaseController {
 
     public function index() {
         // First visit with no query string: default to current FY so cards/table match (YYYY-YYYY like dropdown)
-        if (empty($_GET)) {
-            $m = (int) date('n');
-            $y = (int) date('Y');
-            $start = $m < 4 ? $y - 1 : $y;
-            $default_fy = $start . '-' . ($start + 1);
+        $fy = $this->input->get('financial_year');
+        if (empty($fy)) {
+            $default_fy = '2026-2027';
             redirect('fundSummary?financial_year=' . rawurlencode($default_fy));
             return;
         }
