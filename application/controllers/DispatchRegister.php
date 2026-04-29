@@ -12,6 +12,7 @@ class DispatchRegister extends BaseController {
         $this->load->model('Comman_model');
         $this->isLoggedIn();
         $this->load->library('form_validation');
+        $this->load->model('Vidhan_sabha_model');
         $this->module = 'In-Out-Register';
     }
 
@@ -104,14 +105,14 @@ class DispatchRegister extends BaseController {
                     'date' => $date,
                     'year' => $this->input->post('year'),
                     'month' => $this->input->post('month'),
-                    'portal_no' => $this->input->post('portal_no'),
+                    'portal_no' => $this->input->post('portal_no_prefix') . $this->input->post('portal_no'),
                     'samiti_no' => $this->input->post('samiti_no'),
                     'dispatch_no' => $this->input->post('dispatch_no'),
-                    'inward_doc_no' => $this->input->post('inward_doc_no'),
                     'department_id' => $this->input->post('department_id') ? $this->input->post('department_id') : NULL,
                     'particular_subject' => $this->input->post('particular_subject'),
                     'reference' => $this->input->post('reference'),
                     'district_id' => $this->input->post('district_id') ? $this->input->post('district_id') : NULL,
+                    'vidhan_sabha_id' => $this->input->post('vidhan_sabha_id') ? $this->input->post('vidhan_sabha_id') : NULL,
                     'block_id' => $this->input->post('block_id') ? $this->input->post('block_id') : NULL,
                     'panchayat_id' => $panchayat_id_str,
                     'village_id' => $village_id_str,
@@ -156,6 +157,11 @@ class DispatchRegister extends BaseController {
             $data['departments'] = $this->DispatchRegister_model->get_departments();
             $data['blocks'] = $this->DispatchRegister_model->get_blocks();
             $data['districts'] = $this->DispatchRegister_model->get_districts();
+            
+            // Get Vidhan Sabhas if district is selected
+            if (!empty($data['dispatch_register']->district_id)) {
+                $data['vidhan_sabhas'] = $this->Vidhan_sabha_model->get_vidhan_sabhas_by_district($data['dispatch_register']->district_id);
+            }
             
             // Get panchayats if block is selected
             if (!empty($data['dispatch_register']->block_id)) {
@@ -244,14 +250,14 @@ class DispatchRegister extends BaseController {
                     'date' => $date,
                     'year' => $this->input->post('year'),
                     'month' => $this->input->post('month'),
-                    'portal_no' => $this->input->post('portal_no'),
+                    'portal_no' => $this->input->post('portal_no_prefix') . $this->input->post('portal_no'),
                     'samiti_no' => $this->input->post('samiti_no'),
                     'dispatch_no' => $this->input->post('dispatch_no'),
-                    'inward_doc_no' => $this->input->post('inward_doc_no'),
                     'department_id' => $this->input->post('department_id') ? $this->input->post('department_id') : NULL,
                     'particular_subject' => $this->input->post('particular_subject'),
                     'reference' => $this->input->post('reference'),
                     'district_id' => $this->input->post('district_id') ? $this->input->post('district_id') : NULL,
+                    'vidhan_sabha_id' => $this->input->post('vidhan_sabha_id') ? $this->input->post('vidhan_sabha_id') : NULL,
                     'block_id' => $this->input->post('block_id') ? $this->input->post('block_id') : NULL,
                     'panchayat_id' => $panchayat_id_str,
                     'village_id' => $village_id_str,
@@ -330,6 +336,19 @@ class DispatchRegister extends BaseController {
             }
             
             redirect('dispatchregister');
+        }
+    }
+
+    /**
+     * AJAX: Get vidhan sabhas by district
+     */
+    public function get_vidhan_sabhas_by_district() {
+        $district_id = $this->input->post('district_id');
+        if ($district_id) {
+            $vidhan_sabhas = $this->Vidhan_sabha_model->get_vidhan_sabhas_by_district($district_id);
+            echo json_encode(array('error' => false, 'vidhan_sabhas' => $vidhan_sabhas));
+        } else {
+            echo json_encode(array('error' => true, 'message' => 'District ID required'));
         }
     }
 

@@ -63,15 +63,35 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="portal_no">Portal No.:</label>
-                                        <input type="text" class="form-control" id="portal_no" name="portal_no" value="<?php echo $dispatch_register->portal_no; ?>">
-                                    </div>
                                 </div>
                             </div>
                             
                             <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <?php
+                                        $portal_no = $dispatch_register->portal_no;
+                                        $prefix = '';
+                                        if (strpos($portal_no, 'AC/') === 0) {
+                                            $prefix = 'AC/';
+                                            $portal_no = substr($portal_no, 3);
+                                        } elseif (strpos($portal_no, 'MP/') === 0) {
+                                            $prefix = 'MP/';
+                                            $portal_no = substr($portal_no, 3);
+                                        }
+                                        ?>
+                                        <label for="portal_no">Portal No.:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-btn">
+                                                <select class="btn btn-default dropdown-toggle" name="portal_no_prefix" id="portal_no_prefix" style="border: 1px solid #ccc;">
+                                                    <option value="AC/" <?php echo ($prefix == 'AC/') ? 'selected' : ''; ?>>AC/</option>
+                                                    <option value="MP/" <?php echo ($prefix == 'MP/') ? 'selected' : ''; ?>>MP/</option>
+                                                </select>
+                                            </div>
+                                            <input type="text" class="form-control" id="portal_no" name="portal_no" value="<?php echo $portal_no; ?>">
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="samiti_no">Samiti No.:</label>
@@ -82,12 +102,6 @@
                                     <div class="form-group">
                                         <label for="dispatch_no">Dispatch No.:</label>
                                         <input type="text" class="form-control" id="dispatch_no" name="dispatch_no" value="<?php echo $dispatch_register->dispatch_no; ?>">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="inward_doc_no">Inward Doc No.:</label>
-                                        <input type="text" class="form-control" id="inward_doc_no" name="inward_doc_no" value="<?php echo $dispatch_register->inward_doc_no; ?>" placeholder="Enter inward document number">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -119,6 +133,22 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="vidhan_sabha_id">Vidhan Sabha:</label>
+                                        <select class="form-control" id="vidhan_sabha_id" name="vidhan_sabha_id">
+                                            <option value="">Select Vidhan Sabha</option>
+                                            <?php if(!empty($vidhan_sabhas)): 
+                                                foreach($vidhan_sabhas as $vs):
+                                                    $selected = ($vs->id == $dispatch_register->vidhan_sabha_id) ? 'selected' : '';
+                                            ?>
+                                                <option value="<?php echo $vs->id; ?>" <?php echo $selected; ?>><?php echo $vs->vidhan_sabha_name; ?></option>
+                                            <?php 
+                                                endforeach;
+                                            endif; ?>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="row">
@@ -137,7 +167,7 @@
                             </div>
                             
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="block_id">Block:</label>
                                         <select class="form-control" id="block_id" name="block_id">
@@ -150,7 +180,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="panchayat_id">Panchayat (Multiple):</label>
                                         <select class="form-control select2-multiple" id="panchayat_id" name="panchayat_id[]" multiple="multiple">
@@ -170,7 +200,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="village_id">Village (Multiple):</label>
                                         <select class="form-control select2-multiple" id="village_id" name="village_id[]" multiple="multiple">
@@ -194,7 +224,7 @@
                             </div>
                             
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="upload_letter">Upload Letter:</label>
                                         <input type="file" class="form-control" id="upload_letter" name="upload_letter" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
@@ -261,6 +291,47 @@ $(document).ready(function() {
         allowClear: true,
         width: '100%'
     });
+
+    // Auto-fill Year and Month when Date is changed
+    $('#date').change(function() {
+        var dateVal = $(this).val();
+        if (dateVal) {
+            var dateObj = new Date(dateVal);
+            var year = dateObj.getFullYear();
+            var monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            var month = monthNames[dateObj.getMonth()];
+            
+            $('#year').val(year);
+            $('#month').val(month);
+        }
+    });
+
+    // District change - load vidhan sabhas
+    $('#district_id').change(function() {
+        var district_id = $(this).val();
+        // Only empty if it's a real change, not initial load
+        if (district_id && $(this).data('initial') !== 'true') {
+            $('#vidhan_sabha_id').empty().append('<option value="">Select Vidhan Sabha</option>');
+            $.ajax({
+                url: base_url + 'dispatchregister/get_vidhan_sabhas_by_district',
+                type: 'POST',
+                data: { district_id: district_id },
+                dataType: 'json',
+                success: function(response) {
+                    if (!response.error) {
+                        $.each(response.vidhan_sabhas, function(index, vs) {
+                            $('#vidhan_sabha_id').append('<option value="' + vs.id + '">' + vs.vidhan_sabha_name + '</option>');
+                        });
+                    }
+                }
+            });
+        }
+        $(this).data('initial', 'false');
+    });
+    // Set initial flag to prevent clearing on page load
+    $('#district_id').data('initial', 'true');
     
     // Block change - load panchayats AND villages (both from block)
     $('#block_id').change(function() {

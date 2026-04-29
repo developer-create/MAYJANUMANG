@@ -7,11 +7,12 @@ class DispatchRegister_model extends CI_Model
      */
     public function get_dispatch_registers()
     {
-        $this->db->select('dr.*, d.name as department_name, b.name as block_name, dist.name as district_name, u.name as created_by_name');
+        $this->db->select('dr.*, d.name as department_name, b.name as block_name, dist.name as district_name, vs.vidhan_sabha_name, u.name as created_by_name');
         $this->db->from('dispatch_register as dr');
         $this->db->join('department as d', 'd.id = dr.department_id', 'left');
         $this->db->join('block as b', 'b.id = dr.block_id', 'left');
         $this->db->join('district as dist', 'dist.id = dr.district_id', 'left');
+        $this->db->join('vidhan_sabha as vs', 'vs.id = dr.vidhan_sabha_id', 'left');
         $this->db->join('tbl_users as u', 'u.userId = dr.created_by', 'left');
         $this->db->where('dr.isDeleted', 0);
         
@@ -72,11 +73,12 @@ class DispatchRegister_model extends CI_Model
      */
     public function get_dispatch_register($id)
     {
-        $this->db->select('dr.*, d.name as department_name, b.name as block_name, dist.name as district_name');
+        $this->db->select('dr.*, d.name as department_name, b.name as block_name, dist.name as district_name, vs.vidhan_sabha_name');
         $this->db->from('dispatch_register as dr');
         $this->db->join('department as d', 'd.id = dr.department_id', 'left');
         $this->db->join('block as b', 'b.id = dr.block_id', 'left');
         $this->db->join('district as dist', 'dist.id = dr.district_id', 'left');
+        $this->db->join('vidhan_sabha as vs', 'vs.id = dr.vidhan_sabha_id', 'left');
         $this->db->where('dr.id', $id);
         $this->db->where('dr.isDeleted', 0);
         $query = $this->db->get();

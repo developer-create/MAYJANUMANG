@@ -16,11 +16,11 @@
                             <tr><th>Portal No. (पोर्टल नं.)</th><td><?php echo !empty($record['portal_no']) ? $record['portal_no'] : '-'; ?></td></tr>
                             <tr><th>Samiti No. (समिति नं.)</th><td><?php echo !empty($record['samiti_no']) ? $record['samiti_no'] : '-'; ?></td></tr>
                             <tr><th>Dispatch No. (प्रेषण क्रमांक)</th><td><strong><?php echo !empty($record['dispatch_no']) ? $record['dispatch_no'] : '-'; ?></strong></td></tr>
-                            <tr><th>Inward Doc No. (आवक दस्तावेज़ क्रमांक)</th><td><strong><?php echo !empty($record['inward_doc_no']) ? $record['inward_doc_no'] : '-'; ?></strong></td></tr>
                             <tr><th>Department (विभाग)</th><td><?php echo !empty($record['department_name']) ? $record['department_name'] : '-'; ?></td></tr>
                             <tr><th>Particular/Subject (विशेष/विषय)</th><td><?php echo !empty($record['particular_subject']) ? $record['particular_subject'] : '-'; ?></td></tr>
                             <tr><th>Reference (संदर्भ)</th><td><?php echo !empty($record['reference']) ? $record['reference'] : '-'; ?></td></tr>
                             <tr><th>District (जिला)</th><td><?php echo !empty($record['district_name']) ? $record['district_name'] : '-'; ?></td></tr>
+                            <tr><th>Vidhan Sabha (विधान सभा)</th><td><?php echo !empty($record['vidhan_sabha_name']) ? $record['vidhan_sabha_name'] : '-'; ?></td></tr>
                             <tr><th>Block (ब्लॉक)</th><td><?php echo !empty($record['block_name']) ? $record['block_name'] : '-'; ?></td></tr>
                             <tr><th>Panchayat (पंचायत)</th><td><?php echo !empty($record['panchayat_name']) ? $record['panchayat_name'] : '-'; ?></td></tr>
                             <tr><th>Village (ग्राम)</th><td><?php echo !empty($record['village_name']) ? $record['village_name'] : '-'; ?></td></tr>

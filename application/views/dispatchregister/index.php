@@ -63,36 +63,40 @@
                         </ul>
                         
                         <!-- Filters -->
-                        <div style="padding: 10px; background-color: #f4f4f4; border-bottom: 1px solid #ddd;">
+                        <div style="padding: 15px; background-color: #f4f4f4; border-bottom: 1px solid #ddd;">
                             <div class="row">
-                                <div class="col-md-3">
-                                    <select id="monthFilter" class="form-control">
-                                        <option value="">All Months</option>
-                                        <option value="January">January</option>
-                                        <option value="February">February</option>
-                                        <option value="March">March</option>
-                                        <option value="April">April</option>
-                                        <option value="May">May</option>
-                                        <option value="June">June</option>
-                                        <option value="July">July</option>
-                                        <option value="August">August</option>
-                                        <option value="September">September</option>
-                                        <option value="October">October</option>
-                                        <option value="November">November</option>
-                                        <option value="December">December</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select id="districtFilter" class="form-control">
+                                <div class="col-md-2">
+                                    <label>District</label>
+                                    <select id="districtFilter" class="form-control select2">
                                         <option value="">All Districts</option>
-                                        <?php if(!empty($districts)): ?>
-                                            <?php foreach($districts as $district): ?>
-                                                <option value="<?php echo $district->name; ?>"><?php echo $district->name; ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
                                     </select>
                                 </div>
-
+                                <div class="col-md-2">
+                                    <label>Vidhan Sabha</label>
+                                    <select id="vidhanSabhaFilter" class="form-control select2">
+                                        <option value="">All Vidhan Sabhas</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Year</label>
+                                    <select id="yearFilter" class="form-control select2">
+                                        <option value="">All Years</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Month</label>
+                                    <select id="monthFilter" class="form-control select2">
+                                        <option value="">All Months</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Date</label>
+                                    <input type="date" id="dateFilter" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <label>&nbsp;</label>
+                                    <button id="resetFilters" class="btn btn-default btn-block">Reset Filters</button>
+                                </div>
                             </div>
                         </div>
                         
@@ -110,11 +114,11 @@
                                                 <th>Portal No.</th>
                                                 <th>Samiti No.</th>
                                                 <th>Dispatch No.</th>
-                                                <th>Inward Doc No.</th>
                                                 <th>Department</th>
                                                 <th>Particular (subject)</th>
                                                 <th>Reference</th>
                                                 <th>District</th>
+                                                <th>Vidhan Sabha</th>
                                                 <th>Block</th>
                                                 <th>Letter</th>
                                                 <th>Actions</th>
@@ -124,7 +128,6 @@
                                             <?php foreach ($dispatch_registers as $key => $register): ?>
                                             <tr class="record-row" 
                                                 data-dispatch="<?php echo !empty($register['dispatch_no']) ? '1' : '0'; ?>"
-                                                data-inward="<?php echo !empty($register['inward_doc_no']) ? '1' : '0'; ?>"
                                                 data-month="<?php echo $register['month']; ?>"
                                                 data-district="<?php echo $register['district_name']; ?>">
                                                 <td><?php echo $key + 1; ?></td>
@@ -148,11 +151,11 @@
                                                 <td><?php echo $register['portal_no'] ? $register['portal_no'] : '-'; ?></td>
                                                 <td><?php echo $register['samiti_no'] ? $register['samiti_no'] : '-'; ?></td>
                                                 <td><?php echo $register['dispatch_no'] ? $register['dispatch_no'] : '-'; ?></td>
-                                                <td><?php echo $register['inward_doc_no'] ? $register['inward_doc_no'] : '-'; ?></td>
                                                 <td><?php echo $register['department_name'] ? $register['department_name'] : '-'; ?></td>
                                                 <td class="particular-subject-cell"><?php echo $register['particular_subject'] ? $register['particular_subject'] : '-'; ?></td>
                                                 <td><?php echo $register['reference'] ? $register['reference'] : '-'; ?></td>
                                                 <td><?php echo $register['district_name'] ? $register['district_name'] : '-'; ?></td>
+                                                <td><?php echo !empty($register['vidhan_sabha_name']) ? $register['vidhan_sabha_name'] : '-'; ?></td>
                                                 <td><?php echo $register['block_name'] ? $register['block_name'] : '-'; ?></td>
                                                 <td>
                                                     <?php if(!empty($register['upload_letter']) && file_exists($register['upload_letter'])): ?>
@@ -190,6 +193,11 @@
 
 <script>
 $(document).ready(function() {
+    // Initialize Select2 for filters
+    $('.select2').select2({
+        width: '100%'
+    });
+
     // Custom search function for tab filtering
     var currentTabFilter = 'all';
     
@@ -237,7 +245,60 @@ $(document).ready(function() {
         "ordering": true,
         "info": true,
         "lengthMenu": [[10, 25, 50, 75, -1], [10, 25, 50, 75, "All"]],
-        "order": [[0, "desc"]]
+        "order": [[0, "desc"]],
+        "initComplete": function() {
+            populateFilters(this.api());
+        }
+    });
+
+    function populateFilters(api) {
+        var columnsToFilter = {
+            11: '#districtFilter',
+            12: '#vidhanSabhaFilter',
+            3: '#yearFilter',
+            4: '#monthFilter',
+            2: '#dateFilter'
+        };
+
+        $.each(columnsToFilter, function(index, selector) {
+            if (selector !== '#dateFilter') {
+                api.column(index).data().unique().sort().each(function(d, j) {
+                    if (d && d !== '-') {
+                        $(selector).append('<option value="' + d + '">' + d + '</option>');
+                    }
+                });
+            }
+        });
+    }
+
+    // Apply filters
+    $('#districtFilter').on('change', function() {
+        table.column(11).search(this.value).draw();
+    });
+    $('#vidhanSabhaFilter').on('change', function() {
+        table.column(12).search(this.value).draw();
+    });
+    $('#yearFilter').on('change', function() {
+        table.column(3).search(this.value).draw();
+    });
+    $('#monthFilter').on('change', function() {
+        table.column(4).search(this.value).draw();
+    });
+    $('#dateFilter').on('change', function() {
+        var dateVal = this.value; // yyyy-mm-dd
+        if (dateVal) {
+            var parts = dateVal.split('-');
+            var formattedDate = parts[2] + '-' + parts[1] + '-' + parts[0]; // dd-mm-yyyy
+            table.column(2).search(formattedDate).draw();
+        } else {
+            table.column(2).search('').draw();
+        }
+    });
+
+    $('#resetFilters').on('click', function() {
+        $('.select2').val('').trigger('change');
+        $('#dateFilter').val('');
+        table.columns().search('').draw();
     });
 
     // Tab filtering
@@ -247,20 +308,13 @@ $(document).ready(function() {
         table.draw();
     });
 
-    // Month filter
-    $('#monthFilter').on('change', function() {
-        var month = this.value;
-        table.column(3).search(month).draw();
-    });
-
-    // District filter
-    $('#districtFilter').on('change', function() {
-        var district = this.value;
-        table.column(11).search(district).draw(); // District is now column 11
-    });
-
 });
 </script>
+
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <!-- DataTables and related plugins -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
