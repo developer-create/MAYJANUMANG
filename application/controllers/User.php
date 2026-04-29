@@ -66,6 +66,17 @@ class User extends BaseController {
 
     public function index() {
         $this->load->model('Disctrictproblem');
+        
+        $data["Alldistricts"] = $this->db->get("district")->result();
+        $data["Allvidhansabhas"] = $this->db->get("vidhan_sabha")->result();
+        
+        $filter_district = $this->input->post("filter_district");
+        $filter_vidhan_sabha = $this->input->post("filter_vidhan_sabha");
+        $summary_type = $this->input->post("summary_type") ? $this->input->post("summary_type") : "district";
+
+        $data['filter_district'] = $filter_district;
+        $data['filter_vidhan_sabha'] = $filter_vidhan_sabha;
+        $data['summary_type'] = $summary_type;
 
 
         $this->global["pageTitle"] = "Jan Umang : Dashboard";
@@ -165,32 +176,67 @@ class User extends BaseController {
         $data["coding_types"] = $coding_types;
         
         
-        $sum_parts_dist = [];
+        $sum_parts_vs = [];
         foreach ($coding_types as $ct) {
             if ($ct['col'] === 'वोटर_प्रभारी_Count') {
-                $sum_parts_dist[] = "SUM(CASE WHEN (j.code LIKE '%वोटर प्रभारी%' OR j.code LIKE '%वोटरप्रभारी%') THEN 1 ELSE 0 END) AS वोटर_प्रभारी_Count";
+                $sum_parts_vs[] = "SUM(CASE WHEN (j.code LIKE '%वोटर प्रभारी%' OR j.code LIKE '%वोटरप्रभारी%') THEN 1 ELSE 0 END) AS वोटर_प्रभारी_Count";
             } else {
-                $sum_parts_dist[] = "SUM(CASE WHEN j.code LIKE " . $this->db->escape($ct['like']) . " THEN 1 ELSE 0 END) AS " . $ct['col'];
+                $sum_parts_vs[] = "SUM(CASE WHEN j.code LIKE " . $this->db->escape($ct['like']) . " THEN 1 ELSE 0 END) AS " . $ct['col'];
             }
         }
-        $sum_sql_dist = implode(",\n    ", $sum_parts_dist);
-        $query = $this->db->query("SELECT *
-FROM (
-    SELECT 
-    CASE
-        WHEN d.name IS NULL THEN 'All Districts'
-        ELSE d.name
-    END AS DistrictName,
-    d.id AS district_id, 
-    " . $sum_sql_dist . ",
-    COUNT(j.id) AS Total_Count,
-    SUM(CASE WHEN DATE(j.create_date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
-    FROM district d
-    LEFT JOIN servayapp j ON d.id = j.district
-     GROUP BY d.name, d.id WITH ROLLUP
-) AS subquery
-WHERE (district_id IS NOT NULL OR DistrictName = 'All Districts')
-ORDER BY CASE WHEN DistrictName = 'All Districts' THEN 0 ELSE 1 END, district_id ASC");
+        $sum_sql_vs = implode(",\n    ", $sum_parts_vs);
+        
+        $vs_where = " WHERE 1=1 ";
+        if (!empty($filter_district)) {
+            $vs_where .= " AND vs.district_id = " . $this->db->escape($filter_district);
+        }
+        if (!empty($filter_vidhan_sabha)) {
+            $vs_where .= " AND vs.id = " . $this->db->escape($filter_vidhan_sabha);
+        }
+
+        if ($summary_type == 'vidhan_sabha') {
+            $query = $this->db->query("SELECT * FROM (
+                SELECT 
+                vs.vidhan_sabha_name AS VidhanSabhaName,
+                d.name AS DistrictName,
+                vs.id AS vidhan_sabha_id, 
+                d.id AS district_id_val,
+                " . $sum_sql_vs . ",
+                COUNT(j.id) AS Total_Count,
+                SUM(CASE WHEN DATE(j.create_date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
+                FROM vidhan_sabha vs
+                LEFT JOIN district d ON d.id = vs.district_id
+                LEFT JOIN servayapp j ON vs.id = j.vidhan_sabha_id
+                $vs_where
+                GROUP BY d.id, vs.id WITH ROLLUP
+            ) AS subquery
+            WHERE (vidhan_sabha_id IS NOT NULL AND district_id_val IS NOT NULL) OR (vidhan_sabha_id IS NULL AND district_id_val IS NULL)
+            ORDER BY CASE WHEN vidhan_sabha_id IS NULL THEN 0 ELSE 1 END, DistrictName ASC, VidhanSabhaName ASC");
+        } else {
+            // District wise (Default)
+            $dist_where = " WHERE 1=1 ";
+            if (!empty($filter_district)) {
+                $dist_where .= " AND d.id = " . $this->db->escape($filter_district);
+            }
+            
+            $query = $this->db->query("SELECT * FROM (
+                SELECT 
+                CASE
+                    WHEN d.name IS NULL THEN 'All Districts'
+                    ELSE d.name
+                END AS DistrictName,
+                d.id AS district_id, 
+                " . $sum_sql_vs . ",
+                COUNT(j.id) AS Total_Count,
+                SUM(CASE WHEN DATE(j.create_date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
+                FROM district d
+                LEFT JOIN servayapp j ON d.id = j.district
+                $dist_where
+                GROUP BY d.name, d.id WITH ROLLUP
+            ) AS subquery
+            WHERE (district_id IS NOT NULL OR DistrictName = 'All Districts')
+            ORDER BY CASE WHEN DistrictName = 'All Districts' THEN 0 ELSE 1 END, district_id ASC");
+        }
         $data["districts"] = $query->result(); 
         
         $data["status_count_by_block"] = $this->user_model->getStatusCountByBlock();

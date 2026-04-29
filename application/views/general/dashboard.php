@@ -322,26 +322,10 @@
                                     <select id="block" name="blockname" class="form-control">
                                         <option value="">Select</option>
                                         <?php foreach($Allblocks as $eachblock) { ?>
-                                        <option value="<?php echo $eachblock->id ?>"><?php echo $eachblock->name ?>
+                                        <option value="<?php echo $eachblock->id ?>" <?php echo (isset($blockname) && $blockname == $eachblock->id) ? 'selected' : ''; ?>><?php echo $eachblock->name ?>
                                         </option>
                                         <?php } ?>
                                     </select>
-                                </div>
-                            </div>
-                            <!-- Start Date -->
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="start_date">Start Date:</label>
-                                    <input type="date" id="start_date" name="start_date" class="form-control"
-                                        value="<?php echo set_value('start_date'); ?>">
-                                </div>
-                            </div>
-                            <!-- End Date -->
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="end_date">End Date:</label>
-                                    <input type="date" id="end_date" name="end_date" class="form-control"
-                                        value="<?php echo set_value('end_date'); ?>">
                                 </div>
                             </div>
                         </div>
@@ -474,7 +458,7 @@
             <!-- ./col -->
         </div>
 
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-lg-12 col-xs-12">
                 <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
@@ -510,9 +494,9 @@
                     </div>
                 </div>
             </div>
-            <!-- ./col -->
-        </div>
-        <div class="row">
+            
+        </div> -->
+        <!-- <div class="row">
             <div class="col-lg-12 col-xs-12">
                 <div class="box box-primary" >
                     <div class="box-body table-responsive no-padding">
@@ -635,8 +619,8 @@
                     </div>
                 </div>
             </div>
-            <!-- ./col -->
-        </div>
+            
+        </div> -->
         <div class="row">
             <div class="col-lg-12 col-xs-12">
                 <div class="box box-primary" >
@@ -688,12 +672,58 @@
         <div class="row">
             <div class="col-lg-12 col-xs-12">
                 <div class="box box-primary" >
+                    <form method="post" action="<?php echo base_url('user/index'); ?>">
+                        <div class="row" style="padding: 15px 15px 0 15px;">
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label>Summary View By:</label>
+                                    <select name="summary_type" class="form-control" onchange="this.form.submit()">
+                                        <option value="district" <?php echo ($summary_type == 'district') ? 'selected' : ''; ?>>District Wise</option>
+                                        <option value="vidhan_sabha" <?php echo ($summary_type == 'vidhan_sabha') ? 'selected' : ''; ?>>Vidhan Sabha Wise</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label>District:</label>
+                                    <select name="filter_district" id="worker_filter_district" class="form-control">
+                                        <option value="">All Districts</option>
+                                        <?php if(!empty($Alldistricts)) { foreach($Alldistricts as $dist) { ?>
+                                        <option value="<?php echo $dist->id ?>" <?php echo ($filter_district == $dist->id) ? 'selected' : ''; ?>>
+                                            <?php echo $dist->name ?>
+                                        </option>
+                                        <?php } } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label>Vidhan Sabha:</label>
+                                    <select name="filter_vidhan_sabha" id="worker_filter_vidhan_sabha" class="form-control">
+                                        <option value="">All Vidhan Sabhas</option>
+                                        <?php if(!empty($Allvidhansabhas)) { foreach($Allvidhansabhas as $vs) { ?>
+                                        <option value="<?php echo $vs->id ?>" <?php echo ($filter_vidhan_sabha == $vs->id) ? 'selected' : ''; ?>>
+                                            <?php echo $vs->vidhan_sabha_name ?>
+                                        </option>
+                                        <?php } } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12" style="margin-top: 25px;">
+                                <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr style="margin: 5px 0;">
                     <div class="box-body table-responsive no-padding">
                         <h3 style="text-align:center;"><b>MP Party Worker Code Summary</b></h3>
                         <table class="table table-hover" id="dashboardtable1">
                             <thead>
                                 <tr>
-                                    <th>Block Name</th>
+                                    <th>District Name</th>
+                                    <?php if ($summary_type == 'vidhan_sabha') : ?>
+                                    <th>Vidhan Sabha Name</th>
+                                    <?php endif; ?>
                                     <th class="th-total-count">Total Count</th>
                                     <th class="th-today-count">Today Count</th>
                                     <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
@@ -704,22 +734,55 @@
                             <tbody>
                                 <?php
                                 if (!empty($districts)) :
-                                    foreach ($districts as $block) :
-                                        $district_param = isset($block->district_id) ? 'district_id=' . $block->district_id : 'district_id=';
-                                ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($block->DistrictName); ?></td>
-                                    <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
-                                    <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
-                                    <?php foreach ($coding_types as $ct) :
-                                        $col = $ct['col'];
-                                        $count = isset($block->$col) ? (int)$block->$col : 0;
-                                        $url = base_url('user/filterServaylisting') . '?' . $district_param . '&code=' . rawurlencode($ct['code_param']);
+                                    if ($summary_type == 'vidhan_sabha') :
+                                        // Group rows by District for rowspan
+                                        $district_groups = [];
+                                        foreach ($districts as $row) {
+                                            $d_id = $row->district_id_val ? $row->district_id_val : 'total';
+                                            $district_groups[$d_id][] = $row;
+                                        }
+
+                                        foreach ($district_groups as $d_id => $rows) :
+                                            foreach ($rows as $index => $block) :
+                                                $vs_param = $block->vidhan_sabha_id ? 'vidhan_sabha_id=' . $block->vidhan_sabha_id : 'vidhan_sabha_id=';
                                     ?>
-                                    <td><a href="<?php echo $url; ?>"><?php echo $count; ?></a></td>
+                                    <tr>
+                                        <?php if ($index === 0) : ?>
+                                        <td rowspan="<?php echo count($rows); ?>" style="vertical-align: middle; background-color: #f9f9f9; font-weight: bold;">
+                                            <?php echo htmlspecialchars(($block->district_id_val ? $block->DistrictName : 'All Districts') ?? ''); ?>
+                                        </td>
+                                        <?php endif; ?>
+                                        <td><?php echo htmlspecialchars(($block->vidhan_sabha_id ? $block->VidhanSabhaName : 'All Vidhan Sabhas') ?? ''); ?></td>
+                                        <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
+                                        <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
+                                        <?php foreach ($coding_types as $ct) :
+                                            $col = $ct['col'];
+                                            $count = isset($block->$col) ? (int)$block->$col : 0;
+                                            $url = base_url('user/filterServaylisting') . '?' . $vs_param . '&code=' . rawurlencode($ct['code_param']);
+                                        ?>
+                                        <td><a href="<?php echo $url; ?>"><?php echo $count; ?></a></td>
+                                        <?php endforeach; ?>
+                                    </tr>
                                     <?php endforeach; ?>
-                                </tr>
-                                <?php endforeach; ?>
+                                    <?php endforeach; ?>
+                                    <?php else : ?>
+                                    <?php foreach ($districts as $block) : 
+                                        $district_param = isset($block->district_id) ? 'district_id=' . $block->district_id : 'district_id=';
+                                    ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($block->DistrictName ?? ''); ?></td>
+                                        <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
+                                        <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
+                                        <?php foreach ($coding_types as $ct) :
+                                            $col = $ct['col'];
+                                            $count = isset($block->$col) ? (int)$block->$col : 0;
+                                            $url = base_url('user/filterServaylisting') . '?' . $district_param . '&code=' . rawurlencode($ct['code_param']);
+                                        ?>
+                                        <td><a href="<?php echo $url; ?>"><?php echo $count; ?></a></td>
+                                        <?php endforeach; ?>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                    <?php endif; ?>
                                 <?php else : ?>
                                 <tr>
                                     <td colspan="<?php echo count($coding_types) + 3; ?>">No data available.</td>
@@ -1045,4 +1108,31 @@ function printChart(chartId) {
     printWindow.focus();
     printWindow.print();
 }
+</script>
+
+<script>
+$(document).ready(function() {
+    var allVidhanSabhas = <?php echo json_encode($Allvidhansabhas); ?>;
+    
+    $('#worker_filter_district').change(function() {
+        var districtId = $(this).val();
+        var vsDropdown = $('#worker_filter_vidhan_sabha');
+        vsDropdown.empty();
+        vsDropdown.append('<option value="">All Vidhan Sabhas</option>');
+        
+        if (districtId) {
+            var filteredVS = allVidhanSabhas.filter(function(vs) {
+                return vs.district_id == districtId;
+            });
+            
+            filteredVS.forEach(function(vs) {
+                vsDropdown.append('<option value="' + vs.id + '">' + vs.vidhan_sabha_name + '</option>');
+            });
+        } else {
+            allVidhanSabhas.forEach(function(vs) {
+                vsDropdown.append('<option value="' + vs.id + '">' + vs.vidhan_sabha_name + '</option>');
+            });
+        }
+    });
+});
 </script>

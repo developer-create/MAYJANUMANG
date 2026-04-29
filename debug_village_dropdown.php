@@ -35,7 +35,7 @@ if ($village_count > 0) {
     foreach ($sample_villages as $village) {
         echo "<tr>";
         echo "<td>{$village['id']}</td>";
-        echo "<td>{$village['name']}</td>";
+        echo "<td>{$village['name']}</td>"; 
         echo "<td>{$village['panchayatid']}</td>";
         echo "<td>{$village['boothid']}</td>";
         echo "<td>{$village['blockid']}</td>";
