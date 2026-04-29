@@ -18,6 +18,7 @@ class ProjectSummary extends BaseController
         parent::__construct();
         $this->load->model('ProjectSummary_model', 'psm');
         $this->load->model('Comman_model', 'cm');
+        $this->load->helper('hindi_number'); // Load Hindi number helper
         $this->isLoggedIn();
         $this->module = 'Project-Summary'; // Fixed: Changed to match config (with hyphen)
     }
@@ -47,6 +48,8 @@ class ProjectSummary extends BaseController
             if($this->input->post()) {
                 $filters['department'] = $this->input->post('department');
                 $filters['tender_status'] = $this->input->post('tender_status');
+                $filters['cost_range'] = $this->input->post('cost_range');
+                $filters['estimate_range'] = $this->input->post('estimate_range');
             }
             
             // Load records with filters

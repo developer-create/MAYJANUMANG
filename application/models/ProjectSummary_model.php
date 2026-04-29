@@ -179,10 +179,52 @@ class ProjectSummary_model extends CI_Model
         
         // Apply filters
         if(!empty($filters['department'])) {
-            $this->db->where('LOWER(Dept.name)', strtolower($filters['department']));
+            $this->db->where('Dept.name', $filters['department']);
         }
         if(!empty($filters['tender_status'])) {
-            $this->db->where('LOWER(BaseTbl.tender_status)', strtolower($filters['tender_status']));
+            $this->db->where('BaseTbl.tender_status', $filters['tender_status']);
+        }
+        
+        // Project Cost Range Filter (in Crores: 1 Crore = 10,000,000 rupees)
+        if(!empty($filters['cost_range'])) {
+            switch($filters['cost_range']) {
+                case '0-1':
+                    $this->db->where('BaseTbl.amount_project_cost >=', 0);
+                    $this->db->where('BaseTbl.amount_project_cost <', 10000000);
+                    break;
+                case '1-5':
+                    $this->db->where('BaseTbl.amount_project_cost >=', 10000000);
+                    $this->db->where('BaseTbl.amount_project_cost <', 50000000);
+                    break;
+                case '5-10':
+                    $this->db->where('BaseTbl.amount_project_cost >=', 50000000);
+                    $this->db->where('BaseTbl.amount_project_cost <', 100000000);
+                    break;
+                case '10 Above':
+                    $this->db->where('BaseTbl.amount_project_cost >=', 100000000);
+                    break;
+            }
+        }
+        
+        // Proposal Estimate Range Filter (in Crores: 1 Crore = 10,000,000 rupees)
+        if(!empty($filters['estimate_range'])) {
+            switch($filters['estimate_range']) {
+                case '0-1':
+                    $this->db->where('BaseTbl.proposal_estimate >=', 0);
+                    $this->db->where('BaseTbl.proposal_estimate <', 10000000);
+                    break;
+                case '1-5':
+                    $this->db->where('BaseTbl.proposal_estimate >=', 10000000);
+                    $this->db->where('BaseTbl.proposal_estimate <', 50000000);
+                    break;
+                case '5-10':
+                    $this->db->where('BaseTbl.proposal_estimate >=', 50000000);
+                    $this->db->where('BaseTbl.proposal_estimate <', 100000000);
+                    break;
+                case '10 Above':
+                    $this->db->where('BaseTbl.proposal_estimate >=', 100000000);
+                    break;
+            }
         }
         
         $this->db->order_by('BaseTbl.id', 'DESC');

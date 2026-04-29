@@ -77,6 +77,24 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
+                                    <select name="cost_range" id="filterCostRange" class="form-control" style="font-size: 12px; padding: 5px;">
+                                        <option value="">-- Project Cost (Crore) --</option>
+                                        <option value="0-1" <?php echo (isset($filters['cost_range']) && $filters['cost_range'] == '0-1') ? 'selected' : ''; ?>>0 - 1 Crore</option>
+                                        <option value="1-5" <?php echo (isset($filters['cost_range']) && $filters['cost_range'] == '1-5') ? 'selected' : ''; ?>>1 - 5 Crore</option>
+                                        <option value="5-10" <?php echo (isset($filters['cost_range']) && $filters['cost_range'] == '5-10') ? 'selected' : ''; ?>>5 - 10 Crore</option>
+                                        <option value="10 Above" <?php echo (isset($filters['cost_range']) && $filters['cost_range'] == '10 Above') ? 'selected' : ''; ?>>10 Crore & Above</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select name="estimate_range" id="filterEstimateRange" class="form-control" style="font-size: 12px; padding: 5px;">
+                                        <option value="">-- Proposal Estimate (Crore) --</option>
+                                        <option value="0-1" <?php echo (isset($filters['estimate_range']) && $filters['estimate_range'] == '0-1') ? 'selected' : ''; ?>>0 - 1 Crore</option>
+                                        <option value="1-5" <?php echo (isset($filters['estimate_range']) && $filters['estimate_range'] == '1-5') ? 'selected' : ''; ?>>1 - 5 Crore</option>
+                                        <option value="5-10" <?php echo (isset($filters['estimate_range']) && $filters['estimate_range'] == '5-10') ? 'selected' : ''; ?>>5 - 10 Crore</option>
+                                        <option value="10 Above" <?php echo (isset($filters['estimate_range']) && $filters['estimate_range'] == '10 Above') ? 'selected' : ''; ?>>10 Crore & Above</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
                                     <button type="submit" class="btn btn-primary form-control" style="font-size: 12px; padding: 5px;">Filter</button>
                                 </div>
                                 <div class="col-md-2">
@@ -97,7 +115,9 @@
                                     <th>Department</th>
                                     <th>Work Name</th>
                                     <th>Project Cost</th>
+                                    <th>Project Cost (In Words)</th>
                                     <th>Proposal Estimate</th>
+                                    <th>Proposal Estimate (In Words)</th>
                                     <th>Status</th>
                                     <th>Officer Name</th>
                                     <th>Contact No</th>
@@ -129,8 +149,10 @@
                                     <td><?php echo $record->block_name ?></td>
                                     <td><?php echo $record->department_name ?></td>
                                     <td><?php echo $record->work_name ?></td>
-                                    <td><?php echo number_format($record->amount_project_cost, 2) ?></td>
-                                    <td><?php echo number_format($record->proposal_estimate, 2) ?></td>
+                                    <td><?php echo formatIndianCurrency($record->amount_project_cost) ?></td>
+                                    <td><?php echo !empty($record->amount_project_cost) ? numberToHindiWords($record->amount_project_cost) : 'शून्य'; ?></td>
+                                    <td><?php echo formatIndianCurrency($record->proposal_estimate) ?></td>
+                                    <td><?php echo !empty($record->proposal_estimate) ? numberToHindiWords($record->proposal_estimate) : 'शून्य'; ?></td>
                                     <td>
                                         <span
                                             class="label <?php echo ($record->status == 'Completed') ? 'label-success' : (($record->status == 'In Progress') ? 'label-warning' : 'label-info') ?>">
@@ -287,21 +309,23 @@ table thead tr th:nth-child(4) { min-width: 120px; } /* Block */
 table thead tr th:nth-child(5) { min-width: 150px; } /* Department */
 table thead tr th:nth-child(6) { min-width: 150px; } /* Work Name */
 table thead tr th:nth-child(7) { min-width: 120px; } /* Project Cost */
-table thead tr th:nth-child(8) { min-width: 140px; } /* Proposal Estimate */
-table thead tr th:nth-child(9) { min-width: 100px; } /* Status */
-table thead tr th:nth-child(10) { min-width: 130px; } /* Officer Name */
-table thead tr th:nth-child(11) { min-width: 120px; } /* Contact No */
-table thead tr th:nth-child(12) { min-width: 140px; } /* Technical Session */
-table thead tr th:nth-child(13) { min-width: 150px; } /* Administrative Session */
-table thead tr th:nth-child(14) { min-width: 120px; } /* Tender Status */
-table thead tr th:nth-child(15) { min-width: 140px; } /* Company Name */
-table thead tr th:nth-child(16) { min-width: 140px; } /* Contractor Name */
-table thead tr th:nth-child(17) { min-width: 120px; } /* Phone No */
-table thead tr th:nth-child(18) { min-width: 300px; } /* USD Remark */
-table thead tr th:nth-child(19) { min-width: 600px; } /* Remark */
-table thead tr th:nth-child(20) { min-width: 130px; } /* Current Progress */
-table thead tr th:nth-child(21) { min-width: 120px; } /* Created Date */
-table thead tr th:nth-child(22) { min-width: 100px; } /* Actions */
+table thead tr th:nth-child(8) { min-width: 200px; } /* Project Cost (In Words) */
+table thead tr th:nth-child(9) { min-width: 140px; } /* Proposal Estimate */
+table thead tr th:nth-child(10) { min-width: 200px; } /* Proposal Estimate (In Words) */
+table thead tr th:nth-child(11) { min-width: 100px; } /* Status */
+table thead tr th:nth-child(12) { min-width: 130px; } /* Officer Name */
+table thead tr th:nth-child(13) { min-width: 120px; } /* Contact No */
+table thead tr th:nth-child(14) { min-width: 140px; } /* Technical Session */
+table thead tr th:nth-child(15) { min-width: 150px; } /* Administrative Session */
+table thead tr th:nth-child(16) { min-width: 120px; } /* Tender Status */
+table thead tr th:nth-child(17) { min-width: 140px; } /* Company Name */
+table thead tr th:nth-child(18) { min-width: 140px; } /* Contractor Name */
+table thead tr th:nth-child(19) { min-width: 120px; } /* Phone No */
+table thead tr th:nth-child(20) { min-width: 300px; } /* USD Remark */
+table thead tr th:nth-child(21) { min-width: 600px; } /* Remark */
+table thead tr th:nth-child(22) { min-width: 130px; } /* Current Progress */
+table thead tr th:nth-child(23) { min-width: 120px; } /* Created Date */
+table thead tr th:nth-child(24) { min-width: 100px; } /* Actions */
 
 /* Remark column styling */
 .remark-col {
@@ -439,7 +463,7 @@ $(document).ready(function() {
                 text: 'Export Excel',
                 title: 'Project Summary List',
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] // Exclude Actions column (21)
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22] // Exclude Actions column (23)
                 }
             },
             {
