@@ -97,6 +97,19 @@ class FundSummary_model extends CI_Model {
             $sql .= " AND registration_no LIKE " . $this->db->escape('%' . $filters['registration_no'] . '%');
         }
 
+        if (!empty($filters['approx_cost_range'])) {
+            $range = $filters['approx_cost_range'];
+            if ($range === '0-1') {
+                $sql .= " AND approximate_cost <= 100000";
+            } elseif ($range === '1-5') {
+                $sql .= " AND approximate_cost > 100000 AND approximate_cost <= 500000";
+            } elseif ($range === '5-10') {
+                $sql .= " AND approximate_cost > 500000 AND approximate_cost <= 1000000";
+            } elseif ($range === '10-above') {
+                $sql .= " AND approximate_cost > 1000000";
+            }
+        }
+
         return $sql;
     }
 
@@ -158,9 +171,10 @@ class FundSummary_model extends CI_Model {
             16 => 'work_status',
             17 => 'approved_fund',
             18 => 'approximate_cost',
-            19 => 'work_agency',
-            20 => 'remark',
-            21 => 'date',
+            19 => 'approximate_cost',
+            20 => 'work_agency',
+            21 => 'remark',
+            22 => 'date',
         ];
         $col = isset($orderMap[$order_col]) ? $orderMap[$order_col] : 'date';
         $dir = strtoupper($order_dir) === 'ASC' ? 'ASC' : 'DESC';
@@ -217,6 +231,19 @@ class FundSummary_model extends CI_Model {
         
         if (!empty($filters['registration_no'])) {
             $filter_sql .= " AND registration_no LIKE " . $this->db->escape('%' . $filters['registration_no'] . '%');
+        }
+
+        if (!empty($filters['approx_cost_range'])) {
+            $range = $filters['approx_cost_range'];
+            if ($range === '0-1') {
+                $filter_sql .= " AND approximate_cost <= 100000";
+            } elseif ($range === '1-5') {
+                $filter_sql .= " AND approximate_cost > 100000 AND approximate_cost <= 500000";
+            } elseif ($range === '5-10') {
+                $filter_sql .= " AND approximate_cost > 500000 AND approximate_cost <= 1000000";
+            } elseif ($range === '10-above') {
+                $filter_sql .= " AND approximate_cost > 1000000";
+            }
         }
 
         // Subquery for jansunwai with normalization

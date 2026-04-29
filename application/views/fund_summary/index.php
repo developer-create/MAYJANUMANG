@@ -120,6 +120,18 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
+                                        <label>Approx Cost</label>
+                                        <select name="approx_cost_range" class="form-control">
+                                            <option value="">All Cost</option>
+                                            <option value="0-1" <?php echo ($filters['approx_cost_range'] == '0-1') ? 'selected' : ''; ?>>0-1 lakh</option>
+                                            <option value="1-5" <?php echo ($filters['approx_cost_range'] == '1-5') ? 'selected' : ''; ?>>1-5 lakh</option>
+                                            <option value="5-10" <?php echo ($filters['approx_cost_range'] == '5-10') ? 'selected' : ''; ?>>5-10 lakh</option>
+                                            <option value="10-above" <?php echo ($filters['approx_cost_range'] == '10-above') ? 'selected' : ''; ?>>10 Above lakh</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
                                         <label>Status</label>
                                         <select name="work_status" class="form-control">
                                             <option value="">All Status</option>
@@ -180,6 +192,7 @@
                                     <th>Status</th>
                                     <th>Approved Fund</th>
                                     <th>Approximate Cost</th>
+                                    <th>Approx Cost in Words</th>
                                     <th>Work Agency</th>
                                     <th>Remark</th>
                                     <th>Date</th>
@@ -363,6 +376,7 @@ jQuery(document).ready(function(){
                 d.filter_to_date = jQuery('#fundSummaryFilterForm input[name="to_date"]').val();
                 d.filter_work_status = jQuery('#fundSummaryFilterForm select[name="work_status"]').val();
                 d.filter_registration_no = jQuery('#fundSummaryFilterForm input[name="registration_no"]').val();
+                d.filter_approx_cost = jQuery('#fundSummaryFilterForm select[name="approx_cost_range"]').val();
             },
             dataSrc: function (json) {
                 if (json && typeof json.sumFiltered !== 'undefined') {
@@ -400,7 +414,7 @@ jQuery(document).ready(function(){
         pageLength: 20,
         responsive: true,
         scrollX: true,
-        order: [[21, 'desc']],
+        order: [[22, 'desc']],
         columnDefs: [
             { targets: [5, 16], orderable: false }
         ],

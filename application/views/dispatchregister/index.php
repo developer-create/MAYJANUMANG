@@ -245,7 +245,7 @@ $(document).ready(function() {
         "ordering": true,
         "info": true,
         "lengthMenu": [[10, 25, 50, 75, -1], [10, 25, 50, 75, "All"]],
-        "order": [[0, "desc"]],
+        "order": [[0, "asc"]],
         "initComplete": function() {
             populateFilters(this.api());
         }
