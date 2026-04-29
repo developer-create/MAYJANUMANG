@@ -66,7 +66,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <select name="tender_status" id="filterTenderStatus" class="form-control" style="font-size: 12px; padding: 5px;">
-                                        <option value="">All Statuses</option>
+                                        <option value="">All Tender Statuses</option>
                                         <?php if(!empty($tender_statuses)): ?>
                                             <?php foreach($tender_statuses as $status): ?>
                                                 <option value="<?php echo htmlspecialchars($status->tender_status); ?>" <?php echo (isset($filters['tender_status']) && $filters['tender_status'] == $status->tender_status) ? 'selected' : ''; ?>>
@@ -77,12 +77,15 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <select name="cost_range" id="filterCostRange" class="form-control" style="font-size: 12px; padding: 5px;">
-                                        <option value="">-- Project Cost (Crore) --</option>
-                                        <option value="0-1" <?php echo (isset($filters['cost_range']) && $filters['cost_range'] == '0-1') ? 'selected' : ''; ?>>0 - 1 Crore</option>
-                                        <option value="1-5" <?php echo (isset($filters['cost_range']) && $filters['cost_range'] == '1-5') ? 'selected' : ''; ?>>1 - 5 Crore</option>
-                                        <option value="5-10" <?php echo (isset($filters['cost_range']) && $filters['cost_range'] == '5-10') ? 'selected' : ''; ?>>5 - 10 Crore</option>
-                                        <option value="10 Above" <?php echo (isset($filters['cost_range']) && $filters['cost_range'] == '10 Above') ? 'selected' : ''; ?>>10 Crore & Above</option>
+                                    <select name="work_status" id="filterWorkStatus" class="form-control" style="font-size: 12px; padding: 5px;">
+                                        <option value="">All Work Statuses</option>
+                                        <?php if(!empty($work_statuses)): ?>
+                                            <?php foreach($work_statuses as $ws): ?>
+                                                <option value="<?php echo htmlspecialchars($ws->status); ?>" <?php echo (isset($filters['work_status']) && $filters['work_status'] == $ws->status) ? 'selected' : ''; ?>>
+                                                    <?php echo htmlspecialchars($ws->status); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
@@ -94,10 +97,10 @@
                                         <option value="10 Above" <?php echo (isset($filters['estimate_range']) && $filters['estimate_range'] == '10 Above') ? 'selected' : ''; ?>>10 Crore & Above</option>
                                     </select>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <button type="submit" class="btn btn-primary form-control" style="font-size: 12px; padding: 5px;">Filter</button>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <a href="<?php echo site_url('projectSummary/projectListing'); ?>" class="btn btn-default form-control" style="font-size: 12px; padding: 5px;">Clear</a>
                                 </div>
                             </div>
@@ -114,11 +117,11 @@
                                     <th>Block</th>
                                     <th>Department</th>
                                     <th>Work Name</th>
-                                    <th>Project Cost</th>
+                                    <?php /* <th>Project Cost</th> */ ?>
                                     <th>Project Cost (In Words)</th>
-                                    <th>Proposal Estimate</th>
+                                    <?php /* <th>Proposal Estimate</th> */ ?>
                                     <th>Proposal Estimate (In Words)</th>
-                                    <th>Status</th>
+                                    <th>Work Status</th>
                                     <th>Officer Name</th>
                                     <th>Contact No</th>
                                     <th>Technical Session</th>
@@ -149,9 +152,9 @@
                                     <td><?php echo $record->block_name ?></td>
                                     <td><?php echo $record->department_name ?></td>
                                     <td><?php echo $record->work_name ?></td>
-                                    <td><?php echo formatIndianCurrency($record->amount_project_cost) ?></td>
+                                    <?php /* <td><?php echo formatIndianCurrency($record->amount_project_cost) ?></td> */ ?>
                                     <td><?php echo !empty($record->amount_project_cost) ? numberToHindiWords($record->amount_project_cost) : 'शून्य'; ?></td>
-                                    <td><?php echo formatIndianCurrency($record->proposal_estimate) ?></td>
+                                    <?php /* <td><?php echo formatIndianCurrency($record->proposal_estimate) ?></td> */ ?>
                                     <td><?php echo !empty($record->proposal_estimate) ? numberToHindiWords($record->proposal_estimate) : 'शून्य'; ?></td>
                                     <td>
                                         <span

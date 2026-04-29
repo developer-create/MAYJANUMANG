@@ -184,26 +184,8 @@ class ProjectSummary_model extends CI_Model
         if(!empty($filters['tender_status'])) {
             $this->db->where('BaseTbl.tender_status', $filters['tender_status']);
         }
-        
-        // Project Cost Range Filter (in Crores: 1 Crore = 10,000,000 rupees)
-        if(!empty($filters['cost_range'])) {
-            switch($filters['cost_range']) {
-                case '0-1':
-                    $this->db->where('BaseTbl.amount_project_cost >=', 0);
-                    $this->db->where('BaseTbl.amount_project_cost <', 10000000);
-                    break;
-                case '1-5':
-                    $this->db->where('BaseTbl.amount_project_cost >=', 10000000);
-                    $this->db->where('BaseTbl.amount_project_cost <', 50000000);
-                    break;
-                case '5-10':
-                    $this->db->where('BaseTbl.amount_project_cost >=', 50000000);
-                    $this->db->where('BaseTbl.amount_project_cost <', 100000000);
-                    break;
-                case '10 Above':
-                    $this->db->where('BaseTbl.amount_project_cost >=', 100000000);
-                    break;
-            }
+        if(!empty($filters['work_status'])) {
+            $this->db->where('BaseTbl.status', $filters['work_status']);
         }
         
         // Proposal Estimate Range Filter (in Crores: 1 Crore = 10,000,000 rupees)
@@ -331,6 +313,24 @@ class ProjectSummary_model extends CI_Model
         $this->db->where('BaseTbl.tender_status !=', '');
         $this->db->group_by('BaseTbl.tender_status');
         $this->db->order_by('BaseTbl.tender_status', 'ASC');
+        $query = $this->db->get();
+        
+        return $query->result();
+    }
+
+    /**
+     * This function is used to get all unique work statuses from projects
+     * @return array $result : List of work statuses
+     */
+    function getUniqueWorkStatuses()
+    {
+        $this->db->select('BaseTbl.status', FALSE);
+        $this->db->from('project_details as BaseTbl');
+        $this->db->where('BaseTbl.is_deleted', 0);
+        $this->db->where('BaseTbl.status IS NOT NULL');
+        $this->db->where('BaseTbl.status !=', '');
+        $this->db->group_by('BaseTbl.status');
+        $this->db->order_by('BaseTbl.status', 'ASC');
         $query = $this->db->get();
         
         return $query->result();

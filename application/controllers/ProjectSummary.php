@@ -48,7 +48,7 @@ class ProjectSummary extends BaseController
             if($this->input->post()) {
                 $filters['department'] = $this->input->post('department');
                 $filters['tender_status'] = $this->input->post('tender_status');
-                $filters['cost_range'] = $this->input->post('cost_range');
+                $filters['work_status'] = $this->input->post('work_status');
                 $filters['estimate_range'] = $this->input->post('estimate_range');
             }
             
@@ -58,6 +58,7 @@ class ProjectSummary extends BaseController
             // Load filter options
             $data['departments'] = $this->psm->getUniqueDepartments();
             $data['tender_statuses'] = $this->psm->getUniqueTenderStatuses();
+            $data['work_statuses'] = $this->psm->getUniqueWorkStatuses();
             
             // Pass filters to view for persistence
             $data['filters'] = $filters;
