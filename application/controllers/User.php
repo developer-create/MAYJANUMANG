@@ -1604,6 +1604,8 @@ $insert_id = $this->db->insert_id();
         $this->db->join("panchayat", "panchayat.id = jansunwai.panchayat_name", "left");
         $this->db->join("department", "department.id = jansunwai.department", "left");
         $this->db->join("subtype_of_work", "subtype_of_work.id = jansunwai.sub_work_type_id", "left");
+        $this->db->join("district", "district.id = jansunwai.district", "left");
+        $this->db->join("vidhan_sabha", "vidhan_sabha.id = jansunwai.assembly", "left");
     }
 
     private function jansunwai_datatable_apply_search($request)
@@ -1665,7 +1667,8 @@ $insert_id = $this->db->insert_id();
         $this->db->select(
             "jansunwai.*, tbl_users.name as added_by, subtype_of_work.name as sub_work_type_name, " .
             "block.name as block_join_name, booth.bnumber as booth_number_join, booth.name as booth_display_name, " .
-            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name"
+            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name, " .
+            "district.name as district_name, vidhan_sabha.vidhan_sabha_name as assembly_name"
         );
         $this->db->from("jansunwai");
         $this->jansunwai_datatable_joins();
@@ -1715,6 +1718,8 @@ $insert_id = $this->db->insert_id();
             $panchayatName = $row->panchayat_join_name ?: "N/A";
             $villageName = $row->village_join_name ?: "N/A";
             $departmentName = $row->department_join_name ?: "N/A";
+            $districtName = $row->district_name ?: "N/A";
+            $assemblyName = $row->assembly_name ?: "N/A";
 
             $approvedFundCell = !empty($row->approved_fund) ? $row->approved_fund : "-";
             $workAgencyCell = !empty($row->work_agency) ? $row->work_agency : "-";
@@ -1735,8 +1740,8 @@ $insert_id = $this->db->insert_id();
                     $row->year,
                     $monthLabel,
                     $row->date,
-                    $row->district,
-                    $row->assembly,
+                    $districtName,
+                    $assemblyName,
                     $blockName,
                     $row->recommended_letter_no,
                     $boothNo,
@@ -1788,8 +1793,8 @@ $insert_id = $this->db->insert_id();
                 $row->year,
                 $monthLabel,
                 $row->date,
-                $row->district,
-                $row->assembly,
+                $districtName,
+                $assemblyName,
                 $blockName,
                 $row->recommended_letter_no,
                 $boothNo,
@@ -1913,7 +1918,8 @@ $insert_id = $this->db->insert_id();
         $this->db->select(
             "jansunwai.*, tbl_users.name as added_by, subtype_of_work.name as sub_work_type_name, " .
             "block.name as block_join_name, booth.bnumber as booth_number_join, booth.name as booth_display_name, " .
-            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name"
+            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name, " .
+            "district.name as district_name, vidhan_sabha.vidhan_sabha_name as assembly_name"
         );
         $this->db->from("jansunwai");
         $this->jansunwai_datatable_joins();
@@ -1971,6 +1977,8 @@ $insert_id = $this->db->insert_id();
             $panchayatName = $row->panchayat_join_name ?: "N/A";
             $villageName = $row->village_join_name ?: "N/A";
             $departmentName = $row->department_join_name ?: "N/A";
+            $districtName = $row->district_name ?: "N/A";
+            $assemblyName = $row->assembly_name ?: "N/A";
 
             $actionButtons =
                 '<a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View Comment"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
@@ -1988,8 +1996,8 @@ $insert_id = $this->db->insert_id();
                 $year_display,
                 $monthLabel,
                 $row->date,
-                $row->district,
-                $row->assembly,
+                $districtName,
+                $assemblyName,
                 $blockName,
                 $row->recommended_letter_no,
                 $boothNo,
@@ -2066,7 +2074,8 @@ $insert_id = $this->db->insert_id();
         $this->db->select(
             "jansunwai.*, tbl_users.name as added_by, subtype_of_work.name as sub_work_type_name, " .
             "block.name as block_join_name, booth.bnumber as booth_number_join, booth.name as booth_display_name, " .
-            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name"
+            "village.name as village_join_name, panchayat.name as panchayat_join_name, department.name as department_join_name, " .
+            "district.name as district_name, vidhan_sabha.vidhan_sabha_name as assembly_name"
         );
         $this->db->from("jansunwai");
         $this->jansunwai_datatable_joins();
@@ -2124,6 +2133,8 @@ $insert_id = $this->db->insert_id();
             $panchayatName = $row->panchayat_join_name ?: "N/A";
             $villageName = $row->village_join_name ?: "N/A";
             $departmentName = $row->department_join_name ?: "N/A";
+            $districtName = $row->district_name ?: "N/A";
+            $assemblyName = $row->assembly_name ?: "N/A";
 
             $actionButtons =
                 '<a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View Comment"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
@@ -2141,8 +2152,8 @@ $insert_id = $this->db->insert_id();
                 $year_display,
                 $monthLabel,
                 $row->date,
-                $row->district,
-                $row->assembly,
+                $districtName,
+                $assemblyName,
                 $blockName,
                 $row->recommended_letter_no,
                 $boothNo,
