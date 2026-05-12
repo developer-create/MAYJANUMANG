@@ -15,7 +15,6 @@
         <div class="row">
             <div class="col-xs-12 text-right">
                 <div class="form-group">
-                    <a class="btn btn-info" href="<?php echo base_url(); ?>phonedirectory/bulk_upload"><i class="fa fa-upload"></i> Bulk Upload</a>
                     <a class="btn btn-primary" href="<?php echo base_url(); ?>phonedirectory/add"><i class="fa fa-plus"></i> Add New</a>
                 </div>
             </div>

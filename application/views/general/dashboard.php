@@ -94,7 +94,211 @@
             max-width: 100%;
         }
     }
+
+    /* Widget Toggle Button Styles */
+    .widget-toggle-btn {
+        position: fixed;
+        right: 20px;
+        top: 80px;
+        z-index: 999;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .widget-toggle-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+
+    /* Widget Panel Styles */
+    .widget-panel {
+        position: fixed;
+        right: -350px;
+        top: 0;
+        width: 350px;
+        height: 100vh;
+        background: white;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        border-left: 3px solid #667eea;
+    }
+    .widget-panel.active {
+        right: 0;
+    }
+
+    .widget-panel-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .widget-panel-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .widget-list {
+        padding: 15px;
+    }
+
+    .widget-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 4px solid #667eea;
+        transition: all 0.2s ease;
+    }
+    .widget-item:hover {
+        background: #e9ecef;
+        transform: translateX(-5px);
+    }
+
+    .widget-item input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        cursor: pointer;
+    }
+
+    .widget-item label {
+        flex: 1;
+        margin: 0;
+        cursor: pointer;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .widget-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.3);
+        z-index: 999;
+        display: none;
+    }
+    .widget-overlay.active {
+        display: block;
+    }
+
+    .widget-section-title {
+        font-size: 12px;
+        font-weight: bold;
+        color: #667eea;
+        text-transform: uppercase;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        padding-left: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .widget-reset-btn {
+        width: 100%;
+        padding: 10px;
+        margin: 15px 0;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.2s ease;
+    }
+    .widget-reset-btn:hover {
+        background: #764ba2;
+    }
+
+    /* Hide sections based on widget settings */
+    .dashboard-section {
+        transition: all 0.3s ease;
+    }
+    .dashboard-section.hidden {
+        display: none;
+    }
     </style>
+    <!-- Widget Toggle Button -->
+    <button class="widget-toggle-btn" id="widgetToggleBtn" title="Customize Dashboard">
+        <i class="fa fa-sliders"></i>
+    </button>
+
+    <!-- Widget Panel -->
+    <div class="widget-overlay" id="widgetOverlay"></div>
+    <div class="widget-panel" id="widgetPanel">
+        <div class="widget-panel-header">
+            <span>Customize Dashboard</span>
+            <button class="widget-panel-close" id="widgetPanelClose">&times;</button>
+        </div>
+        <div class="widget-list">
+            <div class="widget-section-title">Vidhan Sabha Cards</div>
+            <div class="widget-item">
+                <input type="checkbox" id="widget-vidhan-cards" class="widget-checkbox" data-section="vidhan-cards" checked>
+                <label for="widget-vidhan-cards">All Vidhan Sabha Cards</label>
+            </div>
+
+            <div class="widget-section-title">MP Cards</div>
+            <div class="widget-item">
+                <input type="checkbox" id="widget-mp-cards" class="widget-checkbox" data-section="mp-cards" checked>
+                <label for="widget-mp-cards">All MP Cards</label>
+            </div>
+
+            <div class="widget-section-title">Charts & Tables</div>
+            <div class="widget-item">
+                <input type="checkbox" id="widget-charts" class="widget-checkbox" data-section="charts" checked>
+                <label for="widget-charts">Charts (Bar & Pie)</label>
+            </div>
+            <div class="widget-item">
+                <input type="checkbox" id="widget-assembly-table" class="widget-checkbox" data-section="assembly-table" checked>
+                <label for="widget-assembly-table">Assembly Department Summary</label>
+            </div>
+            <div class="widget-item">
+                <input type="checkbox" id="widget-mp-table" class="widget-checkbox" data-section="mp-table" checked>
+                <label for="widget-mp-table">MP Department Summary</label>
+            </div>
+
+            <div class="widget-section-title">Party Worker Code Summary</div>
+            <div class="widget-item">
+                <input type="checkbox" id="widget-vidhan-worker-code" class="widget-checkbox" data-section="vidhan-worker-code" checked>
+                <label for="widget-vidhan-worker-code">Vidhan Sabha Party Worker Code</label>
+            </div>
+            <div class="widget-item">
+                <input type="checkbox" id="widget-mp-worker-code" class="widget-checkbox" data-section="mp-worker-code" checked>
+                <label for="widget-mp-worker-code">MP Party Worker Code</label>
+            </div>
+
+            <button class="widget-reset-btn" id="widgetResetBtn">Reset to Default</button>
+        </div>
+    </div>
+
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
@@ -104,7 +308,7 @@
     </section>
     <section class="content" style="padding: 10px;">
         <!-- First Row: My Assembly Cards - 7 per row -->
-        <div class="row" style="display: flex; flex-wrap: wrap; margin: 0; padding: 0;">
+        <div class="dashboard-section" id="section-vidhan-cards" style="display: flex; flex-wrap: wrap; margin: 0; padding: 0;">
             <div class="col-7">
                 <div class="stat-card aqua">
                     <div class="stat-card-title">Today Vidhan Sabha</div>
@@ -185,7 +389,7 @@
             </div>
         </div>
         <!-- Second Row: All MP Cards - 7 per row -->
-        <div class="row" style="display: flex; flex-wrap: wrap; margin: 0; padding: 0;">
+        <div class="dashboard-section" id="section-mp-cards" style="display: flex; flex-wrap: wrap; margin: 0; padding: 0;">
             <div class="col-7">
                 <div class="stat-card aqua">
                     <div class="stat-card-title">Today MP</div>
@@ -263,199 +467,209 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" >
-                    <form method="post" action="<?php echo base_url('user/index'); ?>">
-                        <div class="row">
-                            <!-- Start Date -->
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="start_date">Start Date:</label>
-                                    <input type="date" id="start_date" name="start_date" class="form-control"
-                                        value="<?php echo set_value('start_date'); ?>">
+        <div class="dashboard-section" id="section-charts">
+            <div class="row">
+                <div class="col-lg-12 col-xs-12">
+                    <div class="box box-primary" >
+                        <form method="post" action="<?php echo base_url('user/index'); ?>">
+                            <div class="row">
+                                <!-- Start Date -->
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="start_date">Start Date:</label>
+                                        <input type="date" id="start_date" name="start_date" class="form-control"
+                                            value="<?php echo set_value('start_date'); ?>">
+                                    </div>
+                                </div>
+                                <!-- End Date -->
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="end_date">End Date:</label>
+                                        <input type="date" id="end_date" name="end_date" class="form-control"
+                                            value="<?php echo set_value('end_date'); ?>">
+                                    </div>
+                                </div>
+                                <!-- Submit Button -->
+                                <div class="col-md-4 col-sm-12 col-xs-12 d-flex align-items-end " style="margin-top: 22px;">
+                                    <div class="form-group">
+                                        <label for=" "></label>
+                                        <button type="submit" class="btn btn-primary">Filter Graph Data</button>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- End Date -->
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="end_date">End Date:</label>
-                                    <input type="date" id="end_date" name="end_date" class="form-control"
-                                        value="<?php echo set_value('end_date'); ?>">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-xs-6">
+                    <div class="box box-primary" >
+                        <h4 >Status By Block</h4>
+                        <button onclick="printChart('barChart')" class="btn btn-primary">Print Bar Chart</button>
+                        <canvas id="barChart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xs-6">
+                    <div class="box box-primary" >
+                        <h4 >Over-All Status</h4>
+                        <button onclick="printChart('pieChart')" class="btn btn-primary">Print Pie Chart</button>
+                        <canvas id="pieChart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section" id="section-assembly-table">
+            <div class="row">
+                <div class="col-lg-12 col-xs-12">
+                    <div class="box box-primary" >
+                        <form method="post" action="<?php echo base_url('user/index'); ?>">
+                            <div class="row">
+                                <!-- Start Block -->
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="block">Start Block:</label>
+                                        <select id="block" name="blockname" class="form-control">
+                                            <option value="">Select</option>
+                                            <?php foreach($Allblocks as $eachblock) { ?>
+                                            <option value="<?php echo $eachblock->id ?>" <?php echo (isset($blockname) && $blockname == $eachblock->id) ? 'selected' : ''; ?>><?php echo $eachblock->name ?>
+                                            </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Submit Button -->
-                            <div class="col-md-4 col-sm-12 col-xs-12 d-flex align-items-end " style="margin-top: 22px;">
-                                <div class="form-group">
-                                    <label for=" "></label>
-                                    <button type="submit" class="btn btn-primary">Filter Graph Data</button>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary">Filter</button>
                                 </div>
                             </div>
+                        </form>
+                        <div class="box-body table-responsive no-padding">
+                            <h3 style="text-align:center;"><b>My Assembly Department - Summary Report</b></h3>
+                            <table class="table table-hover" id="dashboardtable">
+                                <thead>
+                                    <tr>
+                                        <th>Department Name</th>
+                                        <th>Complete</th>
+                                        <th>Incomplete</th>
+                                        <th>In Progress</th>
+                                        <th>Total</th>
+                                        <!-- New Total column -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($results)): ?>
+                                    <?php foreach ($results as $row): ?>
+                                    <tr>
+                                        <td>
+                                            <a
+                                                href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=<?php echo $row->work_statuses ?>&department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->department_name; ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a
+                                                href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=Complete&department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->complete_count; ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a
+                                                href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=Incomplete&department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->incomplete_count; ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a
+                                                href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=In progress&department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->inprogress_count; ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a
+                                                href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=&department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->total_count; ?>
+                                            </a>
+                                        </td>
+                                        <!-- Display total -->
+                                    </tr>
+                                    <?php endforeach; ?>
+                                    <?php else: ?>
+                                    <tr>
+                                        <td colspan="5">No data available</td>
+                                        <!-- Adjust colspan for total column -->
+                                    </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
                         </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xs-6">
-                <div class="box box-primary" >
-                    <h4 >Status By Block</h4>
-                    <button onclick="printChart('barChart')" class="btn btn-primary">Print Bar Chart</button>
-                    <canvas id="barChart" style="max-height: 300px;"></canvas>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xs-6">
-                <div class="box box-primary" >
-                    <h4 >Over-All Status</h4>
-                    <button onclick="printChart('pieChart')" class="btn btn-primary">Print Pie Chart</button>
-                    <canvas id="pieChart" style="max-height: 300px;"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" >
-                    <form method="post" action="<?php echo base_url('user/index'); ?>">
-                        <div class="row">
-                            <!-- Start Block -->
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label for="block">Start Block:</label>
-                                    <select id="block" name="blockname" class="form-control">
-                                        <option value="">Select</option>
-                                        <?php foreach($Allblocks as $eachblock) { ?>
-                                        <option value="<?php echo $eachblock->id ?>" <?php echo (isset($blockname) && $blockname == $eachblock->id) ? 'selected' : ''; ?>><?php echo $eachblock->name ?>
-                                        </option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Submit Button -->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="box-body table-responsive no-padding">
-                        <h3 style="text-align:center;"><b>My Assembly Department - Summary Report</b></h3>
-                        <table class="table table-hover" id="dashboardtable">
-                            <thead>
-                                <tr>
-                                    <th>Department Name</th>
-                                    <th>Complete</th>
-                                    <th>Incomplete</th>
-                                    <th>In Progress</th>
-                                    <th>Total</th>
-                                    <!-- New Total column -->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!empty($results)): ?>
-                                <?php foreach ($results as $row): ?>
-                                <tr>
-                                    <td>
-                                        <a
-                                            href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=<?php echo $row->work_statuses ?>&department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->department_name; ?>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a
-                                            href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=Complete&department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->complete_count; ?>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a
-                                            href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=Incomplete&department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->incomplete_count; ?>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a
-                                            href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=In progress&department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->inprogress_count; ?>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a
-                                            href="<?php echo base_url()?>user/filterJansunwai?block=&stage=&status=&department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->total_count; ?>
-                                        </a>
-                                    </td>
-                                    <!-- Display total -->
-                                </tr>
-                                <?php endforeach; ?>
-                                <?php else: ?>
-                                <tr>
-                                    <td colspan="5">No data available</td>
-                                    <!-- Adjust colspan for total column -->
-                                </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+                <!-- ./col -->
             </div>
-            <!-- ./col -->
         </div>
-        <div class="row">
-            <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" >
-                    <div class="box-body table-responsive no-padding">
-                        <h3 style="text-align:center;"><b>MP Public Problems Department - Summary Report</b></h3>
-                        <table class="table table-hover" id="dashboardtable">
-                            <thead>
-                                <tr>
-                                    <th>Department Name</th>
-                                    <th>Complete</th>
-                                    <th>Incomplete</th>
-                                    <th>In Progress</th>
-                                    <th>Total Problems</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!empty($public_problems_dept_summary)): ?>
-                                <?php foreach ($public_problems_dept_summary as $row): ?>
-                                <tr>
-                                    <td>
-                                        <a
-                                            href="<?php echo base_url()?>Districtpublicproblem/Disctrictproblem?department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->department_name; ?>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a
-                                            href="<?php echo base_url()?>Districtpublicproblem/Disctrictproblem?status=Complete&department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->completed; ?>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a style="color:red;"
-                                            href="<?php echo base_url()?>Districtpublicproblem/Disctrictproblem?status=Incomplete&department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->incomplete; ?>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a
-                                            href="<?php echo base_url()?>user/filterdistrictpublicproblemlist?block=&stage=&status=In progress&department=<?php echo $row->department_id ?>">
-                                            <?php echo $row->in_progress; ?>
-                                        </a>
-                                    </td>
-                                    <td> <?php echo $row->total_problems; ?> </td>
-                                </tr>
-                                <?php endforeach; ?>
-                                <?php else: ?>
-                                <tr>
-                                    <td colspan="5">No data available</td>
-                                </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+
+        <div class="dashboard-section" id="section-mp-table">
+            <div class="row">
+                <div class="col-lg-12 col-xs-12">
+                    <div class="box box-primary" >
+                        <div class="box-body table-responsive no-padding">
+                            <h3 style="text-align:center;"><b>MP Public Problems Department - Summary Report</b></h3>
+                            <table class="table table-hover" id="dashboardtable">
+                                <thead>
+                                    <tr>
+                                        <th>Department Name</th>
+                                        <th>Complete</th>
+                                        <th>Incomplete</th>
+                                        <th>In Progress</th>
+                                        <th>Total Problems</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($public_problems_dept_summary)): ?>
+                                    <?php foreach ($public_problems_dept_summary as $row): ?>
+                                    <tr>
+                                        <td>
+                                            <a
+                                                href="<?php echo base_url()?>Districtpublicproblem/Disctrictproblem?department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->department_name; ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a
+                                                href="<?php echo base_url()?>Districtpublicproblem/Disctrictproblem?status=Complete&department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->completed; ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a style="color:red;"
+                                                href="<?php echo base_url()?>Districtpublicproblem/Disctrictproblem?status=Incomplete&department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->incomplete; ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a
+                                                href="<?php echo base_url()?>user/filterdistrictpublicproblemlist?block=&stage=&status=In progress&department=<?php echo $row->department_id ?>">
+                                                <?php echo $row->in_progress; ?>
+                                            </a>
+                                        </td>
+                                        <td> <?php echo $row->total_problems; ?> </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                    <?php else: ?>
+                                    <tr>
+                                        <td colspan="5">No data available</td>
+                                    </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                <!-- ./col -->
             </div>
-            <!-- ./col -->
         </div>
 
         <!-- <div class="row">
@@ -621,130 +835,131 @@
             </div>
             
         </div> -->
-        <div class="row">
-            <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" >
-                    <div class="box-body table-responsive no-padding">
-                        <h3 style="text-align:center;"><b>Vidhan Sabha Party Worker Code Summary</b></h3>
-                        <table class="table table-hover" id="dashboardtable1">
-                            <thead>
-                                <tr>
-                                    <th>Block Name</th>
-                                    <th class="th-total-count">Total Count</th>
-                                    <th class="th-today-count">Today Count</th>
-                                    <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
-                                    <th><?php echo htmlspecialchars($ct['label']); ?></th>
-                                    <?php endforeach; } ?>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $coding_types = isset($coding_types) ? $coding_types : [];
-                                if (!empty($blocks)) :
-                                    foreach ($blocks as $block) :
-                                        $block_param = isset($block->block_id) ? 'block=' . $block->block_id : 'block=';
-                                ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($block->BlockName); ?></td>
-                                    <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
-                                    <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
-                                    <?php foreach ($coding_types as $ct) :
-                                        $col = $ct['col'];
-                                        $count = isset($block->$col) ? (int)$block->$col : 0;
-                                        $url = base_url('user/filterServaylisting') . '?' . $block_param . '&code=' . rawurlencode($ct['code_param']);
+        <div class="dashboard-section" id="section-vidhan-worker-code">
+            <div class="row">
+                <div class="col-lg-12 col-xs-12">
+                    <div class="box box-primary" >
+                        <div class="box-body table-responsive no-padding">
+                            <h3 style="text-align:center;"><b>Vidhan Sabha Party Worker Code Summary</b></h3>
+                            <table class="table table-hover" id="dashboardtable1">
+                                <thead>
+                                    <tr>
+                                        <th>Block Name</th>
+                                        <th class="th-total-count">Total Count</th>
+                                        <th class="th-today-count">Today Count</th>
+                                        <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
+                                        <th><?php echo htmlspecialchars($ct['label']); ?></th>
+                                        <?php endforeach; } ?>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $coding_types = isset($coding_types) ? $coding_types : [];
+                                    if (!empty($blocks)) :
+                                        foreach ($blocks as $block) :
+                                            $block_param = isset($block->block_id) ? 'block=' . $block->block_id : 'block=';
                                     ?>
-                                    <td><a href="<?php echo $url; ?>"><?php echo $count; ?></a></td>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($block->BlockName); ?></td>
+                                        <td><?php echo isset($block->Total_Count) ? (int)$block->Total_Count : 0; ?></td>
+                                        <td><?php echo isset($block->Today_Count) ? (int)$block->Today_Count : 0; ?></td>
+                                        <?php foreach ($coding_types as $ct) :
+                                            $col = $ct['col'];
+                                            $count = isset($block->$col) ? (int)$block->$col : 0;
+                                            $url = base_url('user/filterServaylisting') . '?' . $block_param . '&code=' . rawurlencode($ct['code_param']);
+                                        ?>
+                                        <td><a href="<?php echo $url; ?>"><?php echo $count; ?></a></td>
+                                        <?php endforeach; ?>
+                                    </tr>
                                     <?php endforeach; ?>
-                                </tr>
-                                <?php endforeach; ?>
-                                <?php else : ?>
-                                <tr>
-                                    <td colspan="<?php echo count($coding_types) + 3; ?>">No data available.</td>
-                                </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                                    <?php else : ?>
+                                    <tr>
+                                        <td colspan="<?php echo count($coding_types) + 3; ?>">No data available.</td>
+                                    </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                <!-- ./col -->
             </div>
-            <!-- ./col -->
         </div>
-        <div class="row">
-            <div class="col-lg-12 col-xs-12">
-                <div class="box box-primary" >
-                    <form method="post" action="<?php echo base_url('user/index'); ?>">
-                        <div class="row" style="padding: 15px 15px 0 15px;">
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label>Summary View By:</label>
-                                    <select name="summary_type" class="form-control" onchange="this.form.submit()">
-                                        <option value="district" <?php echo ($summary_type == 'district') ? 'selected' : ''; ?>>District Wise</option>
-                                        <option value="vidhan_sabha" <?php echo ($summary_type == 'vidhan_sabha') ? 'selected' : ''; ?>>Vidhan Sabha Wise</option>
-                                    </select>
+        <div class="dashboard-section" id="section-mp-worker-code">
+            <div class="row">
+                <div class="col-lg-12 col-xs-12">
+                    <div class="box box-primary" >
+                        <form method="post" action="<?php echo base_url('user/index'); ?>">
+                            <div class="row" style="padding: 15px 15px 0 15px;">
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label>Summary View By:</label>
+                                        <select name="summary_type" class="form-control" onchange="this.form.submit()">
+                                            <option value="district" <?php echo ($summary_type == 'district') ? 'selected' : ''; ?>>District Wise</option>
+                                            <option value="vidhan_sabha" <?php echo ($summary_type == 'vidhan_sabha') ? 'selected' : ''; ?>>Vidhan Sabha Wise</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label>District:</label>
+                                        <select name="filter_district" id="worker_filter_district" class="form-control">
+                                            <option value="">All Districts</option>
+                                            <?php if(!empty($Alldistricts)) { foreach($Alldistricts as $dist) { ?>
+                                            <option value="<?php echo $dist->id ?>" <?php echo ($filter_district == $dist->id) ? 'selected' : ''; ?>>
+                                                <?php echo $dist->name ?>
+                                            </option>
+                                            <?php } } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label>Vidhan Sabha:</label>
+                                        <select name="filter_vidhan_sabha" id="worker_filter_vidhan_sabha" class="form-control">
+                                            <option value="">All Vidhan Sabhas</option>
+                                            <?php if(!empty($Allvidhansabhas)) { foreach($Allvidhansabhas as $vs) { ?>
+                                            <option value="<?php echo $vs->id ?>" <?php echo ($filter_vidhan_sabha == $vs->id) ? 'selected' : ''; ?>>
+                                                <?php echo $vs->vidhan_sabha_name ?>
+                                            </option>
+                                            <?php } } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-xs-12" style="margin-top: 25px;">
+                                    <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label>District:</label>
-                                    <select name="filter_district" id="worker_filter_district" class="form-control">
-                                        <option value="">All Districts</option>
-                                        <?php if(!empty($Alldistricts)) { foreach($Alldistricts as $dist) { ?>
-                                        <option value="<?php echo $dist->id ?>" <?php echo ($filter_district == $dist->id) ? 'selected' : ''; ?>>
-                                            <?php echo $dist->name ?>
-                                        </option>
-                                        <?php } } ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-6 col-xs-12">
-                                <div class="form-group">
-                                    <label>Vidhan Sabha:</label>
-                                    <select name="filter_vidhan_sabha" id="worker_filter_vidhan_sabha" class="form-control">
-                                        <option value="">All Vidhan Sabhas</option>
-                                        <?php if(!empty($Allvidhansabhas)) { foreach($Allvidhansabhas as $vs) { ?>
-                                        <option value="<?php echo $vs->id ?>" <?php echo ($filter_vidhan_sabha == $vs->id) ? 'selected' : ''; ?>>
-                                            <?php echo $vs->vidhan_sabha_name ?>
-                                        </option>
-                                        <?php } } ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-6 col-xs-12" style="margin-top: 25px;">
-                                <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
-                            </div>
-                        </div>
-                    </form>
-                    <hr style="margin: 5px 0;">
-                    <div class="box-body table-responsive no-padding">
-                        <h3 style="text-align:center;"><b>MP Party Worker Code Summary</b></h3>
-                        <table class="table table-hover" id="dashboardtable1">
-                            <thead>
-                                <tr>
-                                    <th>District Name</th>
-                                    <?php if ($summary_type == 'vidhan_sabha') : ?>
-                                    <th>Vidhan Sabha Name</th>
-                                    <?php endif; ?>
-                                    <th class="th-total-count">Total Count</th>
-                                    <th class="th-today-count">Today Count</th>
-                                    <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
-                                    <th><?php echo htmlspecialchars($ct['label']); ?></th>
-                                    <?php endforeach; } ?>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                if (!empty($districts)) :
-                                    if ($summary_type == 'vidhan_sabha') :
-                                        // Group rows by District for rowspan
-                                        $district_groups = [];
-                                        foreach ($districts as $row) {
-                                            $d_id = $row->district_id_val ? $row->district_id_val : 'total';
-                                            $district_groups[$d_id][] = $row;
-                                        }
-
-                                        foreach ($district_groups as $d_id => $rows) :
-                                            foreach ($rows as $index => $block) :
-                                                $vs_param = $block->vidhan_sabha_id ? 'vidhan_sabha_id=' . $block->vidhan_sabha_id : 'vidhan_sabha_id=';
+                        </form>
+                        <hr style="margin: 5px 0;">
+                        <div class="box-body table-responsive no-padding">
+                            <h3 style="text-align:center;"><b>MP Party Worker Code Summary</b></h3>
+                            <table class="table table-hover" id="dashboardtable1">
+                                <thead>
+                                    <tr>
+                                        <th>District Name</th>
+                                        <?php if ($summary_type == 'vidhan_sabha') : ?>
+                                        <th>Vidhan Sabha Name</th>
+                                        <?php endif; ?>
+                                        <th class="th-total-count">Total Count</th>
+                                        <th class="th-today-count">Today Count</th>
+                                        <?php if (!empty($coding_types)) { foreach ($coding_types as $ct) : ?>
+                                        <th><?php echo htmlspecialchars($ct['label']); ?></th>
+                                        <?php endforeach; } ?>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    if (!empty($districts)) :
+                                        if ($summary_type == 'vidhan_sabha') :
+                                            $district_groups = [];
+                                            foreach ($districts as $row) {
+                                                $d_id = $row->district_id_val ? $row->district_id_val : 'total';
+                                                $district_groups[$d_id][] = $row;
+                                            }
+                                            foreach ($district_groups as $d_id => $rows) :
+                                                foreach ($rows as $index => $block) :
+                                                    $vs_param = $block->vidhan_sabha_id ? 'vidhan_sabha_id=' . $block->vidhan_sabha_id : 'vidhan_sabha_id=';
                                     ?>
                                     <tr>
                                         <?php if ($index === 0) : ?>
@@ -788,12 +1003,12 @@
                                     <td colspan="<?php echo count($coding_types) + 3; ?>">No data available.</td>
                                 </tr>
                                 <?php endif; ?>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- ./col -->
         </div>
 
         <!-- Fund Summary Section -->
@@ -1134,5 +1349,89 @@ $(document).ready(function() {
             });
         }
     });
+
+    // Widget Toggle Functionality
+    const widgetToggleBtn = $('#widgetToggleBtn');
+    const widgetPanel = $('#widgetPanel');
+    const widgetOverlay = $('#widgetOverlay');
+    const widgetPanelClose = $('#widgetPanelClose');
+    const widgetCheckboxes = $('.widget-checkbox');
+    const widgetResetBtn = $('#widgetResetBtn');
+
+    // Load saved preferences from localStorage
+    function loadWidgetPreferences() {
+        const saved = localStorage.getItem('dashboardWidgets');
+        if (saved) {
+            const preferences = JSON.parse(saved);
+            widgetCheckboxes.each(function() {
+                const section = $(this).data('section');
+                if (preferences.hasOwnProperty(section)) {
+                    $(this).prop('checked', preferences[section]);
+                }
+            });
+            applyWidgetPreferences();
+        }
+    }
+
+    // Save preferences to localStorage
+    function saveWidgetPreferences() {
+        const preferences = {};
+        widgetCheckboxes.each(function() {
+            const section = $(this).data('section');
+            preferences[section] = $(this).is(':checked');
+        });
+        localStorage.setItem('dashboardWidgets', JSON.stringify(preferences));
+    }
+
+    // Apply widget preferences (show/hide sections)
+    function applyWidgetPreferences() {
+        widgetCheckboxes.each(function() {
+            const section = $(this).data('section');
+            const isChecked = $(this).is(':checked');
+            const sectionElement = $('#section-' + section);
+            
+            if (isChecked) {
+                sectionElement.removeClass('hidden');
+            } else {
+                sectionElement.addClass('hidden');
+            }
+        });
+    }
+
+    // Toggle widget panel
+    widgetToggleBtn.click(function() {
+        widgetPanel.toggleClass('active');
+        widgetOverlay.toggleClass('active');
+    });
+
+    // Close widget panel
+    widgetPanelClose.click(function() {
+        widgetPanel.removeClass('active');
+        widgetOverlay.removeClass('active');
+    });
+
+    // Close panel when clicking overlay
+    widgetOverlay.click(function() {
+        widgetPanel.removeClass('active');
+        widgetOverlay.removeClass('active');
+    });
+
+    // Handle checkbox changes
+    widgetCheckboxes.change(function() {
+        applyWidgetPreferences();
+        saveWidgetPreferences();
+    });
+
+    // Reset to default
+    widgetResetBtn.click(function() {
+        if (confirm('Are you sure you want to reset all widgets to default?')) {
+            widgetCheckboxes.prop('checked', true);
+            applyWidgetPreferences();
+            saveWidgetPreferences();
+        }
+    });
+
+    // Load preferences on page load
+    loadWidgetPreferences();
 });
 </script>

@@ -75,10 +75,14 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => '127.0.0.1',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'mayjanumang',
+ 'hostname' => 'sdb-66.hosting.stackcp.net',  // Changed to 127.0.0.1
+
+// 	'username' => 'umangx0x_newdata',
+// 	'password' => 'umangx0x_newdata',
+// 	'database' => 'umangx0x_newdata',
+    'username' => 'janumang-353034313fe5',
+	'password' => 'Ravindra*30',
+	'database' => 'janumang-353034313fe5',
 	
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
@@ -86,12 +90,12 @@ $db['default'] = array(
 	'db_debug' => (ENVIRONMENT !== 'production'),
 	'cache_on' => FALSE,
 	'cachedir' => '',
-	'char_set' => 'utf8mb4',
-	'dbcollat' => 'utf8mb4_unicode_ci',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
 	'swap_pre' => '',
 	'encrypt' => FALSE,
 	'compress' => FALSE,
 	'stricton' => FALSE,
 	'failover' => array(),
 	'save_queries' => TRUE
-); 
+);

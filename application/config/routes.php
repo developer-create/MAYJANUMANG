@@ -198,6 +198,25 @@ $route['dpsamiti/deleteMember/(:num)/(:num)'] = 'DpSamiti/deleteMember/$1/$2';
 $route['dpsamiti/get_booths_by_block'] = 'DpSamiti/get_booths_by_block';
 $route['dpsamiti/get_booth_details'] = 'DpSamiti/get_booth_details';
 
+// Boring Samiti routes
+$route['boringsamiti'] = 'BoringSamiti/index';
+$route['boringsamiti/create'] = 'BoringSamiti/create';
+$route['boringsamiti/store'] = 'BoringSamiti/store';
+$route['boringsamiti/edit/(:num)'] = 'BoringSamiti/edit/$1';
+$route['boringsamiti/update/(:num)'] = 'BoringSamiti/update/$1';
+$route['boringsamiti/delete/(:num)'] = 'BoringSamiti/delete/$1';
+$route['boringsamiti/view/(:num)'] = 'BoringSamiti/view/$1';
+$route['boringsamiti/members/(:num)'] = 'BoringSamiti/members/$1';
+$route['boringsamiti/add_member/(:num)'] = 'BoringSamiti/add_member/$1';
+$route['boringsamiti/store_member'] = 'BoringSamiti/store_member';
+$route['boringsamiti/edit_member/(:num)'] = 'BoringSamiti/edit_member/$1';
+$route['boringsamiti/update_member/(:num)'] = 'BoringSamiti/update_member/$1';
+$route['boringsamiti/delete_member/(:num)'] = 'BoringSamiti/delete_member/$1';
+$route['boringsamiti/get_booths_by_block'] = 'BoringSamiti/get_booths_by_block';
+$route['boringsamiti/get_booth_details'] = 'BoringSamiti/get_booth_details';
+
+
+
 
 // Mandir Samiti routes
 $route['mandirsamiti'] = 'MandirSamiti/index';
@@ -322,6 +341,14 @@ $route['events/google_calendar_callback'] = 'Events/google_calendar_callback';
 $route['events/disconnect-google-calendar'] = 'Events/disconnect_google_calendar';
 $route['events/disconnect_google_calendar'] = 'Events/disconnect_google_calendar';
 
+// Events API (JSON; same fields as events/store)
+$route['api/event_create'] = 'api/event_create';
+$route['api/event_list'] = 'api/event_list';
+$route['api/event_list_by_date'] = 'api/event_list_by_date';
+
+
+
+
 // Voter routes
 $route['voter'] = 'Voter/index';
 $route['voter/create'] = 'Voter/create';
@@ -355,6 +382,9 @@ $route['visitors/view/(:num)'] = 'Visitors/view/$1';
 $route['phonedirectory'] = 'PhoneDirectory/index';
 $route['phonedirectory/add'] = 'PhoneDirectory/add';
 $route['phonedirectory/store'] = 'PhoneDirectory/store';
+$route['phonedirectory/bulk_upload'] = 'PhoneDirectory/bulk_upload';
+$route['phonedirectory/process_bulk_upload'] = 'PhoneDirectory/process_bulk_upload';
+$route['phonedirectory/download_template'] = 'PhoneDirectory/download_template';
 $route['phonedirectory/edit/(:num)'] = 'PhoneDirectory/edit/$1';
 $route['phonedirectory/update/(:num)'] = 'PhoneDirectory/update/$1';
 $route['phonedirectory/delete/(:num)'] = 'PhoneDirectory/delete/$1';

@@ -19,6 +19,19 @@
     	button.dt-button.buttons-excel.buttons-html5 {
     left: 58px !important;
 }
+
+<?php if($this->session->userdata('role') != 1): ?>
+/* Hide export buttons globally for non-admin users */
+.dt-button.buttons-excel, 
+.dt-button.buttons-csv, 
+.dt-button.buttons-copy, 
+.dt-button.buttons-pdf, 
+.dt-button.buttons-print {
+    display: none !important;
+}
+<?php endif; ?>
+
+
 div#feedbackTa_filter {
     margin-right: 138px !important;
 }

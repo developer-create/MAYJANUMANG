@@ -7,8 +7,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 function parse_csv_file($file_path) {
     $rows = array();
     
-    if (($handle = fopen($file_path, 'r')) !== FALSE) {
-        while (($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
+    // Set locale to handle UTF-8 characters correctly with fgetcsv
+    setlocale(LC_ALL, 'en_US.UTF-8');
+    
+    // Read file content to detect and convert encoding
+    $content = file_get_contents($file_path);
+    if ($content === FALSE) return $rows;
+
+    // Check for UTF-8 BOM and remove it
+    if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
+        $content = substr($content, 3);
+    }
+    
+    // Detect encoding
+    $encoding = mb_detect_encoding($content, 'UTF-8, ISO-8859-1, Windows-1252, ASCII', true);
+    
+    if ($encoding && $encoding !== 'UTF-8') {
+        $content = mb_convert_encoding($content, 'UTF-8', $encoding);
+    } elseif (!$encoding) {
+        // Fallback for cases where detection fails - try to convert from Windows-1252 to UTF-8
+        // as it's the most common non-UTF8 encoding from Excel
+        $content = mb_convert_encoding($content, 'UTF-8', 'Windows-1252');
+    }
+    
+    // Use a temporary stream to parse the converted content
+    $handle = fopen('php://temp', 'r+');
+    fwrite($handle, $content);
+    rewind($handle);
+    
+    if ($handle !== FALSE) {
+        while (($data = fgetcsv($handle, 0, ',')) !== FALSE) {
             $rows[] = $data;
         }
         fclose($handle);

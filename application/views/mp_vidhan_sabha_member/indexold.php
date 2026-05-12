@@ -112,8 +112,6 @@
                           <th>Panchayat</th>
                           <th>Village</th>
                           <th>Vidhan Sabha</th>
-                          <th>Lok Sabha</th>
-                          <th>Year</th>
                           <th>BG</th>
                           <th>BC</th>
                           <th>ER</th>
@@ -150,7 +148,8 @@
                           <th>DYC</th>
                           <th>DCC</th>
                           <th>OBC</th>
-                          <th>CELL/MP</th>
+                          <th>CELL</th>
+                          <th>MP</th>
                           <th>DT</th>
                           <th>DP</th>
                           <th>AVP</th>
@@ -165,10 +164,9 @@
                           <th>ADVISE</th>
                           <th>REF</th>
                           <th>Remark</th>
-
                           <th>Created By</th>
                           <th>Created Time</th>
-                          <th>Year (Date)</th>
+                          <th>Year</th>
                           <th>Actions</th>
                       </tr>
                     </thead>
@@ -186,8 +184,6 @@
                         <td><?php echo isset($member['panchayat_name']) && $member['panchayat_name'] ? htmlspecialchars($member['panchayat_name']) : '-'; ?></td>
                         <td><?php echo isset($member['village_name']) && $member['village_name'] ? htmlspecialchars($member['village_name']) : '-'; ?></td>
                         <td><?php echo isset($member['vidhan_sabha_name']) && $member['vidhan_sabha_name'] ? htmlspecialchars($member['vidhan_sabha_name']) : '-'; ?></td>
-                        <td><?php echo !empty($member['locksabha']) ? htmlspecialchars($member['locksabha']) : '-'; ?></td>
-                        <td><?php echo !empty($member['year']) ? htmlspecialchars($member['year']) : '-'; ?></td>
                         <td><?php echo isset($member['bg']) && $member['bg'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['bc']) && $member['bc'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['er']) && $member['er'] ? '✓' : '-'; ?></td>
@@ -224,7 +220,8 @@
                         <td><?php echo isset($member['dyc']) && $member['dyc'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['dcc']) && $member['dcc'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['obc']) && $member['obc'] ? '✓' : '-'; ?></td>
-                        <td><?php echo isset($member['cell_mp']) && $member['cell_mp'] ? '✓' : '-'; ?></td>
+                        <td><?php echo isset($member['cell']) && $member['cell'] ? '✓' : '-'; ?></td>
+                        <td><?php echo isset($member['mp']) && $member['mp'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['dt']) && $member['dt'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['dp']) && $member['dp'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['avp']) && $member['avp'] ? '✓' : '-'; ?></td>
@@ -239,7 +236,6 @@
                         <td><?php echo isset($member['advise']) && $member['advise'] ? '✓' : '-'; ?></td>
                         <td><?php echo isset($member['ref']) && $member['ref'] ? '✓' : '-'; ?></td>
                         <td><?php echo !empty($member['remark']) ? htmlspecialchars($member['remark']) : '-'; ?></td>
-
                         <td><?php echo $member['created_by_name']; ?></td>
                         <td><?php echo date('d-m-Y H:i:s', strtotime($member['created_time'])); ?></td>
                         <td><?php echo isset($member['date']) && $member['date'] ? date('Y', strtotime($member['date'])) : '-'; ?></td>
@@ -291,7 +287,7 @@ $(document).ready(function() {
             [10, 25, 50, 75, "All"]
         ],
         "columnDefs": [
-            { "orderable": false, "targets": -1 }
+            { "orderable": false, "targets": 63 }
         ],
         "scrollX": true
     });

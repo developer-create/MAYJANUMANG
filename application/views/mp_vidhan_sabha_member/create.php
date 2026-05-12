@@ -115,14 +115,26 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="mobile_no">Mobile No</label>
-                                        <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Enter Mobile No">
-                                    </div>
-                                </div>
-                            </div>
+                             <div class="row">
+                                 <div class="col-md-6">
+                                     <div class="form-group">
+                                         <label for="mobile_no">Mobile No</label>
+                                         <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Enter Mobile No">
+                                     </div>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <div class="form-group">
+                                         <label for="locksabha">Lok Sabha</label>
+                                         <input type="text" class="form-control" id="locksabha" name="locksabha" placeholder="Enter Lok Sabha">
+                                     </div>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <div class="form-group">
+                                         <label for="year">Year</label>
+                                         <input type="text" class="form-control" id="year" name="year" placeholder="Enter Year">
+                                     </div>
+                                 </div>
+                             </div>
 
                             <hr>
                             <h4>Additional Code</h4>
@@ -337,14 +349,10 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="checkbox">
-                                        <label><input type="checkbox" name="cell" id="cell"> CELL</label>
+                                        <label><input type="checkbox" name="cell_mp" id="cell_mp"> CELL/MP</label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="checkbox">
-                                        <label><input type="checkbox" name="mp" id="mp"> MP</label>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-3">
                                     <div class="checkbox">
                                         <label><input type="checkbox" name="dt" id="dt"> DT</label>

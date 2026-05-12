@@ -322,6 +322,176 @@ class PhoneDirectory extends BaseController
     }
 
     /**
+     * Show bulk upload form for Phone Directory
+     */
+    public function bulk_upload() {
+        if (!$this->hasCreateAccess()) {
+            $this->loadThis();
+        } else {
+            $data["departments"] = $this->PhoneDirectory_model->getDepartments();
+            $data["districts"] = $this->PhoneDirectory_model->getDistricts();
+            $data["blocks"] = $this->PhoneDirectory_model->getBlocks();
+            $data["parties"] = $this->PhoneDirectory_model->getParties();
+            
+            $this->global["pageTitle"] = "Jan Umang : Bulk Upload Phone Directory";
+            $this->loadViews("phonedirectory/bulk_upload", $this->global, $data, null);
+        }
+    }
+
+    /**
+     * Process bulk upload for Phone Directory
+     */
+    public function process_bulk_upload() {
+        if (!$this->hasCreateAccess()) {
+            $this->loadThis();
+        } else {
+            $config['upload_path'] = './uploads/bulk_phonedirectory/';
+            $config['allowed_types'] = 'csv';
+            $config['max_size'] = 10240; // 10MB
+            
+            if (!is_dir($config['upload_path'])) {
+                mkdir($config['upload_path'], 0755, true);
+            }
+            
+            $this->load->library('upload', $config);
+            $this->load->helper('bulk_upload');
+            
+            if (!$this->upload->do_upload('bulk_file')) {
+                $this->session->set_flashdata('error', $this->upload->display_errors());
+                redirect('phonedirectory/bulk_upload');
+            } else {
+                $upload_data = $this->upload->data();
+                $file_path = $upload_data['full_path'];
+                
+                try {
+                    $rows = parse_bulk_upload_file($file_path);
+                    
+                    if (empty($rows)) {
+                        throw new Exception('Unable to parse file. Please ensure it is a valid CSV file.');
+                    }
+                    
+                    $headers = array_map('trim', $rows[0]);
+                    $column_map = array();
+                    foreach ($headers as $index => $header) {
+                        $column_map[strtolower(str_replace([' ', '*'], ['_', ''], $header))] = $index;
+                    }
+                    
+                    $success_count = 0;
+                    $error_count = 0;
+                    $errors = array();
+                    
+                    for ($i = 1; $i < count($rows); $i++) {
+                        $row = $rows[$i];
+                        if (empty(array_filter($row))) continue;
+                        
+                        $get_col = function($col_name) use ($row, $column_map) {
+                            $key = strtolower(str_replace([' ', '*'], ['_', ''], $col_name));
+                            return isset($column_map[$key]) && isset($row[$column_map[$key]]) ? trim($row[$column_map[$key]]) : '';
+                        };
+                        
+                        $name = $get_col('Name');
+                        $number = $get_col('Number');
+                        
+                        if (empty($name) || empty($number)) {
+                            $errors[] = "Row " . ($i + 1) . ": Name and Number are required";
+                            $error_count++;
+                            continue;
+                        }
+                        
+                        $dept_name = $get_col('Department Name');
+                        $dist_name = $get_col('District Name');
+                        $block_name = $get_col('VS Block Name');
+                        $party_name = $get_col('Party Name');
+                        
+                        $dept_id = !empty($dept_name) ? get_id_by_name($this, 'department', 'name', $dept_name) : null;
+                        $dist_id = !empty($dist_name) ? get_id_by_name($this, 'district', 'name', $dist_name) : null;
+                        $block_id = !empty($block_name) ? get_id_by_name($this, 'block', 'name', $block_name) : null;
+                        $party_id = !empty($party_name) ? get_id_by_name($this, 'party', 'name', $party_name) : null;
+                        
+                        // Auto-create if not exists (optional, following jansunwai pattern)
+                        if (empty($dept_id) && !empty($dept_name)) {
+                            $this->db->insert('department', ['name' => $dept_name]);
+                            $dept_id = $this->db->insert_id();
+                        }
+                        if (empty($dist_id) && !empty($dist_name)) {
+                            $this->db->insert('district', ['name' => $dist_name]);
+                            $dist_id = $this->db->insert_id();
+                        }
+                        if (empty($block_id) && !empty($block_name)) {
+                            $this->db->insert('block', ['name' => $block_name]);
+                            $block_id = $this->db->insert_id();
+                        }
+                        if (empty($party_id) && !empty($party_name)) {
+                            $this->db->insert('party', ['name' => $party_name]);
+                            $party_id = $this->db->insert_id();
+                        }
+                        
+                        $data = array(
+                            'name' => ucwords(strtolower($name)),
+                            'number' => $number,
+                            'alternate_number' => $get_col('Alternate Number'),
+                            'email' => strtolower($get_col('Email')),
+                            'post' => $get_col('Post'),
+                            'department_id' => $dept_id,
+                            'district_id' => $dist_id,
+                            'vs_block_id' => $block_id,
+                            'party_id' => $party_id,
+                            'remark' => $get_col('Remark'),
+                            'status' => 'Active',
+                            'created_by' => $this->vendorId,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        
+                        $result = $this->PhoneDirectory_model->addNewPhoneDirectory($data);
+                        if ($result) {
+                            $this->logActivity('add', 'phone_directory', $result, $data, null, 'Phone Directory entry created via bulk upload with ID: ' . $result . ' (Name: ' . $data['name'] . ')');
+                            $success_count++;
+                        } else {
+                            $errors[] = "Row " . ($i + 1) . ": Failed to insert record";
+                            $error_count++;
+                        }
+                    }
+                    
+                    unlink($file_path);
+                    
+                    $message = "Bulk upload completed. Success: $success_count, Errors: $error_count";
+                    if (!empty($errors)) {
+                        $message .= "\nErrors: " . implode(", ", array_slice($errors, 0, 5));
+                    }
+                    
+                    if ($success_count > 0) {
+                        $this->session->set_flashdata('success', $message);
+                    } else {
+                        $this->session->set_flashdata('error', $message);
+                    }
+                    
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('error', 'Error processing file: ' . $e->getMessage());
+                }
+                
+                redirect('phonedirectory');
+            }
+        }
+    }
+
+    /**
+     * Download sample CSV template for Phone Directory
+     */
+    public function download_template() {
+        $filename = 'phonedirectory_template.csv';
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        $headers = array('Name*', 'Number*', 'Email', 'Post', 'Department Name', 'District Name', 'VS Block Name', 'Party Name');
+        fputcsv($output, $headers);
+        
+        $sample = array('John Doe', '9876543210', 'john@example.com', 'Manager', 'PWD', 'Dhar', 'Gandhwani', 'BJP');
+        fputcsv($output, $sample);
+        fclose($output);
+    }
+
+    /**
      * Page not found : error 404
      */
     function pageNotFound()

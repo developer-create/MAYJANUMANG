@@ -107,14 +107,26 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="mobile_no">Mobile No</label>
-                                        <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Enter Mobile No" value="<?php echo isset($member['mobile_no']) ? htmlspecialchars($member['mobile_no']) : ''; ?>">
-                                    </div>
-                                </div>
-                            </div>
+                             <div class="row">
+                                 <div class="col-md-6">
+                                     <div class="form-group">
+                                         <label for="mobile_no">Mobile No</label>
+                                         <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Enter Mobile No" value="<?php echo isset($member['mobile_no']) ? htmlspecialchars($member['mobile_no']) : ''; ?>">
+                                     </div>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <div class="form-group">
+                                         <label for="locksabha">Lok Sabha</label>
+                                         <input type="text" class="form-control" id="locksabha" name="locksabha" placeholder="Enter Lok Sabha" value="<?php echo isset($member['locksabha']) ? htmlspecialchars($member['locksabha']) : ''; ?>">
+                                     </div>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <div class="form-group">
+                                         <label for="year">Year</label>
+                                         <input type="text" class="form-control" id="year" name="year" placeholder="Enter Year" value="<?php echo isset($member['year']) ? htmlspecialchars($member['year']) : ''; ?>">
+                                     </div>
+                                 </div>
+                             </div>
 
                             <hr>
                             <h4>Additional Fields</h4>
@@ -329,14 +341,10 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="checkbox">
-                                        <label><input type="checkbox" name="cell" id="cell" <?php echo (isset($member['cell']) && $member['cell']) ? 'checked' : ''; ?>> CELL</label>
+                                        <label><input type="checkbox" name="cell_mp" id="cell_mp" <?php echo (isset($member['cell_mp']) && $member['cell_mp']) ? 'checked' : ''; ?>> CELL/MP</label>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="checkbox">
-                                        <label><input type="checkbox" name="mp" id="mp" <?php echo (isset($member['mp']) && $member['mp']) ? 'checked' : ''; ?>> MP</label>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-3">
                                     <div class="checkbox">
                                         <label><input type="checkbox" name="dt" id="dt" <?php echo (isset($member['dt']) && $member['dt']) ? 'checked' : ''; ?>> DT</label>

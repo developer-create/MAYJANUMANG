@@ -260,24 +260,73 @@ $(document).ready(function() {
             2: '#dateFilter'
         };
 
+        var monthOrder = {
+            "January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "June": 6,
+            "July": 7, "August": 8, "September": 9, "October": 10, "November": 11, "December": 12,
+            "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
+            "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
+        };
+
         $.each(columnsToFilter, function(index, selector) {
             if (selector !== '#dateFilter') {
-                api.column(index).data().unique().sort().each(function(d, j) {
-                    if (d && d !== '-') {
-                        $(selector).append('<option value="' + d + '">' + d + '</option>');
-                    }
-                });
+                var columnData = api.column(index).data().unique().sort();
+                
+                if (selector === '#monthFilter') {
+                    var sortedMonths = columnData.toArray().sort(function(a, b) {
+                        return (monthOrder[a] || 99) - (monthOrder[b] || 99);
+                    });
+                    $.each(sortedMonths, function(i, d) {
+                        if (d && d !== '-') {
+                            $(selector).append('<option value="' + d + '">' + d + '</option>');
+                        }
+                    });
+                } else {
+                    columnData.each(function(d, j) {
+                        if (d && d !== '-') {
+                            $(selector).append('<option value="' + d + '">' + d + '</option>');
+                        }
+                    });
+                }
             }
         });
     }
 
     // Apply filters
     $('#districtFilter').on('change', function() {
-        table.column(11).search(this.value).draw();
+        var districtVal = this.value;
+        
+        // When district changes, we should clear Vidhan Sabha selection and search
+        $('#vidhanSabhaFilter').val('').trigger('change.select2');
+        table.column(12).search('');
+        
+        table.column(11).search(districtVal).draw();
+        
+        // Repopulate Vidhan Sabha filter based on currently visible rows
+        updateVidhanSabhaOptions();
     });
+
     $('#vidhanSabhaFilter').on('change', function() {
         table.column(12).search(this.value).draw();
     });
+
+    function updateVidhanSabhaOptions() {
+        var vsFilter = $('#vidhanSabhaFilter');
+        var currentVS = vsFilter.val();
+        vsFilter.empty().append('<option value="">All Vidhan Sabhas</option>');
+        
+        // Get unique Vidhan Sabhas from rows matching current filters (which includes District)
+        var uniqueVS = table.column(12, { search: 'applied' }).data().unique().sort();
+        
+        uniqueVS.each(function(d) {
+            if (d && d !== '-') {
+                var selected = (d === currentVS) ? ' selected' : '';
+                vsFilter.append('<option value="' + d + '"' + selected + '>' + d + '</option>');
+            }
+        });
+        
+        vsFilter.trigger('change.select2');
+    }
+
     $('#yearFilter').on('change', function() {
         table.column(3).search(this.value).draw();
     });
@@ -299,13 +348,31 @@ $(document).ready(function() {
         $('.select2').val('').trigger('change');
         $('#dateFilter').val('');
         table.columns().search('').draw();
+        
+        // After reset, repopulate VS filter with all options
+        repopulateAllFilters();
     });
+
+    function repopulateAllFilters() {
+        // Just clear and repopulate the VS filter with all possible values
+        var vsFilter = $('#vidhanSabhaFilter');
+        vsFilter.empty().append('<option value="">All Vidhan Sabhas</option>');
+        
+        table.column(12).data().unique().sort().each(function(d) {
+            if (d && d !== '-') {
+                vsFilter.append('<option value="' + d + '">' + d + '</option>');
+            }
+        });
+        vsFilter.trigger('change.select2');
+    }
 
     // Tab filtering
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         var filter = $(e.target).data('filter');
         currentTabFilter = filter;
         table.draw();
+        // Update VS options when tab changes as well
+        updateVidhanSabhaOptions();
     });
 
 });
