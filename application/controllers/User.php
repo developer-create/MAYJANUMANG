@@ -195,19 +195,70 @@ class User extends BaseController {
         }
 
         if ($summary_type == 'vidhan_sabha') {
+            // Use mp_vidhan_sabha_member table for vidhan sabha wise summary
+            $sum_parts_mp = [];
+            $sum_parts_mp[] = "SUM(CASE WHEN j.sc = 1 THEN 1 ELSE 0 END) AS SC_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.yc = 1 THEN 1 ELSE 0 END) AS YC_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.wc = 1 THEN 1 ELSE 0 END) AS WC_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.pa = 1 THEN 1 ELSE 0 END) AS PA_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.sr = 1 THEN 1 ELSE 0 END) AS SM_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.eo = 1 THEN 1 ELSE 0 END) AS EO_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.gs = 1 THEN 1 ELSE 0 END) AS GS_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.dcc = 1 THEN 1 ELSE 0 END) AS DCC_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.pw = 1 THEN 1 ELSE 0 END) AS PW_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.nl = 1 THEN 1 ELSE 0 END) AS NL_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.fr = 1 THEN 1 ELSE 0 END) AS FR_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.so = 1 THEN 1 ELSE 0 END) AS SO_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.st = 1 THEN 1 ELSE 0 END) AS ST_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.ref = 1 THEN 1 ELSE 0 END) AS REF_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.us = 1 THEN 1 ELSE 0 END) AS US_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.smw = 1 THEN 1 ELSE 0 END) AS SMW_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.dyc = 1 THEN 1 ELSE 0 END) AS DYC_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.obc = 1 THEN 1 ELSE 0 END) AS OBC_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.dt = 1 THEN 1 ELSE 0 END) AS DT_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.dp = 1 THEN 1 ELSE 0 END) AS DP_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.mla_x_mla = 1 THEN 1 ELSE 0 END) AS MLA_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.avp = 1 THEN 1 ELSE 0 END) AS AVP_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.meet = 1 THEN 1 ELSE 0 END) AS MEET_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.media = 1 THEN 1 ELSE 0 END) AS MEDIA_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.mla_x_mla = 1 THEN 1 ELSE 0 END) AS XMLA_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.bc = 1 THEN 1 ELSE 0 END) AS BC_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.pp = 1 THEN 1 ELSE 0 END) AS PP_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.ip = 1 THEN 1 ELSE 0 END) AS IP_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.fp = 1 THEN 1 ELSE 0 END) AS FH_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.smtw = 1 THEN 1 ELSE 0 END) AS SMM_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.sr = 1 THEN 1 ELSE 0 END) AS MS_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.fp = 1 THEN 1 ELSE 0 END) AS FP_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.er = 1 THEN 1 ELSE 0 END) AS ER_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.sr = 1 THEN 1 ELSE 0 END) AS वरिष्ठ_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.yc = 1 THEN 1 ELSE 0 END) AS युवा_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.pw = 1 THEN 1 ELSE 0 END) AS वोटर_प्रभारी_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.in_field = 1 THEN 1 ELSE 0 END) AS BLA_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.fm = 1 THEN 1 ELSE 0 END) AS FM_Count";
+            $sum_parts_mp[] = "SUM(CASE WHEN j.ak = 1 THEN 1 ELSE 0 END) AS AK_Count";
+            $sum_sql_mp = implode(",\n            ", $sum_parts_mp);
+            
+            $mp_where = " WHERE 1=1 ";
+            if (!empty($filter_district)) {
+                $mp_where .= " AND vs.district_id = " . $this->db->escape($filter_district);
+            }
+            if (!empty($filter_vidhan_sabha)) {
+                $mp_where .= " AND vs.id = " . $this->db->escape($filter_vidhan_sabha);
+            }
+            
             $query = $this->db->query("SELECT * FROM (
                 SELECT 
                 vs.vidhan_sabha_name AS VidhanSabhaName,
                 d.name AS DistrictName,
                 vs.id AS vidhan_sabha_id, 
                 d.id AS district_id_val,
-                " . $sum_sql_vs . ",
+                " . $sum_sql_mp . ",
                 COUNT(j.id) AS Total_Count,
                 SUM(CASE WHEN DATE(j.date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
                 FROM vidhan_sabha vs
                 LEFT JOIN district d ON d.id = vs.district_id
                 LEFT JOIN mp_vidhan_sabha_member j ON vs.id = j.vidhan_sabha_id
-                $vs_where
+                $mp_where
                 GROUP BY d.id, vs.id WITH ROLLUP
             ) AS subquery
             WHERE (vidhan_sabha_id IS NOT NULL AND district_id_val IS NOT NULL) OR (vidhan_sabha_id IS NULL AND district_id_val IS NULL)
@@ -228,9 +279,9 @@ class User extends BaseController {
                 d.id AS district_id, 
                 " . $sum_sql_vs . ",
                 COUNT(j.id) AS Total_Count,
-                SUM(CASE WHEN DATE(j.date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
+                SUM(CASE WHEN DATE(j.create_date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
                 FROM district d
-                LEFT JOIN mp_vidhan_sabha_member j ON d.id = j.district_id
+                LEFT JOIN servayapp j ON d.id = j.district
                 $dist_where
                 GROUP BY d.name, d.id WITH ROLLUP
             ) AS subquery
