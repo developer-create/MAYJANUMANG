@@ -203,10 +203,10 @@ class User extends BaseController {
                 d.id AS district_id_val,
                 " . $sum_sql_vs . ",
                 COUNT(j.id) AS Total_Count,
-                SUM(CASE WHEN DATE(j.create_date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
+                SUM(CASE WHEN DATE(j.date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
                 FROM vidhan_sabha vs
                 LEFT JOIN district d ON d.id = vs.district_id
-                LEFT JOIN servayapp j ON vs.id = j.vidhan_sabha_id
+                LEFT JOIN mp_vidhan_sabha_member j ON vs.id = j.vidhan_sabha_id
                 $vs_where
                 GROUP BY d.id, vs.id WITH ROLLUP
             ) AS subquery
@@ -228,9 +228,9 @@ class User extends BaseController {
                 d.id AS district_id, 
                 " . $sum_sql_vs . ",
                 COUNT(j.id) AS Total_Count,
-                SUM(CASE WHEN DATE(j.create_date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
+                SUM(CASE WHEN DATE(j.date) = CURDATE() THEN 1 ELSE 0 END) AS Today_Count
                 FROM district d
-                LEFT JOIN servayapp j ON d.id = j.district
+                LEFT JOIN mp_vidhan_sabha_member j ON d.id = j.district_id
                 $dist_where
                 GROUP BY d.name, d.id WITH ROLLUP
             ) AS subquery
