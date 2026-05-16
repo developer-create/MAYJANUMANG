@@ -93,13 +93,10 @@ $role = $this->session->userdata('role');
                                     </div>
                                     <div class="box-body">
                                         <ul>
-                                            <li><strong>Required Fields:</strong> Sector Name, Work Problem, Beneficial</li>
-                                            <li><strong>Date Format:</strong> Use YYYY-MM-DD format (e.g., 2026-01-15)</li>
-                                            <li><strong>Reference Fields:</strong> Use names (not IDs) for Block, Department, Sub Work Type</li>
-                                            <li><strong>Mobile Numbers:</strong> 10-digit numbers without country code</li>
-                                            <li><strong>Approximate Cost:</strong> Numeric value without currency symbols</li>
-                                            <li><strong>Empty Rows:</strong> Will be skipped automatically</li>
-                                            <li><strong>Budget Validation:</strong> System will check fund availability</li>
+                                            <li><strong>Format Match:</strong> Make sure your file exactly matches the columns in the downloaded template (which matches the final export structure).</li>
+                                            <li><strong>Validations Disabled:</strong> During bulk upload, required fields and budget constraints are not strictly enforced to allow raw data import.</li>
+                                            <li><strong>Reference Fields:</strong> The system will try to match Block, Department, Sub Work Type names with existing records.</li>
+                                            <li><strong>Empty Rows:</strong> Will be skipped automatically.</li>
                                         </ul>
                                         
                                         <h4>Reference Data:</h4>

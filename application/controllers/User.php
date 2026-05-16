@@ -2863,9 +2863,34 @@ $insert_id = $this->db->insert_id();
                         };
                         
                         // Lookup IDs from names
-                        // Lookup IDs from names
+                        $district_name = $get_col('District');
+                        $assembly_name = $get_col('Assembly');
                         $block_name = $get_col('Block Name');
                         $department_name = $get_col('Department Name');
+                        
+                        $district_id = !empty($district_name) ? get_id_by_name($this, 'district', 'name', $district_name) : null;
+                        if (empty($district_id) && !empty($district_name)) {
+                            $this->db->insert('district', ['name' => $district_name]);
+                            $district_id = $this->db->insert_id();
+                        }
+
+                        $assembly_id = !empty($assembly_name) ? get_id_by_name($this, 'vidhan_sabha', 'vidhan_sabha_name', $assembly_name, 'district_id', $district_id) : null;
+                        if (empty($assembly_id) && !empty($assembly_name)) {
+                            $this->db->insert('vidhan_sabha', ['vidhan_sabha_name' => $assembly_name, 'district_id' => $district_id ?: 0]);
+                            $assembly_id = $this->db->insert_id();
+                        }
+
+                        $block_id = !empty($block_name) ? get_id_by_name($this, 'block', 'name', $block_name) : null;
+                        if (empty($block_id) && !empty($block_name)) {
+                            $this->db->insert('block', ['name' => $block_name]);
+                            $block_id = $this->db->insert_id();
+                        }
+
+                        $department_id = !empty($department_name) ? get_id_by_name($this, 'department', 'name', $department_name) : null;
+                        if (empty($department_id) && !empty($department_name)) {
+                            $this->db->insert('department', ['name' => $department_name]);
+                            $department_id = $this->db->insert_id();
+                        }
                         
                         // Try Sub Work Type Name first, then Sub Work Type
                         $sub_work_type_name = $get_col('Sub Work Type Name');
@@ -2876,9 +2901,6 @@ $insert_id = $this->db->insert_id();
                         $booth_name = $get_col('Booth Name');
                         $panchayat_name = $get_col('Panchayat Name');
                         $village_name = $get_col('Village');
-                        
-                        $block_id = !empty($block_name) ? get_id_by_name($this, 'block', 'name', $block_name) : null;
-                        $department_id = !empty($department_name) ? get_id_by_name($this, 'department', 'name', $department_name) : null;
                         
                         // Use block_id as filter for booth, panchayat, village if available
                         $booth_id = !empty($booth_name) ? get_id_by_name($this, 'booth', 'name', $booth_name, 'blockid', $block_id) : null;
@@ -2943,17 +2965,13 @@ $insert_id = $this->db->insert_id();
                             $month_number = isset($months_map[strtolower($month_val)]) ? $months_map[strtolower($month_val)] : $month_val;
                         }
 
-                        // Validate that required IDs were found
+                        // Validations for required IDs have been bypassed for bulk upload
                         if (empty($block_id)) {
-                            $errors[] = "Row " . ($i + 1) . ": Block not found: " . $block_name;
-                            $error_count++;
-                            continue;
+                            $block_id = 0;
                         }
                         
                         if (empty($department_id)) {
-                            $errors[] = "Row " . ($i + 1) . ": Department not found: " . $department_name;
-                            $error_count++;
-                            continue;
+                            $department_id = 0;
                         }
                         
                         $data = array(
@@ -2964,8 +2982,8 @@ $insert_id = $this->db->insert_id();
                             "year" => $get_col('Year'),
                             "month" => $month_number,
                             "date" => !empty($get_col('Date')) ? date("Y-m-d", strtotime($get_col('Date'))) : null,
-                            "district" => $get_col('District'),
-                            "assembly" => $get_col('Assembly'),
+                            "district" => $district_id ?: 0,
+                            "assembly" => $assembly_id ?: 0,
                             "block" => $block_id,
                             "recommended_letter_no" => $get_col('Recommended Letter No'),
                             "booth_no" => $get_col('Booth No'),
@@ -3010,41 +3028,7 @@ $insert_id = $this->db->insert_id();
                             "lng" => 0.00000000
                         );
                         
-                        // Validate required fields
-                        if (empty($data['sector_name']) || empty($data['work_problem']) || empty($data['beneficial'])) {
-                            $errors[] = "Row " . ($i + 1) . ": Required fields missing (Sector Name, Work Problem, Beneficial)";
-                            $error_count++;
-                            continue;
-                        }
-                        
-                        // Validate mobile number
-                        if (!empty($data['mobile']) && !preg_match('/^\d{10}$/', $data['mobile'])) {
-                            $errors[] = "Row " . ($i + 1) . ": Invalid mobile number format";
-                            $error_count++;
-                            continue;
-                        }
-                        
-                        // Validate contact number
-                        if (!empty($data['cont_no']) && !preg_match('/^\d{10}$/', $data['cont_no'])) {
-                            $errors[] = "Row " . ($i + 1) . ": Invalid contact number format";
-                            $error_count++;
-                            continue;
-                        }
-                        
-                        // Budget validation
-                        $this->load->helper("fund_budget");
-                        $this->load->model("Fund_budget_model");
-                        $resolved_fund = $data['approved_fund'];
-                        $norm_fund = normalize_approved_fund_name($resolved_fund);
-                        if ($norm_fund !== null && !empty($data['approximate_cost'])) {
-                            $fy = canonicalize_financial_year_for_budget($data['year']);
-                            $chk = $this->Fund_budget_model->check_budget($norm_fund, $fy, (float)$data['approximate_cost'], null, null);
-                            if (!$chk["ok"]) {
-                                $errors[] = "Row " . ($i + 1) . ": " . $chk["message"];
-                                $error_count++;
-                                continue;
-                            }
-                        }
+                        // Validations for required fields, mobile, contact, and budget have been bypassed for bulk upload
                         
                         // Insert data into database
                         $result = $this->db->insert('jansunwai', $data);
@@ -3095,24 +3079,14 @@ $insert_id = $this->db->insert_id();
         
         // CSV headers
         $headers = array(
-            'Sector Name*', 'Micro Sector No*', 'Micro Sector Name*', 'Year*', 'Month*', 'Date (YYYY-MM-DD)*',
-            'District*', 'Assembly*', 'Block Name*', 'Recommended Letter No*', 'Booth No*', 'Booth Name*',
-            'Panchayat Name*', 'Village*', 'Majra Faliya*', 'Work Problem*', 'Office*', 'Approximate Cost*',
-            'Department Name*', 'Priority*', 'TS No/Date', 'AS No/Date', 'Type of Work*', 'Sub Work Type',
-            'Middle Men*', 'Contact No*', 'Beneficial*', 'Mobile*', 'PO*', 'Work Agency*', 'Approved Fund*',
-            'Account Details', 'ID Proof Number', 'Residential Number', 'Remark/Goshana', 'REMARK / TIP/ USD'
+            'Regi. No.', 'Timer', 'Status', 'Added By', 'Beneficially Mobile', 'lat-lng', 'Registration Date', 'Avedan', 'Actions', 'Office', 'Date', 'Month', 'Year', 'Sector Name', 'Micro Sector No', 'Micro Sector Name', 'District', 'Assembly', 'Block Name', 'Booth Name', 'Booth No', 'Panchayat Name', 'Village', 'Majra Faliya', 'Work Problem', 'Type of Work', 'Sub Work Type Name', 'Priority', 'Department Name', 'Approximate Cost', 'Approved Fund', 'Work Agency', 'Recommended Letter No', 'TS No Date', 'AS No Date', 'Middle Men', 'Cont No', 'Beneficial', 'PO', 'Account Details', 'Residential Number', 'ID Proof Number', 'Remark Goshana', 'REMARK / TIP/ USD'
         );
         
         fputcsv($output, $headers);
         
         // Sample data row
         $sample = array(
-            'Sample Sector', '001', 'Sample Micro Sector', '2026', 'January', '2026-01-15',
-            'Sample District', 'Sample Assembly', 'Gandhwani', 'RLN001', '001', 'Sample Booth',
-            'Sample Panchayat', 'Sample Village', 'Sample Majra', 'Sample Work Problem', 'Sample Office', '50000',
-            'PWD (लोक निर्माण विभाग)', 'High', 'TS001/2026', 'AS001/2026', 'Sample Work Type', 'Sample Sub Work Type',
-            'Sample Middle Man', '9876543210', 'Sample Beneficial', '9876543210', 'Sample PO', 'Sample Agency', 'MLA FUND',
-            'Sample Account Details', '123456789012', 'IFSC0001234', 'Sample Remark'
+            '', '', 'Complete', 'Akashy Dawar ', '', '', '', '', '', 'DHAR', '', '', '2008-09', 'KHEDI', 'TK1', 'KUNWA', 'DHAR', 'GANDHWANI', 'TIRLA', 'कुआं', '119', 'कुआं', 'कुआं', 'कुआं', 'तिरला से कुआ तक प्रधानमंत्री ग्रामीण सडक योजना अंतर्गत स्वीकृत ', 'निर्माण कार्य', 'सामान्य सड़क / खेत सड़क', 'A+', 'PMGSY (प्रधानमंत्री ग्राम सड़क योजना)', '805.21', '', '', '', 'N/A', 'N/A', '', '', '', '', 'N/A', '', '', '', ''
         );
         
         fputcsv($output, $sample);
