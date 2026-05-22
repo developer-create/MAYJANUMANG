@@ -133,6 +133,7 @@ public function store() {
             'time' => $this->input->post('time') ?: 'NA',
             'event_detail' => $this->input->post('event_detail') ?: 'NA',
             'district' => $district,
+            'priority' => $this->input->post('priority') ?: 'NA',
             'venue_city' => $this->input->post('venue_city') ?: 'NA',
             'referance' => $this->input->post('referance') ?: 'NA',
             'date' => !empty($this->input->post('date')) ? date('Y-m-d', strtotime($this->input->post('date'))) : '0000-00-00',

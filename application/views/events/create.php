@@ -213,6 +213,17 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
+                                        <label for="priority">Priority:</label>
+                                        <select class="form-control" name="priority">
+                                         <option value="">Select Priority</option>
+                                         <option value="High" <?php echo set_select('priority', 'High'); ?>>High</option>
+                                         <option value="Medium" <?php echo set_select('priority', 'Medium'); ?>>Medium</option>
+                                         <option value="Low" <?php echo set_select('priority', 'Low'); ?>>Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
                                         <label for="probability">PROBABILITY  ( JANA KI NAHI JANA):</label>
                                         <select class="form-control required" name="probability">
                                          <option value="">Select Option</option>
@@ -230,6 +241,9 @@
                                         <input type="text" class="form-control" id="tentative_duration" name="tentative_duration" value="<?php echo set_value('tentative_duration'); ?>">
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="attended">ATTENDED (YES/NO):</label>
