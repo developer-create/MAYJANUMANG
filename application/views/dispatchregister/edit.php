@@ -308,11 +308,14 @@ $(document).ready(function() {
         }
     });
 
+    // Set initial flag to prevent clearing on page load
+    var isInitialLoad = true;
+
     // District change - load vidhan sabhas
     $('#district_id').change(function() {
         var district_id = $(this).val();
         // Only empty if it's a real change, not initial load
-        if (district_id && $(this).data('initial') !== 'true') {
+        if (district_id && !isInitialLoad) {
             $('#vidhan_sabha_id').empty().append('<option value="">Select Vidhan Sabha</option>');
             $.ajax({
                 url: base_url + 'dispatchregister/get_vidhan_sabhas_by_district',
@@ -328,10 +331,8 @@ $(document).ready(function() {
                 }
             });
         }
-        $(this).data('initial', 'false');
+        isInitialLoad = false;
     });
-    // Set initial flag to prevent clearing on page load
-    $('#district_id').data('initial', 'true');
     
     // Block change - load panchayats AND villages (both from block)
     $('#block_id').change(function() {
