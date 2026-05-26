@@ -2030,6 +2030,8 @@ $insert_id = $this->db->insert_id();
             $departmentName = $row->department_join_name ?: "N/A";
             $districtName = $row->district_name ?: "N/A";
             $assemblyName = $row->assembly_name ?: "N/A";
+            $approvedFundCell = !empty($row->approved_fund) ? $row->approved_fund : "-";
+            $workAgencyCell = !empty($row->work_agency) ? $row->work_agency : "-";
 
             $actionButtons =
                 '<a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View Comment"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
@@ -2060,6 +2062,8 @@ $insert_id = $this->db->insert_id();
                 $row->office,
                 $row->approximate_cost,
                 $departmentName,
+                $approvedFundCell,
+                $workAgencyCell,
                 $row->priority,
                 $row->ts_no_date,
                 $row->as_no_date,
@@ -2186,6 +2190,8 @@ $insert_id = $this->db->insert_id();
             $departmentName = $row->department_join_name ?: "N/A";
             $districtName = $row->district_name ?: "N/A";
             $assemblyName = $row->assembly_name ?: "N/A";
+            $approvedFundCell = !empty($row->approved_fund) ? $row->approved_fund : "-";
+            $workAgencyCell = !empty($row->work_agency) ? $row->work_agency : "-";
 
             $actionButtons =
                 '<a class="btn btn-sm btn-info" href="' . base_url("user/jansunwaicommentview/" . $row->id) . '" title="View Comment"><i class="fa fa-eye" aria-hidden="true"></i></a> ' .
@@ -2216,6 +2222,8 @@ $insert_id = $this->db->insert_id();
                 $row->office,
                 $row->approximate_cost,
                 $departmentName,
+                $approvedFundCell,
+                $workAgencyCell,
                 $row->priority,
                 $row->ts_no_date,
                 $row->as_no_date,

@@ -175,6 +175,8 @@
                            <th>Office</th>
                            <th>Approx Cost</th>
                            <th>Department</th>
+                           <th>Approved Fund</th>
+                           <th>Work Agency</th>
                            <th>Priority</th>
                            <th>TS No/Date</th>
                            <th>AS No/Date</th>
@@ -271,7 +273,9 @@ $(document).ready(function() {
             { data: 36 },
             { data: 37 },
             { data: 38 },
-            { data: 39 }
+            { data: 39 },
+            { data: 40 },
+            { data: 41 }
         ],
         order: [[1, 'desc']],
         pageLength: 10,
